@@ -49,8 +49,14 @@ int vt_print_char(char ch, char attr, int r, int c)
 			char *PointerRam;
 			PointerRam = video_mem;
 
-				PointerRam = PointerRam + (r-1)*scr_width+c;
+			if(r >= scr_width || c >= scr_lines)
+			{
+				return 1;
+			}
+
+				PointerRam = PointerRam + 2*((r+1)*scr_width-(scr_width-c));
 				*PointerRam =ch;
+				PointerRam++;
 				*PointerRam=attr;
 				return 0;
 }
