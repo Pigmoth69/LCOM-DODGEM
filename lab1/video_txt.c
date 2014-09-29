@@ -54,7 +54,7 @@ int vt_print_char(char ch, char attr, int r, int c)
 				return 1;
 			}
 
-				PointerRam = PointerRam + 2*((r+1)*scr_width-(scr_width-c));
+				PointerRam = PointerRam + 2*(r*scr_width-(scr_width-c))-2;
 				*PointerRam =ch;
 				PointerRam++;
 				*PointerRam=attr;
@@ -62,15 +62,48 @@ int vt_print_char(char ch, char attr, int r, int c)
 }
 
 
-int vt_print_string(char *str, char attr, int r, int c) {
+int vt_print_string(char *str, char attr, int r, int c)
+{
+				char *PointerRam;
+				PointerRam = video_mem;
+				int i ;
+				int lim = strlen(str);
 
-  /* To complete ... */
+				if(r >= scr_width || c >= scr_lines)
+				{
+					return 1;
+				}
+
+					PointerRam = PointerRam + 2*(r*scr_width-(scr_width-c))-2;
+					for(i = 0; i < lim ;i++)
+					{
+						*PointerRam = *(str+i);
+						PointerRam++;
+						*PointerRam=attr;
+						PointerRam++;
+						// falta
+					}
+
+					return 0;
 
 }
 
 int vt_print_int(int num, char attr, int r, int c) {
 
-  /* To complete ... */
+				char *PointerRam;
+				PointerRam = video_mem;
+				char numero= 33;
+
+				if(r >= scr_width || c >= scr_lines)
+				{
+					return 1;
+				}
+
+					PointerRam = PointerRam + 2*(r*scr_width-(scr_width-c))-2;
+					*PointerRam =numero;
+					PointerRam++;
+					*PointerRam=attr;
+					return 0;
 
 }
 
