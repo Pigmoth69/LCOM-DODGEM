@@ -92,18 +92,37 @@ int vt_print_int(int num, char attr, int r, int c) {
 
 				char *PointerRam;
 				PointerRam = video_mem;
-				char numero= 33;
+				char numero_char= ' ';
+				int comprimento = 0;
+				int numero = num;
 
 				if(r >= scr_width || c >= scr_lines)
-				{
-					return 1;
-				}
+								{
+									return 1;
+								}
 
-					PointerRam = PointerRam + 2*(r*scr_width-(scr_width-c))-2;
-					*PointerRam =numero;
-					PointerRam++;
-					*PointerRam=attr;
-					return 0;
+				int x;
+				while(numero % 10 != 0)
+				{
+					numero = numero / 10;
+					comprimento++;
+				}
+				PointerRam = PointerRam + 2*(r*scr_width-(scr_width-c))-2;
+				for(x = 0; x < comprimento;x++)
+				{
+							numero_char +=
+				}
+				*PointerRam =numero;
+				PointerRam++;
+				*PointerRam=attr;
+				return 0;
+
+
+
+
+
+
+
 
 }
 
