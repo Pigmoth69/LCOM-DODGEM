@@ -17,16 +17,16 @@ static unsigned scr_lines;	/* Height of screen in lines */
 
 void vt_fill(char ch, char attr)
 {
-		char *PointerRam;
-		PointerRam = video_mem;
-		int x;
-		for(x = 0 ; x < scr_width*scr_lines;x++)
-		{
-			*PointerRam =ch;
-			PointerRam++;
-			*PointerRam=attr;
-			PointerRam++;
-		}
+	char *PointerRam;
+	PointerRam = video_mem;
+	int x;
+	for(x = 0 ; x < scr_width*scr_lines;x++)
+	{
+		*PointerRam =ch;
+		PointerRam++;
+		*PointerRam=attr;
+		PointerRam++;
+	}
 }
 
 void vt_blank() {
@@ -46,76 +46,106 @@ void vt_blank() {
 
 int vt_print_char(char ch, char attr, int r, int c)
 {
-			char *PointerRam;
-			PointerRam = video_mem;
+	char *PointerRam;
+	PointerRam = video_mem;
 
-			if(r >= scr_width || c >= scr_lines)
-			{
-				return 1;
-			}
+	if(r >= scr_width || c >= scr_lines)
+	{
+		return 1;
+	}
 
-				PointerRam = PointerRam + 2*(r*scr_width-(scr_width-c))-2;
-				*PointerRam =ch;
-				PointerRam++;
-				*PointerRam=attr;
-				return 0;
+	PointerRam = PointerRam + 2*(r*scr_width-(scr_width-c))-2;
+	*PointerRam =ch;
+	PointerRam++;
+	*PointerRam=attr;
+	return 0;
 }
 
 
 int vt_print_string(char *str, char attr, int r, int c)
 {
-				char *PointerRam;
-				PointerRam = video_mem;
-				int i ;
-				int lim = strlen(str);
+	char *PointerRam;
+	PointerRam = video_mem;
+	int i ;
+	int lim = strlen(str);
 
-				if(r >= scr_width || c >= scr_lines)
-				{
-					return 1;
-				}
+	if(r >= scr_lines || c >= scr_width)
+	{
+		return 1;
+	}
 
-					PointerRam = PointerRam + 2*(r*scr_width-(scr_width-c))-2;
-					for(i = 0; i < lim ;i++)
-					{
-						*PointerRam = *(str+i);
-						PointerRam++;
-						*PointerRam=attr;
-						PointerRam++;
-						// falta
-					}
+	PointerRam += 2*(scr_width*r+c);
 
-					return 0;
+	if(PointerRam + 2*lim > video_mem+2*scr_width*scr_lines)
+	{
+		return -1;
+	}
+	for(i = 0; i < lim ;i++)
+	{
+		*PointerRam = *(str+i);
+		PointerRam++;
+		*PointerRam=attr;
+		PointerRam++;
+
+	}
+
+	return 0;
 
 }
 
-int vt_print_int(int num, char attr, int r, int c) {
+int vt_print_int(int num, char attr, int r, int c)
+{
 
-				char *PointerRam;
-				PointerRam = video_mem;
-				char numero_char= ' ';
-				int comprimento = 0;
-				int numero = num;
 
-				if(r >= scr_width || c >= scr_lines)
-								{
-									return 1;
-								}
+	char *PointerRam;
+	PointerRam = video_mem;
+	int i ;
+	int lim = 0;
+	int numero = num;
 
-				int x;
-				while(numero % 10 != 0)
-				{
-					numero = numero / 10;
-					comprimento++;
-				}
-				PointerRam = PointerRam + 2*(r*scr_width-(scr_width-c))-2;
-				for(x = 0; x < comprimento;x++)
-				{
-							numero_char +=
-				}
-				*PointerRam =numero;
-				PointerRam++;
-				*PointerRam=attr;
-				return 0;
+	if(r >= scr_lines || c >= scr_width)
+	{
+		return 1;
+	}
+
+	PointerRam += 2*(scr_width*r+c);
+
+
+	if(numero<0){
+		numero=numero*(-1);
+	}
+	while(numero > 0)
+	{
+		numero = numero/10;
+		lim++;
+	}
+
+	if(PointerRam + 2*lim > video_mem+2*scr_width*scr_lines)
+	{
+		return -1;
+	}
+
+	if( num < 0)
+		{
+			num=num*-1;
+			*PointerRam=0x2D;
+			PointerRam++;
+			*PointerRam=attr;
+			PointerRam++;
+		}
+
+	PointerRam+=2*(lim-1);
+	for(i = 0; i < lim ;i++)
+	{
+		*PointerRam=0x30+num%10;
+		num=num/10;
+		PointerRam++;
+		*PointerRam=attr;
+		PointerRam-=3;
+
+	}
+
+	return 0;
 
 
 
@@ -130,7 +160,7 @@ int vt_print_int(int num, char attr, int r, int c) {
 int vt_draw_frame(int width, int height, char attr, int r, int c)
 {
 
-  /* To complete ... */
+	/* To complete ... */
 
 }
 
@@ -138,30 +168,30 @@ int vt_draw_frame(int width, int height, char attr, int r, int c)
  * THIS FUNCTION IS FINALIZED, do NOT touch it
  */
 
-char *vt_init(vt_info_t *vi_p) {
+ char *vt_init(vt_info_t *vi_p) {
 
-  int r;
-  struct mem_range mr;
+	 int r;
+	 struct mem_range mr;
 
-  /* Allow memory mapping */
+	 /* Allow memory mapping */
 
-  mr.mr_base = (phys_bytes)(vi_p->vram_base);
-  mr.mr_limit = mr.mr_base + vi_p->vram_size;
+	 mr.mr_base = (phys_bytes)(vi_p->vram_base);
+	 mr.mr_limit = mr.mr_base + vi_p->vram_size;
 
-  if( OK != (r = sys_privctl(SELF, SYS_PRIV_ADD_MEM, &mr)))
-	  panic("video_txt: sys_privctl (ADD_MEM) failed: %d\n", r);
+	 if( OK != (r = sys_privctl(SELF, SYS_PRIV_ADD_MEM, &mr)))
+		 panic("video_txt: sys_privctl (ADD_MEM) failed: %d\n", r);
 
-  /* Map memory */
+	 /* Map memory */
 
-  video_mem = vm_map_phys(SELF, (void *)mr.mr_base, vi_p->vram_size);
+	 video_mem = vm_map_phys(SELF, (void *)mr.mr_base, vi_p->vram_size);
 
-  if(video_mem == MAP_FAILED)
-	  panic("video_txt couldn't map video memory");
+	 if(video_mem == MAP_FAILED)
+		 panic("video_txt couldn't map video memory");
 
-  /* Save text mode resolution */
+	 /* Save text mode resolution */
 
-  scr_lines = vi_p->scr_lines;
-  scr_width = vi_p->scr_width;
+	 scr_lines = vi_p->scr_lines;
+	 scr_width = vi_p->scr_width;
 
-  return video_mem;
-}
+	 return video_mem;
+ }
