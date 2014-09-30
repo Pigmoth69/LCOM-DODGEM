@@ -147,20 +147,57 @@ int vt_print_int(int num, char attr, int r, int c)
 
 	return 0;
 
-
-
-
-
-
-
-
 }
 
 
 int vt_draw_frame(int width, int height, char attr, int r, int c)
 {
 
-	/* To complete ... */
+	char *PointerRam;
+	PointerRam = video_mem;
+	int x;
+
+
+	if(r >= scr_lines || c >= scr_width || r<0||c<0 || scr_width < c+width||scr_lines < r+height)
+		{
+			return 1;
+		}
+
+	PointerRam += 2*(scr_width*r+c)+1;
+
+
+	for(x=0;x<width; x++)
+	{
+		*PointerRam=attr;
+		PointerRam +=2;
+	}
+	PointerRam -=2;
+	for(x=1; x < height;x++)
+	{
+		PointerRam +=2*scr_width;
+		*PointerRam=attr;
+	}
+
+	PointerRam -=2*width;
+	PointerRam +=2;
+
+	for(x=0; x<width;x++)
+	{
+		*PointerRam=attr;
+		PointerRam +=2;
+	}
+
+	PointerRam = video_mem;
+	PointerRam += 2*(scr_width*r+c)+1;
+
+	for(x=0;x<height;x++)
+	{
+		*PointerRam = attr;
+		PointerRam +=2*scr_width;
+	}
+
+	return 0;
+
 
 }
 
