@@ -20,7 +20,8 @@ void timer_int_handler() {
 
 }
 
-int timer_get_conf(unsigned long timer, unsigned char *st) {
+int timer_get_conf(unsigned long timer, unsigned char *st)
+{
 	
 	return 1;
 }
@@ -40,7 +41,15 @@ int timer_test_int(unsigned long time) {
 	return 1;
 }
 
-int timer_test_config(unsigned long timer) {
-	
-	return 1;
+int timer_test_config(unsigned long timer)
+{
+	unsigned char tempo;
+	if(timer!=0 ||timer !=1 ||timer !=2)
+	{
+		return 1;
+	}
+
+	timer_get_conf(timer,&tempo);
+	timer_display_conf(tempo);
+	return 0;
 }
