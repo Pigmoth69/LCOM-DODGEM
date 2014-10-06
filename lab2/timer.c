@@ -30,39 +30,64 @@ int timer_get_conf(unsigned long timer, unsigned char *st)
 	sys_outb(TIMER_CTRL, temporario);
 	sys_inb(TIMER_0+timer, (unsigned long *) st );
 	printf("%X",*st);
+	printf("\n");
 	return 0;
 }
 
 int timer_display_conf(unsigned char conf)
 {
-	unsigned char temporario;
+	if(BIT(7) == (BIT(7) & conf))
+	{
+		printf("Output: 2 \n");
+	}
+	else if(BIT(6) == (BIT(6) & conf))
+	{
+		printf("Null counter: 1 \n");
+	}
+	else
+		printf("Output: 0 \n");
 
-	if(BIT(5)|BIT(4) == (BIT(5)|BIT(4))& conf)
+
+
+	if((BIT(5)|BIT(4)) == ((BIT(5)|BIT(4))& conf))
 	{
 		printf("Type of access: LSB followed by MSB \n ");
 	}
-	else if(BIT(5) == BIT(5) & conf)
+	else if(BIT(5) == (BIT(5) & conf))
 	{
 		printf("Type of access: MSB \n ");
 	}
 	else
 		printf("Type of access: LSB\n ");
 	
-	if(BIT(1)  == (BIT(1) | BIT(2) | BIT(3)) & conf)
-		printf("Operating mode: 1\n");
+	if(((BIT(3)|BIT(2)|BIT(1)) == ((BIT(3)|BIT(2)|BIT(1)) & conf))|| ((BIT(2)|BIT(1)) == ((BIT(2)|BIT(1)) & conf)))
+	{
+		printf("Programmed mode: 3 \n");
+	}
+	else if((BIT(3)|BIT(2))== ((BIT(3)|BIT(2)) & conf))
+	{
+		printf("Programmed mode: 2 \n");
+	}
+	else if((BIT(3)| BIT(1))== ((BIT(3)| BIT(1)) & conf))
+	{
+		printf("Programmed mode: 5 \n");
+	}
+	else if(BIT(3)== (BIT(3) & conf))
+	{
+		printf("Programmed mode: 4 \n");
+	}
+	else if(BIT(2) == (BIT(2) & conf))
+	{
+		printf("Programmed mode: 2 \n");
+	}
+	else if(BIT(1) == (BIT(1) & conf))
+	{
+		printf("Programmed mode: 1 \n");
+	}
 	else
-	if((BIT(2)  == (BIT(1) | BIT(2) | BIT(3)) & conf)||(BIT(2)|BIT(3)  == (BIT(1) | BIT(2) | BIT(3)) & conf))
-		printf("Operating mode: 2\n");
-	else
-	if(BIT(1) | BIT(2) | BIT(3)  == (BIT(1) | BIT(2) | BIT(3)) & conf|| BIT(1)|BIT(2)  == (BIT(1) | BIT(2) | BIT(3)) & conf)
-			printf("Operating mode: 3\n");
-	else
-	if(BIT(3)  == ((BIT(1) | BIT(2) | BIT(3)) & conf))
-			printf("Operating mode: 4\n");
-	if(BIT(1)|BIT(3)  == ((BIT(1) | BIT(2) | BIT(3)) & conf))
-			printf("Operating mode: 5\n");
-	else
-		printf("Operating mode: 0\n");
+		printf(" Programmed mode: 0 \n");
+
+
 
 	if(BIT(0) == (BIT(0) & conf))
 		printf("Counting mode: BCD (4  decades) \n");
