@@ -22,8 +22,13 @@ void timer_int_handler() {
 
 int timer_get_conf(unsigned long timer, unsigned char *st)
 {
-	
-	return 1;
+	unsigned long temporario;
+
+	temporario = TIMER_RB_CMD | TIMER_RB_COUNT_  |TIMER_RB_SEL(timer) ;
+	sys_outb(TIMER_CTRL, temporario);
+	sys_inb(TIMER_0+timer, &temporario );
+	*st = (unsigned char)temporario;
+	return 0;
 }
 
 int timer_display_conf(unsigned char conf)
@@ -45,12 +50,21 @@ int timer_test_int(unsigned long time) {
 int timer_test_config(unsigned long timer)
 {
 	unsigned char tempo;
-	if(timer!=0 ||timer !=1 ||timer !=2)
+	int erro;
+	if(timer!=0 || timer !=1 ||timer !=2)
 	{
 		return 1;
 	}
+	erro = timer_get_conf(timer,&tempo);
 
-	timer_get_conf(timer,&tempo);
-	timer_display_conf(tempo);
+	if(erro == 1)
+		return 1;
+
+
+	erro = timer_display_conf(tempo);
+
+	if(erro == 1)
+		return 1;
+
 	return 0;
 }
