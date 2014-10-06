@@ -26,7 +26,8 @@ int timer_get_conf(unsigned long timer, unsigned char *st)
 	return 1;
 }
 
-int timer_display_conf(unsigned char conf) {
+int timer_display_conf(unsigned char conf)
+{
 	
 	return 1;
 }
