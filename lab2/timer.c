@@ -38,14 +38,12 @@ int timer_display_conf(unsigned char conf)
 {
 	if(BIT(7) == (BIT(7) & conf))
 	{
-		printf("Output: 2 \n");
-	}
-	else if(BIT(6) == (BIT(6) & conf))
-	{
-		printf("Null counter: 1 \n");
+		printf("Output: 1 \n");
 	}
 	else
-		printf("Output: 0 \n");
+	{
+		printf("Output: 0\n");
+	}
 
 
 
@@ -88,7 +86,7 @@ int timer_display_conf(unsigned char conf)
 		printf(" Programmed mode: 0 \n");
 
 
-
+//mudar o BIT(2) | BIT(1) por BIT_SQ
 	if(BIT(0) == (BIT(0) & conf))
 		printf("Counting mode: BCD (4  decades) \n");
 	else
