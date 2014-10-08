@@ -14,7 +14,8 @@ int main(int argc, char **argv) {
 
   printf("lab2: \n");
 
-  if ( argc == 1 ) {
+  if ( argc == 1 || argc == 0)
+  {
       print_usage(argv);
       return 0;
   } else {
