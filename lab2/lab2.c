@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 
 	  sef_startup();
 
-  printf("Lab2: \n");
+  //printf("Lab2: \n");
 
   if ( argc == 1 || argc == 0)
   {

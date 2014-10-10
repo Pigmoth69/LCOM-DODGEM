@@ -16,21 +16,25 @@ int timer_set_square(unsigned long timer, unsigned long freq)
 		{
 			return 1;
 		}
+
 		if(sys_outb(TIMER_CTRL,TIMER_SEL0 | TIMER_LSB_MSB | TIMER_SQR_WAVE | (conf & BIT(0))) != 0)
 		{
 			return 1;
 		}
+
 		if(sys_outb(TIMER_0+timer, (char)div) != 0)
 		{
 			return 1;
 		}
-		if(sys_outb(TIMER_0,(char)(div>>8)) != 0)
+
+		if(sys_outb(TIMER_0+timer,(char)(div>>8)) != 0)
 		{
 			return 1;
 		}
+
 		return 0;
 		}
-		printf("teste \n");
+
 		return 1;
 }
 
@@ -44,7 +48,8 @@ int timer_unsubscribe_int() {
 	return 1;
 }
 
-void timer_int_handler() {
+void timer_int_handler()
+{
 
 }
 
@@ -131,7 +136,6 @@ int timer_display_conf(unsigned char conf)
 
 int timer_test_square(unsigned long freq)
 {
-
 	return timer_set_square(0,freq);
 }
 
