@@ -3,7 +3,7 @@
 #include "i8254.h"
 #include "timer.h"
 
-
+int x = 0;
 int timer_set_square(unsigned long timer, unsigned long freq)
 {
 	unsigned short div = TIMER_FREQ/freq;
