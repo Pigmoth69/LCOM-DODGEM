@@ -69,8 +69,14 @@ static int proc_args(int argc, char *argv[])
 	  }
 	  timer_test_config(parse_ulong(argv[2],10));
 	  return 0;
-
   }
+  else
+  {
+	  printf("Function not valid! \n");
+	  print_usage(argv);
+	  return 1;
+  }
+
 }
 
 static unsigned long parse_ulong(char *str, int base) {
