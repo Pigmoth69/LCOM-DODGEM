@@ -4,9 +4,34 @@
 #include "timer.h"
 
 
-int timer_set_square(unsigned long timer, unsigned long freq) {
+int timer_set_square(unsigned long timer, unsigned long freq)
+{
+	unsigned short div = TIMER_FREQ/freq;
+	char conf;
 
-	return 1;
+		if(timer >= 0 && timer <= 2)
+		{
+
+		if(timer_get_conf(timer,&conf)!= 0)
+		{
+			return 1;
+		}
+		if(sys_outb(TIMER_CTRL,TIMER_SEL0 | TIMER_LSB_MSB | TIMER_SQR_WAVE | (conf & BIT(0))) != 0)
+		{
+			return 1;
+		}
+		if(sys_outb(TIMER_0+timer, (char)div) != 0)
+		{
+			return 1;
+		}
+		if(sys_outb(TIMER_0,(char)(div>>8)) != 0)
+		{
+			return 1;
+		}
+		return 0;
+		}
+		printf("teste \n");
+		return 1;
 }
 
 int timer_subscribe_int(void ) {
@@ -26,11 +51,21 @@ void timer_int_handler() {
 int timer_get_conf(unsigned long timer, unsigned char *st)
 {
 	unsigned long temporario;
+	int x;
+
 	temporario = TIMER_RB_CMD | TIMER_RB_COUNT_  |TIMER_RB_SEL(timer) ;
-	sys_outb(TIMER_CTRL, temporario);
-	sys_inb(TIMER_0+timer, (unsigned long *) st );
-	printf("%X",*st);
-	printf("\n");
+
+	if(sys_outb(TIMER_CTRL, temporario) != 0)
+	{
+		return 1;
+	}
+
+	if(sys_inb(TIMER_0+timer, (unsigned long *) st )!= 0)
+	{
+		return 1;
+	}
+	//printf("%X",*st);
+	//printf("\n");
 	return 0;
 }
 
@@ -94,9 +129,10 @@ int timer_display_conf(unsigned char conf)
 	return 0;
 }
 
-int timer_test_square(unsigned long freq) {
-	
-	return 1;
+int timer_test_square(unsigned long freq)
+{
+
+	return timer_set_square(0,freq);
 }
 
 int timer_test_int(unsigned long time) {
