@@ -4,6 +4,7 @@
 
 static void print_usage(char *argv[]);
 static int proc_args(int argc, char *argv[]);
+static unsigned long parse_ulong(char *str, int base);
 
 
 int main(int argc, char **argv) {
@@ -12,13 +13,14 @@ int main(int argc, char **argv) {
 
 	  sef_startup();
 
-  printf("lab2: \n");
+  printf("Lab2: \n");
 
   if ( argc == 1 || argc == 0)
   {
       print_usage(argv);
       return 0;
-  } else {
+  } else
+  {
       proc_args(argc, argv);
   }
   return 0;
@@ -45,7 +47,7 @@ static int proc_args(int argc, char *argv[])
 		  printf("int: wrong no of arguments for test of timer_test_int() \n");
 		  return 1;
 	  }
-	  timer_test_int(*argv[2]-48);
+	  timer_test_int(parse_ulong(argv[2],10));
 	  return 0;
   }
   else if (strncmp(argv[1], "square", strlen("square")) == 0)
@@ -55,7 +57,7 @@ static int proc_args(int argc, char *argv[])
 		  printf("square: wrong no of arguments for test of timer_test_square() ");
 		  return 1;
 	  }
-	  timer_test_square(*argv[2]-48);
+	  timer_test_square(parse_ulong(argv[2],10));
 
   }
   else if (strncmp(argv[1], "config", strlen("config")) == 0)
@@ -65,8 +67,30 @@ static int proc_args(int argc, char *argv[])
 		  printf("config: wrong no of arguments for timer_test_config() \n");
 		  return 1;
 	  }
-	  timer_test_config(*argv[2]-48);
+	  timer_test_config(parse_ulong(argv[2],10));
 	  return 0;
 
   }
 }
+
+static unsigned long parse_ulong(char *str, int base) {
+  char *endptr;
+  unsigned long val;
+
+  val = strtoul(str, &endptr, base);
+
+  if ((errno == ERANGE && val == ULONG_MAX )
+	  || (errno != 0 && val == 0)) {
+	  perror("strtol");
+	  return ULONG_MAX;
+  }
+
+  if (endptr == str) {
+	  printf("video_txt: parse_ulong: no digits were found in %s \n", str);
+	  return ULONG_MAX;
+  }
+
+  /* Successful conversion */
+  return val;
+}
+
