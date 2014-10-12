@@ -189,6 +189,7 @@ int timer_test_int(unsigned long time)
 
 			}
 	}
+	timer_unsubscribe_int();
 
 	
 	return 1;
