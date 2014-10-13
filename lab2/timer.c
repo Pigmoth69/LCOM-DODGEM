@@ -4,7 +4,7 @@
 #include "timer.h"
 
 int counter = 0;
-int hook = 0;
+int hook_id = 0;
 
 
 
@@ -51,12 +51,22 @@ int timer_set_square(unsigned long timer, unsigned long freq)
 
 int timer_subscribe_int(void )
 {
-	return sys_irqsetpolicy(TIMER0_IRQ,IRQ_REENABLE,&hook);
+	int hook;
+	hook = hook_id;
+	if (sys_irqsetpolicy(TIMER0_IRQ,IRQ_REENABLE,&hook_id) == OK)
+		if (sys_irqenable(&hook_id) == OK)
+			return BIT(hook);
+
+	return -1;
 }
 
 int timer_unsubscribe_int()
 {
-	return sys_irqrmpolicy(&hook);
+	if(sys_irqrmpolicy(&hook_id) == OK)
+		if (sys_irqdisable(&hook_id) == OK)
+			return 0;
+
+	return 1;
 }
 
 void timer_int_handler()
@@ -153,24 +163,27 @@ int timer_test_square(unsigned long freq)
 
 int timer_test_int(unsigned long time)
 {
-
-	timer_subscribe_int();
+	int irq_set = timer_subscribe_int();
 	timer_set_square(0,60);
 
 	int ipc_status;
+	int r;
 	message msg;
 	unsigned i = 0;
 	while( i < time) { /* You may want to use a different condition */
 		/* Get a request message. */
-		if ( driver_receive(ANY, &msg, &ipc_status) != 0 )
+		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
 		{
-			//printf("driver_receive failed with: %d", r);
+			printf("driver_receive failed with: %d", r);
 			continue;
 		}
+
+
+
 		if (is_ipc_notify(ipc_status)) { /* received notification */
 			switch (_ENDPOINT_P(msg.m_source)) {
 			 case HARDWARE: /* hardware interrupt notification */
-				 if (msg.NOTIFY_ARG & BIT(0))
+				 if (msg.NOTIFY_ARG & irq_set)
 				 { /* subscribed interrupt */
 					 timer_int_handler();
 					 if (counter % 60 == 0)
