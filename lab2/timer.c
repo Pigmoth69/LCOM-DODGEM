@@ -202,10 +202,11 @@ int timer_test_int(unsigned long time)
 
 			}
 	}
-	timer_unsubscribe_int();
-
+	if (timer_unsubscribe_int() != OK)
+		return 1;
+//falta a condição do if para se ser erro
 	
-	return 1;
+	return 0;
 }
 
 int timer_test_config(unsigned long timer)
