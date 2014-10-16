@@ -163,14 +163,14 @@ int timer_test_square(unsigned long freq)
 
 int timer_test_int(unsigned long time)
 {
-	int irq_set = timer_subscribe_int();
-	timer_set_square(0,60);
+	int irq_set = timer_subscribe_int(); //subscreve e inicia as interrupções do timer0
+	timer_set_square(0,60); //coloca a frequencia a 60
 
 	int ipc_status;
 	int r;
 	message msg;
 	unsigned i = 0;
-	while( i < time) { /* You may want to use a different condition */
+	while( i < time) { // enquando a contagem é menor que o valor passado no parametro
 		/* Get a request message. */
 		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
 		{
@@ -186,10 +186,10 @@ int timer_test_int(unsigned long time)
 				 if (msg.NOTIFY_ARG & irq_set)
 				 { /* subscribed interrupt */
 					 timer_int_handler();
-					 if (counter % 60 == 0)
+					 if (counter % 60 == 0) //a cada segundo (60 contagens a 60 de frequencia)
 					 {
 						 i++;
-						 printf("%d", i);
+						 printf("%d", i); // imprime o valor do segundo.
 						 printf("\n");
 					 }
 				 }
@@ -202,9 +202,8 @@ int timer_test_int(unsigned long time)
 
 			}
 	}
-	if (timer_unsubscribe_int() != OK)
+	if (timer_unsubscribe_int() != OK)  //termina a subscrição, caso dê erro retorna 1
 		return 1;
-//falta a condição do if para se ser erro
 	
 	return 0;
 }
