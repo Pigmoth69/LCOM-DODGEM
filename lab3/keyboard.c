@@ -1,5 +1,7 @@
 #include"keyboard.h"
 
+int hook_id = 1;
+
 
 int KBD_subscribe_int(void )
 {
@@ -23,8 +25,27 @@ int KBD_unsubscribe_int()
 }
 
 
-int KDB_handler()
+int KDB_handler_C()
 {
+	sys_inb(OUT_BUF, &keyboard);// vai à porta buscar e coloca-o em &keyboard
+
+	if((keyboard & 0x7F) != keyboard)
+	{
+		printf("MAKECODE: 0x%x",keyboard);
+		printf("\n");
+	}
+	else
+	{
+		printf("BREAKCODE: 0x%x",keyboard);
+		printf("\n");
+	}
+
+	return 1;
+}
+
+int KDB_handler_ASS()
+{
+
 
 
 

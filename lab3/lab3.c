@@ -15,6 +15,7 @@ int main(int argc, char **argv) {
 
   //printf("Lab3: \n");
 
+/*
   if ( argc == 1 || argc == 0)
   {
       print_usage(argv);
@@ -22,7 +23,8 @@ int main(int argc, char **argv) {
   } else
   {
       proc_args(argc, argv);
-  }
+  }*/
+	  kbd_test_scan(1);
   return 0;
 
 }

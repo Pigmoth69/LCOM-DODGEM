@@ -1,19 +1,22 @@
-#include"keyboard.h"
+#include"test3.h"
 
 
-int hook = 0;
+unsigned long keyboard = 0x00;
+
 
 
 int kbd_test_scan(unsigned short ass)
 {
-	unsigned short keyboard;
 
-	if(int irq_set = timer_subscribe_int()== -1)
+	int ipc_status;
+	int r;
+	message msg;
+	int irq_set;
+
+	if(( irq_set = KBD_subscribe_int())== -1)
 		return -1;
 
-
-
-	while( keyboard!= OUT_BUF) {
+	while(keyboard!= 0x81) {
 		/* Get a request message. */
 		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
 		{
@@ -27,6 +30,14 @@ int kbd_test_scan(unsigned short ass)
 				{ /* subscribed interrupt */
 
 
+					if( ass == 0)
+					{
+						return 0;
+					}
+					else
+					{
+						KDB_handler_C();
+					}
 
 
 
@@ -42,6 +53,8 @@ int kbd_test_scan(unsigned short ass)
 		}
 
 	}
+
+
 
 
 
