@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 
 	  sef_startup();
 
-  //printf("Lab3: \n");
+ // printf("Lab3: \n");
 
 /*
   if ( argc == 1 || argc == 0)
@@ -33,11 +33,9 @@ static void print_usage(char *argv[])
 {
   printf("Usage: one of the following:\n"
 	 "\t service run %s -args \"test_scan  <key>\" \n",
-	 argv[0]);
-	 /*
 	 "\t service run %s -args \"square <freq>\" \n"
 	 "\t service run %s -args \"config <timer>\" \n",
-	 argv[0], argv[0],argv[0]);*/
+	 argv[0], argv[0],argv[0]);
 
 }
 
