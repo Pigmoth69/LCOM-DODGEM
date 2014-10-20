@@ -1,4 +1,4 @@
-
+#include"keyboard.h"
 
 
 int hook = 0;
@@ -13,7 +13,7 @@ int kbd_test_scan(unsigned short ass)
 
 
 
-	while( i < time) {
+	while( keyboard!= OUT_BUF) {
 		/* Get a request message. */
 		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
 		{
@@ -25,6 +25,10 @@ int kbd_test_scan(unsigned short ass)
 			case HARDWARE: /* hardware interrupt notification */
 				if (msg.NOTIFY_ARG & irq_set)
 				{ /* subscribed interrupt */
+
+
+
+
 
 
 				}
@@ -57,35 +61,6 @@ int kbd_test_leds(unsigned short n, unsigned short *leds)
 
 int kbd_test_timed_scan(unsigned short n) {
     /* To be completed */
-}
-
-int KBD_subscribe_int(void )
-{
-
-	int hook;
-	hook = hook_id;
-	if (sys_irqsetpolicy(KBD_IRQ,IRQ_REENABLE | IRQ_EXCLUSIVE,&hook_id) == OK)
-		if (sys_irqenable(&hook_id) == OK)
-			return BIT(hook);
-
-	return -1;
-}
-
-int KBD_unsubscribe_int()
-{
-	if(sys_irqrmpolicy(&hook_id) == OK)
-		if (sys_irqdisable(&hook_id) == OK)
-			return 0;
-
-	return 1;
-}
-
-
-int KDB_handler()
-{
-
-
-
 }
 
 
