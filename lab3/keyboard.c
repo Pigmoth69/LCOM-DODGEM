@@ -38,9 +38,18 @@ int KDB_handler_C()
 
 	if (bts == 1)
 	{
-		printf("MAKECODE: 0xe0%x",keyboard);
-		printf("\n");
-		bts = 0;
+		if ((keyboard & 0x7F) == keyboard)
+		{
+			printf("MAKECODE: 0xe0%x",keyboard);
+			printf("\n");
+			bts = 0;
+		}
+		else
+		{
+			printf("BREAKCODE: 0xe0%x",keyboard);
+			printf("\n");
+			bts = 0;
+		}
 	}
 	else
 	if((keyboard & 0x7F) == keyboard)
