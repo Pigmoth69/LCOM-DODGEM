@@ -17,6 +17,7 @@
 #define OUT_BUF 0x60
 #define STAT_REG 0x64
 #define KBC_CMD_REG 0x64
+#define BIT_SIG_0 0x7F
 
 
 extern unsigned long keyboard;
