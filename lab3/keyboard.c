@@ -1,6 +1,7 @@
 #include"keyboard.h"
 
 int hook_id = 1;
+int bts = 0;
 
 
 int KBD_subscribe_int(void )
@@ -30,8 +31,18 @@ int KDB_handler_C()
 	sys_inb(OUT_BUF, &keyboard);// vai à porta buscar e coloca-o em &keyboard
 
 	if (keyboard == 0xe0)
+	{
+		bts = 1;
 		return 1;
+	}
 
+	if (bts == 1)
+	{
+		printf("MAKECODE: 0xe0%x",keyboard);
+		printf("\n");
+		bts = 0;
+	}
+	else
 	if((keyboard & 0x7F) == keyboard)
 	{
 		printf("MAKECODE: 0x%x",keyboard);
