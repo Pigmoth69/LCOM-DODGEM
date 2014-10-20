@@ -1,4 +1,5 @@
 #include"test3.h"
+#include"keyboard.h"
 #include <minix/drivers.h>
 
 static void print_usage(char *argv[]);
