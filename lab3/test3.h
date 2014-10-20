@@ -1,6 +1,10 @@
 #ifndef __TEST3_H
 #define __TEST3_H
 
+#include"keyboard.h"
+#include"i8254.h"
+
+int byte_lido;
 
 
 /** @defgroup test3 test3
