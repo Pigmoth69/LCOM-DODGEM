@@ -29,7 +29,10 @@ int KDB_handler_C()
 {
 	sys_inb(OUT_BUF, &keyboard);// vai à porta buscar e coloca-o em &keyboard
 
-	if((keyboard & 0x7F) != keyboard)
+	if (keyboard == 0xe0)
+		return 1;
+
+	if((keyboard & 0x7F) == keyboard)
 	{
 		printf("MAKECODE: 0x%x",keyboard);
 		printf("\n");
