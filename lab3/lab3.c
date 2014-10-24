@@ -2,9 +2,9 @@
 #include"keyboard.h"
 #include <minix/drivers.h>
 
-static void print_usage(char *argv[]);
-static int proc_args(int argc, char *argv[]);
-static unsigned long parse_ulong(char *str, int base);
+//static void print_usage(char *argv[]);
+//static int proc_args(int argc, char *argv[]);
+//static unsigned long parse_ulong(char *str, int base);
 
 
 int main(int argc, char **argv) {
@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
   return 0;
 
 }
-
+/*
 static void print_usage(char *argv[])
 {
   printf("Usage: one of the following:\n"
@@ -38,7 +38,9 @@ static void print_usage(char *argv[])
 	 argv[0], argv[0],argv[0]);
 
 }
+*/
 
+/*
 static int proc_args(int argc, char *argv[])
 {
 
@@ -78,10 +80,10 @@ static int proc_args(int argc, char *argv[])
 	  print_usage(argv);
 	  return 1;
   }*/
-  return 1;
+  //return 1;
 
-}
-
+//}
+/*
 static unsigned long parse_ulong(char *str, int base) {
   char *endptr;
   unsigned long val;
@@ -98,8 +100,8 @@ static unsigned long parse_ulong(char *str, int base) {
 	  printf("video_txt: parse_ulong: no digits were found in %s \n", str);
 	  return ULONG_MAX;
   }
-
+*/
   /* Successful conversion */
-  return val;
-}
+ // return val;
+//}
 
