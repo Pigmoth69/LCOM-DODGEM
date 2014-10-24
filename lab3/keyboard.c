@@ -3,7 +3,7 @@
 
 int hook_id = 1;
 int bts = 0;
-
+int counter1 = 0;
 
 
 int KBD_subscribe_int(void )
@@ -85,7 +85,7 @@ int KBD_toggle_led(int x)
 
 
 	int status;
-	status = *RESEND;
+	status = LED_ERROR;
 
 	while (status != ACK){
 	if (sys_outb(IN_BUF, LEDS_COMM) != OK)
@@ -94,7 +94,7 @@ int KBD_toggle_led(int x)
 	if (status != ACK)
 		continue;
 
-	if (sys_inb(OUT_BUF, status) != OK)
+	if (sys_inb(OUT_BUF, (unsigned long *) status) != OK)
 		return 1;
 	}
 
@@ -106,3 +106,27 @@ int KBD_toggle_led(int x)
 	return 0;
 }
 
+int timer_subscribe_int(void )
+{
+	int hook;
+	hook = hook_id;
+	if (sys_irqsetpolicy(TIMER0_IRQ,IRQ_REENABLE,&hook_id) == OK)
+		if (sys_irqenable(&hook_id) == OK)
+			return BIT(hook);
+
+	return -1;
+}
+
+int timer_unsubscribe_int()
+{
+	if(sys_irqrmpolicy(&hook_id) == OK)
+		if (sys_irqdisable(&hook_id) == OK)
+			return 0;
+
+	return 1;
+}
+
+void timer_int_handler()
+{
+	counter1++;
+}

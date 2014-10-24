@@ -73,7 +73,6 @@ int kbd_test_leds(unsigned short n, unsigned short *leds)
 	int x;
 
 	int irq_set = timer_subscribe_int(); //subscreve e inicia as interrupções do timer0
-	timer_set_square(0,60); //coloca a frequencia a 60
 
 	int ipc_status;
 	int r;

@@ -42,6 +42,10 @@ int KDB_handler_C();
 int KBD_toggle_led(int x);
 
 
+int timer_subscribe_int(void );
+int timer_unsubscribe_int();
+void timer_int_handler();
+
 
 
 #endif /* KEYBOARD_H_ */
