@@ -9,21 +9,22 @@ static unsigned long parse_ulong(char *str, int base);
 
 int main(int argc, char **argv) {
 
-	 /* Initialize service */
+	/* Initialize service */
 
-	  sef_startup();
+	sef_startup();
 
 
 
-	  printf("Lab3: \n");
+	printf("Lab3: \n");
 
-	 if ( argc == 1 || argc == 0)
-  {		  print_usage(argv);
-	  return 0;
-  } else
-  {
-      proc_args(argc, argv);
-  }
+	if ( argc == 1 || argc == 0)
+	{
+		print_usage(argv);
+		return 0;
+	} else
+	{
+		proc_args(argc, argv);
+	}
 
 }
 
@@ -54,7 +55,7 @@ static int proc_args(int argc, char *argv[])
   }
   else if (strncmp(argv[1], "kbd_test_leds", strlen("kbd_test_leds")) == 0)
   {
-	  if( argc != 4 )
+	  if( argc < 4 )
 	  {
 		  printf("kbd_test_leds: wrong no of arguments for test of kbd_test_leds ");
 		  return 1;
