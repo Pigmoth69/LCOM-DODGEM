@@ -27,7 +27,6 @@ int KBD_unsubscribe_int()
 	return 1;
 }
 
-
 int KDB_handler_C()
 {
 	sys_inb(OUT_BUF, &keyboard);// vai à porta buscar e coloca-o em &keyboard
@@ -70,10 +69,7 @@ int KDB_handler_C()
 
 int KDB_handler_ASS()
 {
-
-
-
-
+	return 0;
 }
 
 
@@ -89,7 +85,7 @@ int KBD_toggle_led(int x)
 
 
 	int status;
-	status = RESEND;
+	status = *RESEND;
 
 	while (status != ACK){
 	if (sys_outb(IN_BUF, LEDS_COMM) != OK)
