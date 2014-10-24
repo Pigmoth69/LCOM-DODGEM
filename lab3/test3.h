@@ -3,6 +3,7 @@
 
 #include"keyboard.h"
 #include"i8254.h"
+#include "timer.h"
 
 int byte_lido;
 

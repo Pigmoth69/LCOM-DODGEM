@@ -1,7 +1,9 @@
 #include"keyboard.h"
 
+
 int hook_id = 1;
 int bts = 0;
+
 
 
 int KBD_subscribe_int(void )
@@ -73,3 +75,38 @@ int KDB_handler_ASS()
 
 
 }
+
+
+int KBD_toggle_led(int x)
+{
+	static char led_status = 0x00;
+
+	if (led_status && BIT(x) == 0){
+		led_status = led_status | BIT(x);
+	}
+	else
+		led_status = led_status & ~BIT(x);
+
+
+	int status;
+	status = RESEND;
+
+	while (status != ACK){
+	if (sys_outb(IN_BUF, LEDS_COMM) != OK)
+		return 1;
+
+	if (status != ACK)
+		continue;
+
+	if (sys_inb(OUT_BUF, status) != OK)
+		return 1;
+	}
+
+
+	if(sys_outb(IN_BUF, led_status) != OK)
+		return 1;
+
+
+	return 0;
+}
+
