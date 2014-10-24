@@ -72,45 +72,49 @@ int kbd_test_leds(unsigned short n, unsigned short *leds)
 {
 	int x;
 
-	int irq_set = timer_subscribe_int(); //subscreve e inicia as interrupções do timer0
+	//int irq_set = timer_subscribe_int(); //subscreve e inicia as interrupções do timer0
 
-	int ipc_status;
-	int r;
-	message msg;
-	unsigned i = 0;
-
+	//int ipc_status;
+	//int r;
+	//message msg;
+	unsigned i;
+	i = 0;
 
 
 	for (x=0; x < n; x++)
 	{
-		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
+		//printf("%d \n", x);
+
+		/*if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
 		{
 			printf("driver_receive failed with: %d", r);
 			continue;
-		}
+		}*/
 
-		if (is_ipc_notify(ipc_status)) { /* received notification */
+
+		/*if (is_ipc_notify(ipc_status)) { // received notification
 			switch (_ENDPOINT_P(msg.m_source)) {
-			case HARDWARE: /* hardware interrupt notification */
+			case HARDWARE: // hardware interrupt notification
 				if (msg.NOTIFY_ARG & irq_set)
-				{ /* subscribed interrupt */
+				{ // subscribed interrupt
 					counter++;
-					if (counter == 60) //a cada segundo (60 contagens a 60 de frequencia)
-					{
-						printf("toggle led %d \n", leds[x]);
+					if (counter == 60) O counter não funciona
+		{*/
+			printf("toggle led %d \n", *(leds+ x*sizeof(short)));
 
-						KBD_toggle_led(leds[x]);
-					}
-				}
+
+			KBD_toggle_led(*leds);
+			/*}
+		}
 				break;
 			default:
-				break; /* no other notifications expected: do nothing */
+				break; // no other notifications expected: do nothing
 			}
-		}
+		}*/
 
 
-		if (timer_unsubscribe_int() != OK)  //termina a subscrição, caso dê erro retorna 1
-			return 1;
+		/*if (timer_unsubscribe_int() != 0)  //termina a subscrição, caso dê erro retorna 1
+			return 1;*/
 
 	}
 }

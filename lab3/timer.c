@@ -3,7 +3,7 @@
 #include "i8254.h"
 #include "timer.h"
 
-/*
+
 int hook_id = 0;
 int counter1 = 0;
 
@@ -224,4 +224,4 @@ int timer_test_config(unsigned long timer)
 
 	return 0;
 }
-*/
+
