@@ -2,7 +2,7 @@
 #include "timer.h"
 
 unsigned long keyboard = 0x00;
-
+int counter =0;
 
 
 int kbd_test_scan(unsigned short ass)
@@ -12,6 +12,7 @@ int kbd_test_scan(unsigned short ass)
 	int r;
 	message msg;
 	int irq_set;
+
 
 	if(( irq_set = KBD_subscribe_int())== -1)
 		return -1;
@@ -79,6 +80,8 @@ int kbd_test_leds(unsigned short n, unsigned short *leds)
 	message msg;
 	unsigned i = 0;
 
+
+
 	for (x=0; x < n; x++)
 	{
 		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
@@ -92,7 +95,7 @@ int kbd_test_leds(unsigned short n, unsigned short *leds)
 			case HARDWARE: /* hardware interrupt notification */
 				if (msg.NOTIFY_ARG & irq_set)
 				{ /* subscribed interrupt */
-					timer_int_handler();
+					counter++;
 					if (counter == 60) //a cada segundo (60 contagens a 60 de frequencia)
 					{
 						printf("toggle led %d \n", leds[x]);

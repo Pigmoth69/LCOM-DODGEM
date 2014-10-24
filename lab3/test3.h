@@ -8,6 +8,11 @@
 int byte_lido;
 
 
+
+
+
+
+
 /** @defgroup test3 test3
  * @{
  *
