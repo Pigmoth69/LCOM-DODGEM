@@ -84,26 +84,20 @@ int KBD_toggle_led(int x)
 	else
 		led_status = led_status & ~BIT(x);
 
-	printf("%d \n", led_status);
 
-	int status;
+	unsigned long status;
 	status = LED_ERROR;
 
 	while (status != ACK){
-	sys_outb(IN_BUF, LEDS_COMM);
+	sys_outb(OUT_BUF, LEDS_COMM);
 
-	printf("%u \n", (unsigned long *) status);
 
-	sys_inb(OUT_BUF, (unsigned long *) status);
+	sys_inb(OUT_BUF, &status);
 
-	printf("a");
-	printf("%d \n", status);
 	}
 
-	printf("c");
 	if(sys_outb(IN_BUF, led_status) != OK)
 		return 1;
-	printf("d");
 
 	return 0;
 }
