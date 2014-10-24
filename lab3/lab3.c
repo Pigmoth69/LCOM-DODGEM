@@ -60,7 +60,17 @@ static int proc_args(int argc, char *argv[])
 		  printf("kbd_test_leds: wrong no of arguments for test of kbd_test_leds ");
 		  return 1;
 	  }
-	  kbd_test_leds(parse_ulong(argv[2],10),(unsigned short*)(parse_ulong(argv[3],10)));
+
+	  int list[parse_ulong(argv[2],10)];
+	  int *lista1;
+	  int j;
+	  for (j = 0; j < parse_ulong(argv[2],10); j++)
+	  {
+		  list[j] = parse_ulong(argv[3 + j],10);
+	  }
+	  lista1 = list;
+
+	  kbd_test_leds(parse_ulong(argv[2],10),(unsigned short*)lista1);
 
   }
   else if (strncmp(argv[1], "kbd_test_timed_scan", strlen("kbd_test_timed_scan")) == 0)
