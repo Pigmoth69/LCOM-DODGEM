@@ -155,8 +155,8 @@ int wait_a_second()
 				if (msg.NOTIFY_ARG & irq_set)
 				{ /* subscribed interrupt */
 					timer_int_handler();
-					printf("%d \n", counter);
-					if (counter == 60)
+					printf("%d \n", getCounter());
+					if (getCounter() == 60)
 					{//do nothing
 						i = 5;
 					}
