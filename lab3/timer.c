@@ -7,7 +7,7 @@ int counter = 0;
 int hook_id = 0;
 
 //123
-
+int getCounter() {return counter;}
 
 int timer_set_square(unsigned long timer, unsigned long freq)
 {
