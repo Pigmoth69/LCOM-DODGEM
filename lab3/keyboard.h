@@ -12,6 +12,7 @@
 #include <minix/sysutil.h>
 #include <minix/drivers.h>
 #include "timer.h"
+#include "i8254.h"
 
 #define OK 0
 #define KBD_IRQ 1
@@ -45,7 +46,7 @@ int KBD_toggle_led(int x);
 int timer_subscribe_int(void );
 int timer_unsubscribe_int();
 void timer_int_handler();
-
+int wait_a_second();
 
 
 #endif /* KEYBOARD_H_ */
