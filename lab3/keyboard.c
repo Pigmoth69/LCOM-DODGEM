@@ -75,28 +75,19 @@ int KDB_handler_ASS()
 int KBD_toggle_led(int x)
 {
 	static char led_status = 0x00;
-
-
-	if (led_status && BIT(x) == 0){
-		led_status = led_status | BIT(x);
-	}
-	else
-		led_status = led_status & ~BIT(x);
-
-
 	unsigned long status;
-	status = LED_ERROR;
 
+	led_status ^= BIT(x);
+printf("status: %d\n", led_status);
 	while (status != ACK){
-	sys_outb(OUT_BUF, LEDS_COMM);
-
-
+	sys_outb(IN_BUF, LEDS_COMM);
 	sys_inb(OUT_BUF, &status);
 
 	}
 
 	if(sys_outb(IN_BUF, led_status) != OK)
 		return 1;
+	sys_inb(OUT_BUF, &status);
 
 	return 0;
 }
