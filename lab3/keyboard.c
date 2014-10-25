@@ -102,37 +102,6 @@ int KBD_toggle_led(int x)
 }
 
 /*
-int timer_subscribe_int()
-{
-	int hook;
-	hook = hook_id;
-	if (sys_irqsetpolicy(TIMER0_IRQ,IRQ_REENABLE,&hook_id) == OK)
-		if (sys_irqenable(&hook_id) == OK)
-			return BIT(hook);
-
-	printf("erro com o subscribe \n");
-	return -1;
-}
-
-int timer_unsubscribe_int()
-{
-	if(sys_irqrmpolicy(&hook_id) == OK)
-			if (sys_irqdisable(&hook_id) == OK)
-			{
-				printf("erro \n");
-				return 0;
-			}
-
-	//printf("erro com o unsubscribe \n");
-	return 0;
-}
-
-void timer_int_handler()
-{
-	counter1++;
-}
-*/
-
 int wait_a_second()
 {
 	int irq_set = timer_subscribe_int(); //subscreve e inicia as interrupções do timer0
@@ -149,11 +118,11 @@ int wait_a_second()
 			printf("driver_receive failed with: %d", r);
 		}
 
-		if (is_ipc_notify(ipc_status)) { /* received notification */
+		if (is_ipc_notify(ipc_status)) { // received notification
 			switch (_ENDPOINT_P(msg.m_source)) {
-			case HARDWARE: /* hardware interrupt notification */
+			case HARDWARE: // hardware interrupt notification
 				if (msg.NOTIFY_ARG & irq_set)
-				{ /* subscribed interrupt */
+				{ // subscribed interrupt
 					timer_int_handler();
 					printf("%d \n", getCounter());
 					if (getCounter() == 60)
@@ -169,3 +138,4 @@ int wait_a_second()
 	}
 	return 0;
 }
+*/
