@@ -51,26 +51,16 @@ int kbd_test_leds(unsigned short n, unsigned short *leds)
 {
 	int x;
 
-	//int irq_set = timer_subscribe_int(); //subscreve e inicia as interrupções do timer0
-
-	//int ipc_status;
-	//int r;
-	//message msg;
 	unsigned i;
 	i = 0;
 
 
 	for (x=0; x < n; x++)
 	{
-		//printf("%d \n", x);
-
-
 		printf("toggle led %d \n", *(leds+ x*sizeof(short)));
 
-
-		KBD_toggle_led(*leds);
+		KBD_toggle_led(*(leds + x*sizeof(short)));
 		wait_a_second();
-
 	}
 	return 0;
 }
