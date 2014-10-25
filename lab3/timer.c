@@ -3,9 +3,11 @@
 #include "i8254.h"
 #include "timer.h"
 
-
+int counter = 0;
 int hook_id = 0;
-int counter1 = 0;
+
+//123
+
 
 int timer_set_square(unsigned long timer, unsigned long freq)
 {
@@ -45,6 +47,8 @@ int timer_set_square(unsigned long timer, unsigned long freq)
 		return 1;
 }
 
+
+
 int timer_subscribe_int(void )
 {
 	int hook;
@@ -67,7 +71,7 @@ int timer_unsubscribe_int()
 
 void timer_int_handler()
 {
-	counter1++;
+	counter++;
 }
 
 int timer_get_conf(unsigned long timer, unsigned char *st)
@@ -156,6 +160,7 @@ int timer_test_square(unsigned long freq)
 	return timer_set_square(0,freq);
 }
 
+
 int timer_test_int(unsigned long time)
 {
 	int irq_set = timer_subscribe_int(); //subscreve e inicia as interrupções do timer0
@@ -181,7 +186,7 @@ int timer_test_int(unsigned long time)
 				 if (msg.NOTIFY_ARG & irq_set)
 				 { /* subscribed interrupt */
 					 timer_int_handler();
-					 if (counter1 % 60 == 0) //a cada segundo (60 contagens a 60 de frequencia)
+					 if (counter % 60 == 0) //a cada segundo (60 contagens a 60 de frequencia)
 					 {
 						 i++;
 						 printf("%d", i); // imprime o valor do segundo.
@@ -224,4 +229,3 @@ int timer_test_config(unsigned long timer)
 
 	return 0;
 }
-

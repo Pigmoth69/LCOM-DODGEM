@@ -1,5 +1,4 @@
 #include"test3.h"
-#include "timer.h"
 
 unsigned long keyboard = 0x00;
 
