@@ -1,19 +1,17 @@
 #include"keyboard.h"
 
 
-int hook_id = 1;
+int hook_id2 = 1;
 int bts = 0;
-int counter1 = 0;
-int hook_id2 = 0;
 
 
 int KBD_subscribe_int(void )
 {
 
 	int hook;
-	hook = hook_id;
-	if (sys_irqsetpolicy(KBD_IRQ,IRQ_REENABLE | IRQ_EXCLUSIVE,&hook_id) == OK)
-		if (sys_irqenable(&hook_id) == OK)
+	hook = hook_id2;
+	if (sys_irqsetpolicy(KBD_IRQ,IRQ_REENABLE | IRQ_EXCLUSIVE,&hook_id2) == OK)
+		if (sys_irqenable(&hook_id2) == OK)
 			return BIT(hook);
 
 	return -1;
@@ -21,8 +19,8 @@ int KBD_subscribe_int(void )
 
 int KBD_unsubscribe_int()
 {
-	if(sys_irqrmpolicy(&hook_id) == OK)
-		if (sys_irqdisable(&hook_id) == OK)
+	if(sys_irqrmpolicy(&hook_id2) == OK)
+		if (sys_irqdisable(&hook_id2) == OK)
 			return 0;
 
 	return 1;
@@ -103,12 +101,13 @@ int KBD_toggle_led(int x)
 	return 0;
 }
 
+/*
 int timer_subscribe_int()
 {
 	int hook;
-	hook = hook_id2;
-	if (sys_irqsetpolicy(TIMER0_IRQ,IRQ_REENABLE,&hook_id2) == OK)
-		if (sys_irqenable(&hook_id2) == OK)
+	hook = hook_id;
+	if (sys_irqsetpolicy(TIMER0_IRQ,IRQ_REENABLE,&hook_id) == OK)
+		if (sys_irqenable(&hook_id) == OK)
 			return BIT(hook);
 
 	printf("erro com o subscribe \n");
@@ -117,18 +116,22 @@ int timer_subscribe_int()
 
 int timer_unsubscribe_int()
 {
-	if(sys_irqrmpolicy(&hook_id2) == OK)
-		if (sys_irqdisable(&hook_id2) == OK)
-			return 0;
+	if(sys_irqrmpolicy(&hook_id) == OK)
+			if (sys_irqdisable(&hook_id) == OK)
+			{
+				printf("erro \n");
+				return 0;
+			}
 
-	printf("erro com o unsubscribe \n");
-	return 1;
+	//printf("erro com o unsubscribe \n");
+	return 0;
 }
 
 void timer_int_handler()
 {
 	counter1++;
 }
+*/
 
 int wait_a_second()
 {
@@ -138,33 +141,31 @@ int wait_a_second()
 	int ipc_status;
 	int r;
 	message msg;
-	if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
-	{
-		printf("driver_receive failed with: %d", r);
-	}
 
-	if (is_ipc_notify(ipc_status)) { /* received notification */
-		switch (_ENDPOINT_P(msg.m_source)) {
-		case HARDWARE: /* hardware interrupt notification */
-			if (msg.NOTIFY_ARG & irq_set)
-			{ /* subscribed interrupt */
-				timer_int_handler();
-				printf("%d \n", counter1);
-				while (counter1 % 60 != 0 && i != 60)
-				{//do nothing
-					printf("g");
-					i++;
+	while(i != 5)
+	{
+		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
+		{
+			printf("driver_receive failed with: %d", r);
+		}
+
+		if (is_ipc_notify(ipc_status)) { /* received notification */
+			switch (_ENDPOINT_P(msg.m_source)) {
+			case HARDWARE: /* hardware interrupt notification */
+				if (msg.NOTIFY_ARG & irq_set)
+				{ /* subscribed interrupt */
+					timer_int_handler();
+					printf("%d \n", counter);
+					if (counter == 60)
+					{//do nothing
+						i = 5;
+					}
 				}
-				printf("h \n");
-				printf("%d \n", counter1);
 			}
 		}
+
+		timer_unsubscribe_int(); //termina a subscrição
+
 	}
-
-	printf("i \n");
-	timer_unsubscribe_int(); //termina a subscrição
-
-	printf("j \n");
-
 	return 0;
 }

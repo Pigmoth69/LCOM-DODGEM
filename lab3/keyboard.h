@@ -11,10 +11,10 @@
 #include"test3.h"
 #include <minix/sysutil.h>
 #include <minix/drivers.h>
-#include "timer.h"
 #include "i8254.h"
+#include "timer.h"
 
-#define OK 0
+//#define OK 0
 #define KBD_IRQ 1
 #define OUT_BUF 0x60
 #define IN_BUF 0x60
@@ -27,6 +27,8 @@
 #define RESEND 0xFE
 #define LED_ERROR 0xFC
 #define ACK 0xFA
+
+
 
 
 extern unsigned long keyboard;
@@ -42,10 +44,10 @@ int KDB_handler_ASS();
 int KDB_handler_C();
 int KBD_toggle_led(int x);
 
-
+/*
 int timer_subscribe_int(void );
 int timer_unsubscribe_int();
-void timer_int_handler();
+void timer_int_handler();*/
 int wait_a_second();
 
 
