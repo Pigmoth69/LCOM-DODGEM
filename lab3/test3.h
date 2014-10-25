@@ -56,4 +56,8 @@ int kbd_test_leds(unsigned short n, unsigned short *leds);
  */
 int kbd_test_timed_scan(unsigned short n);
 
+//A function that holds a second trough counting it (TIMER0)
+
+//void wait_a_second();
+
 #endif /* __TEST3_H */
