@@ -89,6 +89,7 @@ static int proc_args(int argc, char *argv[])
 	  print_usage(argv);
 	  return 1;
   }
+
   return 1;
 
 }
