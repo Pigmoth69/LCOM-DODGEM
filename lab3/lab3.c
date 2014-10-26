@@ -5,7 +5,7 @@
 static void print_usage(char *argv[]);
 static int proc_args(int argc, char *argv[]);
 static unsigned long parse_ulong(char *str, int base);
-//asdsad
+
 
 int main(int argc, char **argv) {
 
@@ -33,8 +33,8 @@ static void print_usage(char *argv[])
   printf("Usage: one of the following:\n"
 	 "\t service run %s -args \"kbd_test_scan <key>\" \n"
 	 "\t service run %s -args \"kbd_test_leds <vector size> <spaced vector elements>\" \n"
-	 "\t service run %s -args \"kbd_test_timed_scan <cenas>\" \n",
-	 argv[0], argv[0],argv[0]);
+	 "\t service run %s -args \"kbd_test_timed_scan <tempo>\" \n",
+	 argv[0], argv[0],argv[0],argv[0]);
 
 }
 

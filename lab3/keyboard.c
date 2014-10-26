@@ -30,7 +30,7 @@ int KDB_handler_C()
 {
 	sys_inb(OUT_BUF, &keyboard);// vai à porta buscar e coloca-o em &keyboard
 
-	if (keyboard == 0xe0)
+	if (keyboard == 0xe0) // falta mudar para macro
 	{
 		bts = 1;
 		return 1;
@@ -119,6 +119,13 @@ int KBD_toggle_led(int x)
 
 	return 0;
 }
+
+
+
+
+
+
+
 
 /*
 int wait_a_second()
