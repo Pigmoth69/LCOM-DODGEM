@@ -32,7 +32,7 @@ static void print_usage(char *argv[])
 {
   printf("Usage: one of the following:\n"
 	 "\t service run %s -args \"kbd_test_scan <key>\" \n"
-	 "\t service run %s -args \"kbd_test_leds <vector size> <spaced vector elements>\" \n"
+	 "\t service run %s -args \"kbd_test_leds <spaced vector elements>\" \n"
 	 "\t service run %s -args \"kbd_test_timed_scan <tempo>\" \n",
 	 argv[0], argv[0],argv[0],argv[0]);
 

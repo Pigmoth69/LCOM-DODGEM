@@ -68,7 +68,13 @@ int KDB_handler_C()
 
 int KDB_handler_ASS()
 {
-	return 0;
+
+
+
+
+
+
+
 }
 
 
@@ -120,48 +126,3 @@ int KBD_toggle_led(int x)
 	return 0;
 }
 
-
-
-
-
-
-
-
-/*
-int wait_a_second()
-{
-	int irq_set = timer_subscribe_int(); //subscreve e inicia as interrupções do timer0
-
-	int i = 0;
-	int ipc_status;
-	int r;
-	message msg;
-
-	while(i != 5)
-	{
-		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
-		{
-			printf("driver_receive failed with: %d", r);
-		}
-
-		if (is_ipc_notify(ipc_status)) { // received notification
-			switch (_ENDPOINT_P(msg.m_source)) {
-			case HARDWARE: // hardware interrupt notification
-				if (msg.NOTIFY_ARG & irq_set)
-				{ // subscribed interrupt
-					timer_int_handler();
-					printf("%d \n", getCounter());
-					if (getCounter() == 60)
-					{//do nothing
-						i = 5;
-					}
-				}
-			}
-		}
-
-		timer_unsubscribe_int(); //termina a subscrição
-
-	}
-	return 0;
-}
-*/
