@@ -44,6 +44,7 @@ int KBD_unsubscribe_int();
 int KDB_handler_ASS();
 int KDB_handler_C();
 int KBD_toggle_led(int x);
+int asm_handler();
 
 int wait_a_second();
 

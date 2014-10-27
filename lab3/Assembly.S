@@ -1,11 +1,11 @@
+#define OUT_BUFF 0X60
+.global _ass_handler
 
 .text
-	_KBD_HANDLER_ASS:
+	_ass_handler:
 
-	movl %0,%ebx
-	movl %0, %eax
-
-	IN OUT_BUF,%ebx
+	xor %al, %al
+	in $OUT_BUFF, %al
 	RET
 
 
