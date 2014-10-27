@@ -68,9 +68,9 @@ int KDB_handler_C()
 
 int KDB_handler_ASS()
 {
-
-	sys_enable_iop(SELF);
-	_KBD_HANDLER_ASS;
+	keyboard=ass_handler();
+	keyboard = keyboard << 24;
+	keyboard = keyboard >> 24;
 
 	if (keyboard == TWO_BYTES) // verifica se o endereço da tecla possui 2 bytes
 		{
