@@ -142,16 +142,16 @@ int KBD_toggle_led(int x)
 
 
 	while (status != ACK){
-	//sys_outb(IN_BUF, LEDS_COMM);
-	//sys_inb(OUT_BUF, &status);
-		rec_cmd();
+	sys_outb(IN_BUF, LEDS_COMM);
+	sys_inb(OUT_BUF, &status);
+		//rec_cmd();
 	}
 
-	/*if(sys_outb(IN_BUF, led_status) != OK)
+	if(sys_outb(IN_BUF, led_status) != OK)
 		return 1;
-	sys_inb(OUT_BUF, &status);*/
+	sys_inb(OUT_BUF, &status);
 
-	send_cmd(LED);
+	//send_cmd(LED);
 
 	return 0;
 }
