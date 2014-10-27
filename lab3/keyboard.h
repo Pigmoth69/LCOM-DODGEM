@@ -28,7 +28,8 @@
 #define LED_ERROR 0xFC
 #define ACK 0xFA
 #define TWO_BYTES 0xe0
-
+#define PAR_ERR 0x80
+#define TO_ERR 0x40
 
 
 
@@ -48,5 +49,8 @@ int asm_handler();
 
 int wait_a_second();
 
+
+int send_cmd();
+int rec_cmd();
 
 #endif /* KEYBOARD_H_ */

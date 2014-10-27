@@ -118,12 +118,6 @@ int KBD_toggle_led(int x)
 	static int led_status = 0;
 	unsigned long status;
 
-	/*if (led_status & BIT(x) == 0){
-		led_status = led_status | BIT(x);
-	}
-	else
-		led_status = led_status & ~BIT(x);*/
-	printf("%d \n", x);
 
 	if (x == 0){
 		if (led_status == 0 || led_status == 2 || led_status == 4 || led_status == 6)
@@ -147,17 +141,50 @@ int KBD_toggle_led(int x)
 	}
 
 
-	//printf("status: %d\n", led_status);
 	while (status != ACK){
-	sys_outb(IN_BUF, LEDS_COMM);
-	sys_inb(OUT_BUF, &status);
-
+	//sys_outb(IN_BUF, LEDS_COMM);
+	//sys_inb(OUT_BUF, &status);
+		rec_cmd();
 	}
 
-	if(sys_outb(IN_BUF, led_status) != OK)
+	/*if(sys_outb(IN_BUF, led_status) != OK)
 		return 1;
-	sys_inb(OUT_BUF, &status);
+	sys_inb(OUT_BUF, &status);*/
+
+	send_cmd(LED);
 
 	return 0;
 }
 
+
+int send_cmd(unsigned long cmd){
+	unsigned long stat = 0;
+	unsigned long IBF = 0x0002;
+
+	while( 1 ) {
+		sys_inb(STAT_REG, &stat);
+		if( (stat & IBF) == 0 ) {
+			sys_outb(KBC_CMD_REG, cmd);
+			return 0;
+		}
+		tickdelay(micros_to_ticks(DELAY_US));
+	}
+}
+
+int rec_cmd(){
+	unsigned long stat = 0;
+	unsigned long OBF = 0x0001;
+	unsigned long data = 0;
+
+	while( 1 ) {
+		sys_inb(STAT_REG, &stat);
+		if( stat & OBF ) {
+			sys_inb(OUT_BUF, &data);
+			if ( (stat &(PAR_ERR | TO_ERR)) == 0 )
+				return data;
+			else
+				return -1;
+		}
+		tickdelay(micros_to_ticks(DELAY_US));
+	}
+}
