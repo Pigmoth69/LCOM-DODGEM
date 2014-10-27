@@ -27,6 +27,7 @@
 #define RESEND 0xFE
 #define LED_ERROR 0xFC
 #define ACK 0xFA
+#define TWO_BYTES 0xe0
 
 
 

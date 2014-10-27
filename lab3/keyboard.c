@@ -30,15 +30,15 @@ int KDB_handler_C()
 {
 	sys_inb(OUT_BUF, &keyboard);// vai à porta buscar e coloca-o em &keyboard
 
-	if (keyboard == 0xe0) // falta mudar para macro
+	if (keyboard == TWO_BYTES) // verifica se o endereço da tecla possui 2 bytes
 	{
-		bts = 1;
-		return 1;
+		bts = 1; //coloca a variavel bts a 1 para mais tarde ver se o endereço é de 2 bytes
+		return 1; //caso seja de 2 bytes passa ao proximo ciclo
 	}
 
-	if (bts == 1)
+	if (bts == 1) //caso tenha 2 bytes
 	{
-		if ((keyboard & BIT_SIG_0) == keyboard)
+		if ((keyboard & BIT_SIG_0) == keyboard) //verifica se é makecode ou breakcode (BIT mais significativo a 1 ou 0
 		{
 			printf("MAKECODE: 0xe0%x",keyboard);
 			printf("\n");
@@ -52,7 +52,7 @@ int KDB_handler_C()
 		}
 	}
 	else
-	if((keyboard & BIT_SIG_0) == keyboard)
+	if((keyboard & BIT_SIG_0) == keyboard) //verifica se é make ou breakcode (bit mais sig a 0 ou 1)
 	{
 		printf("MAKECODE: 0x%x",keyboard);
 		printf("\n");
@@ -111,8 +111,8 @@ int KBD_toggle_led(int x)
 			led_status -= 4;
 	}
 
-	//led_status ^= BIT(x);
-	printf("status: %d\n", led_status);
+
+	//printf("status: %d\n", led_status);
 	while (status != ACK){
 	sys_outb(IN_BUF, LEDS_COMM);
 	sys_inb(OUT_BUF, &status);
