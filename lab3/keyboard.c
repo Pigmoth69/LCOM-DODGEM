@@ -69,8 +69,43 @@ int KDB_handler_C()
 int KDB_handler_ASS()
 {
 
+	sys_enable_iop(SELF);
+	_KBD_HANDLER_ASS;
 
+	if (keyboard == TWO_BYTES) // verifica se o endereço da tecla possui 2 bytes
+		{
+			bts = 1; //coloca a variavel bts a 1 para mais tarde ver se o endereço é de 2 bytes
+			return 1; //caso seja de 2 bytes passa ao proximo ciclo
+		}
 
+		if (bts == 1) //caso tenha 2 bytes
+		{
+			if ((keyboard & BIT_SIG_0) == keyboard) //verifica se é makecode ou breakcode (BIT mais significativo a 1 ou 0
+			{
+				printf("MAKECODE: 0xe0%x",keyboard);
+				printf("\n");
+				bts = 0;
+			}
+			else
+			{
+				printf("BREAKCODE: 0xe0%x",keyboard);
+				printf("\n");
+				bts = 0;
+			}
+		}
+		else
+		if((keyboard & BIT_SIG_0) == keyboard) //verifica se é make ou breakcode (bit mais sig a 0 ou 1)
+		{
+			printf("MAKECODE: 0x%x",keyboard);
+			printf("\n");
+		}
+		else
+		{
+			printf("BREAKCODE: 0x%x",keyboard);
+			printf("\n");
+		}
+
+		return 1;
 
 
 
