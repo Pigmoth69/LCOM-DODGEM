@@ -188,6 +188,7 @@ int test_config(void) {
 		message msg;
 		int irq_set;
 		int x =0;
+		int contador=0;
 
 
 		if ((irq_set = MOUSE_subscribe_int()) == -1)
@@ -208,51 +209,51 @@ int test_config(void) {
 			test_config();
 		}
 
-		if( sys_inb(OUT_BUF, &mouse) == OK ) {
-		printf("Scaling:");
-		if (mouse & BIT(4))
-		{
-		printf(" 2:1\n");
-		}
-		else
-		{
-		printf(" 1:1\n");
-		}
+		while (contador < 3 {
+				/* Get a request message. */
+				if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0) {
+					printf("driver_receive failed with: %d", r);
+					continue;
+				}
+				if (is_ipc_notify(ipc_status)) { /* received notification */
+					switch (_ENDPOINT_P(msg.m_source)) {
+					case HARDWARE: /* hardware interrupt notification */
+						if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
 
-		printf("Data Reporting:");
-		if (mouse & BIT(5))
-		{
-		printf(" enable\n");
-		}
-		else
-		{
-		printf(" disable\n");
-		}
-		printf("Mode:");
-		if (mouse & BIT(6))
-		{
-		printf(" remote mode is enabled\n");
-		}
-		else
-		{
-		printf(" stream mode is enabled\n");
-		}
-		printf("Byte 1: 0x%X \n", mouse);
-		}
-		if( sys_inb(OUT_BUF, &mouse) == OK ) {
-		printf("Byte 2: 0x%X \n", mouse);
-		printf("Resolution: %d\n", mouse<<1);
-		}
-		if( sys_inb(OUT_BUF, &mouse) == OK ) {
-		printf("Byte 3: 0x%X \n", mouse);
-		printf("Sample Rate: %d\n", mouse);
-		}
-		return -1;
+							MOUSE_int_handler();
 
+							if (((BIT(3) & mouse_char) == BIT(3)) && (contador == 0))
+							{
+							packets[0] = mouse_char;
+							contador++;
+							}
+							else if (contador == 1)
+							{
+								packets[1] = mouse_char;
+								contador++;
+							}
+							else if (contador == 2) {
+								packets[2] = mouse_char;
+								print_config(packets);
+								break;
+							}
 
+						}
+						break;
+					default:
+						break; /* no other notifications expected: do nothing */
+					}
+				} else { /* received a standard message, not a notification */
+					/* no standard messages expected: do nothing */
+				}
+			}
 
+			if (MOUSE_unsubscribe_int() != OK)
+				return -1;
+			return 0;
 }
 
 int test_gesture(short length, unsigned short tolerance) {
-	/* To be completed ... */
+
+
 }

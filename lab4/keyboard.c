@@ -44,6 +44,11 @@ void print_array(unsigned char *packets) {
 
 }
 
+void prinf_config(unsigned char *packets)
+{
+
+}
+
 
 int send_cmd(unsigned long cmd){
 	unsigned long stat = 0;
