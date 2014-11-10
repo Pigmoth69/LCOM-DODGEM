@@ -20,13 +20,14 @@ int main(int argc, char *argv[]) {
 	}
 }
 
-//falta alterara a usage
+
 static void print_usage(char *argv[]) {
 	printf(
 			"Usage: one of the following:\n"
 					"\t service run %s -args \"test_packet <cnt>\" \n"
 					"\t service run %s -args \"test_async_<time>\" \n"
-					"\t service run %s -args \"kbd_test_timed_scan <tempo>\" \n",
+					"\t service run %s -args \"test_config < >\" \n"
+					"\t service run %s -args \"int test_gesture <short length> <ushort tolerance>\" \n",
 			argv[0], argv[0], argv[0], argv[0]);
 
 }
@@ -44,10 +45,9 @@ static int proc_args(int argc, char *argv[]) {
 		test_packet(parse_ulong(argv[2], 10));
 		return 0;
 	}
-
 	 else if (strncmp(argv[1], "test_async", strlen("test_async")) == 0)
 	 {
-	 if( argc < 3)
+	 if( argc != 3)
 	 {
 	 printf("test_async: wrong no of arguments for test of test_async ");
 	 return 1;
@@ -55,17 +55,25 @@ static int proc_args(int argc, char *argv[]) {
 	 test_async(parse_ulong(argv[2], 10));
 
 	 }
-	/* else if (strncmp(argv[1], "kbd_test_timed_scan", strlen("kbd_test_timed_scan")) == 0)
+	else if (strncmp(argv[1], "test_config", strlen("test_config")) == 0)
 	 {
-	 if( argc != 3 )
+	 if( argc != 2 )
 	 {
-	 printf("kbd_test_timed_scan: wrong no of arguments for kbd_test_timed_scan \n");
+	 printf("test_config: wrong no of arguments for test_config \n");
 	 return 1;
 	 }
-	 kbd_test_timed_scan(parse_ulong(argv[2],10));
+	 test_config();
 	 return 0;
 
-	 }*/
+	 }/*
+	 else if (strncmp(argv[1], "test_async", strlen("test_async")) == 0)
+	 	 {
+	 	 if( argc < 3)
+	 	 {
+	 	 printf("test_async: wrong no of arguments for test of test_async ");
+	 	 return 1;
+	 	 }
+	 	 test_async(parse_ulong(argv[2], 10));*/
 	 else
 	 {
 	 printf("Function not valid! \n");
@@ -76,7 +84,7 @@ static int proc_args(int argc, char *argv[]) {
 
 }
 
-//nada a alterar desta função
+
 static unsigned long parse_ulong(char *str, int base) {
 	char *endptr;
 	unsigned long val;

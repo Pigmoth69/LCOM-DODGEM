@@ -20,8 +20,8 @@ int test_packet(unsigned short cnt) {
 	if ((irq_set = MOUSE_subscribe_int()) == -1)
 			return -1;
 
-		/*if (sys_outb(KBC_CMD_REG, ENABLE_MOUSE) != OK)
-			return -1;*/
+		if (sys_outb(KBC_CMD_REG, ENABLE_MOUSE) != OK)
+			return -1;
 
 		if (sys_outb(KBC_CMD_REG, KBDCOMMAND) != OK)
 			return -1;
@@ -180,7 +180,77 @@ int test_async(unsigned short idle_time) {
 }
 
 int test_config(void) {
-	/* To be completed ... */
+
+		int ipc_status;
+		int r;
+		char packets[3];
+		unsigned long resp;
+		message msg;
+		int irq_set;
+		int x =0;
+
+
+		if ((irq_set = MOUSE_subscribe_int()) == -1)
+			return -1;
+		if (sys_outb(KBC_CMD_REG, ENABLE_MOUSE) != OK)
+			return -1;
+		if (sys_outb(KBC_CMD_REG, KBDCOMMAND) != OK)
+			return -1;
+		if(sys_outb(KBC_CMD_REG,DISABLE_STREAM) != OK)
+			return -1;
+		if(sys_outb(KBC_CMD_REG,KBDCOMMAND)!= OK)
+			return -1;
+		if (sys_outb(OUT_BUF, STATUSREQUEST) != OK)
+			return -1;
+
+		if (rec_cmd() != ACK) {
+			printf("Nenhum ACK recebido");
+			test_config();
+		}
+
+		if( sys_inb(OUT_BUF, &mouse) == OK ) {
+		printf("Scaling:");
+		if (mouse & BIT(4))
+		{
+		printf(" 2:1\n");
+		}
+		else
+		{
+		printf(" 1:1\n");
+		}
+
+		printf("Data Reporting:");
+		if (mouse & BIT(5))
+		{
+		printf(" enable\n");
+		}
+		else
+		{
+		printf(" disable\n");
+		}
+		printf("Mode:");
+		if (mouse & BIT(6))
+		{
+		printf(" remote mode is enabled\n");
+		}
+		else
+		{
+		printf(" stream mode is enabled\n");
+		}
+		printf("Byte 1: 0x%X \n", mouse);
+		}
+		if( sys_inb(OUT_BUF, &mouse) == OK ) {
+		printf("Byte 2: 0x%X \n", mouse);
+		printf("Resolution: %d\n", mouse<<1);
+		}
+		if( sys_inb(OUT_BUF, &mouse) == OK ) {
+		printf("Byte 3: 0x%X \n", mouse);
+		printf("Sample Rate: %d\n", mouse);
+		}
+		return -1;
+
+
+
 }
 
 int test_gesture(short length, unsigned short tolerance) {

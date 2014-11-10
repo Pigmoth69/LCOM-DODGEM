@@ -40,7 +40,7 @@ void print_array(unsigned char *packets) {
 			packets[0], packets[1], packets[2], (BIT(0) & packets[0]),
 			(BIT(2) & packets[0]) >> 2, (BIT(1) & packets[0]) >> 1,
 			(BIT(6) & packets[0]) >> 6, (BIT(7) & packets[0]) >> 7,
-			packets[1], packets[2]);
+			(char)packets[1], (char)packets[2]);
 
 }
 
@@ -58,6 +58,7 @@ int send_cmd(unsigned long cmd){
 		tickdelay(micros_to_ticks(DELAY_US));
 	}
 }
+
 
 int rec_cmd(){
 	unsigned long stat = 0;
