@@ -17,21 +17,21 @@ int test_packet(unsigned short cnt) {
 	//fazer funcao para activar stream mode
 
 	if ((irq_set = MOUSE_subscribe_int()) == -1)
-		return -1;
+			return -1;
 
-	if (sys_outb(KBC_CMD_REG, ENABLE_MOUSE) != OK)
-		return -1;
+		/*if (sys_outb(KBC_CMD_REG, ENABLE_MOUSE) != OK)
+			return -1;*/
 
-	if (sys_outb(KBC_CMD_REG, KBDCOMMAND) != OK)
-		return -1;
+		if (sys_outb(KBC_CMD_REG, KBDCOMMAND) != OK)
+			return -1;
 
-	if (sys_outb(OUT_BUF, SEND_PACKET) != OK)
-		return -1;
+		if (sys_outb(OUT_BUF, SEND_PACKET) != OK)
+			return -1;
 
-	if (rec_cmd() != ACK) {
-		printf("Nenhum ACK recebido");
-		return 1;
-	}
+		if (rec_cmd() != ACK) {
+			printf("Nenhum ACK recebido");
+			return -1;
+		}
 
 	while (x < cnt) {
 		/* Get a request message. */
@@ -48,9 +48,9 @@ int test_packet(unsigned short cnt) {
 
 					if (((BIT(3) & mouse) == BIT(3)) && (contador == 0))
 						packets[0] = mouse;
-					if (contador == 1)
+					else if (contador == 1)
 						packets[1] = mouse;
-					if (contador == 2) {
+					else if (contador == 2) {
 						packets[2] = mouse;
 						print_array(packets);
 						x++;
@@ -76,7 +76,8 @@ int test_packet(unsigned short cnt) {
 }
 
 int test_async(unsigned short idle_time) {
-	/* To be completed ... */
+
+
 }
 
 int test_config(void) {
