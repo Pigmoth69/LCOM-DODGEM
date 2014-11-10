@@ -31,6 +31,7 @@
 #define PAR_ERR 0x80
 #define TO_ERR 0x40
 
+
 #define KBDCOMMAND 0xD4
 #define MOUSE_IRQ 12
 #define STREAMMODE 0xEA
@@ -41,8 +42,10 @@
 
 
 
+
 #define DELAY_US 20000
 int MOUSE_int_handler();
+void print_config();
 void print_array(unsigned char *packets);
 
 
