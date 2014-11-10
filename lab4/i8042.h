@@ -45,7 +45,7 @@
 
 #define DELAY_US 20000
 int MOUSE_int_handler();
-void print_config();
+void print_config(unsigned char *packets);
 void print_array(unsigned char *packets);
 
 

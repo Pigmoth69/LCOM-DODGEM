@@ -1,6 +1,6 @@
 #include"i8042.h"
 
-int hook_id2 = 1;
+int hook_id;
 //int bts = 0;
 
 unsigned long mouse;
@@ -9,25 +9,25 @@ char mouse_char;
 int MOUSE_subscribe_int(void) {
 
 	int hook;
-	hook = hook_id2;
+	hook = hook_id;
 	if (sys_irqsetpolicy(MOUSE_IRQ, IRQ_REENABLE | IRQ_EXCLUSIVE,
-			&hook_id2) == OK)
-		if (sys_irqenable(&hook_id2) == OK)
+			&hook_id) == OK)
+		if (sys_irqenable(&hook_id) == OK)
 			return BIT(hook);
 
 	return -1;
 }
 
 int MOUSE_unsubscribe_int() {
-	if (sys_irqrmpolicy(&hook_id2) == OK)
-		if (sys_irqdisable(&hook_id2) == OK)
+	if (sys_irqrmpolicy(&hook_id) == OK)
+		if (sys_irqdisable(&hook_id) == OK)
 			return 0;
-
+	printf("erro de subscribe \n");
 	return 1;
 }
 
 int MOUSE_int_handler() {
-
+	printf("handler\n");
 	if (sys_inb(OUT_BUF, &mouse) != OK)
 		return -1;
 	mouse_char = (char)mouse;
@@ -44,8 +44,47 @@ void print_array(unsigned char *packets) {
 
 }
 
-void prinf_config(unsigned char *packets)
+void print_config(unsigned char *packets)
 {
+	unsigned char byte1 = packets[1];
+	unsigned char byte2 = packets[2];
+	unsigned char byte3 = packets[3];
+
+	if(byte1 & BIT(6))
+		printf("Remote (polled) mode\n");
+	else
+		printf("Stream mode \n");
+
+	if(byte1  & BIT(5))
+		printf("Data reporting enabled\n");
+	else
+		printf("Reporting disable \n");
+
+	if(byte1  & BIT(4))
+		printf("Scaling is 2:1\n");
+	else
+		printf("Scaling is 1:1\n");
+
+	if(byte1 &BIT(2))
+		printf("Left button is currently pressed\n");
+	else
+		printf("Left button is currently released\n");
+
+	if(byte1 &BIT(1))
+		printf("Middle button is currently pressed\n");
+	else
+		printf("Middle button is currently released\n");
+
+	if(byte1 &BIT(0))
+		printf(" Right button is currently pressed\n");
+	else
+		printf(" Right button is currently released\n");
+
+
+	printf("Resolution: %d",byte2);
+	printf("\n");
+	printf("Sample Rate: %d",byte3);
+	printf("\n");
 
 }
 
@@ -82,5 +121,4 @@ int rec_cmd(){
 		tickdelay(micros_to_ticks(DELAY_US));
 	}
 }
-
 

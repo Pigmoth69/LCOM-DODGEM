@@ -209,7 +209,7 @@ int test_config(void) {
 			test_config();
 		}
 
-		while (contador < 3 {
+		while (contador < 3) {
 				/* Get a request message. */
 				if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0) {
 					printf("driver_receive failed with: %d", r);
@@ -219,6 +219,7 @@ int test_config(void) {
 					switch (_ENDPOINT_P(msg.m_source)) {
 					case HARDWARE: /* hardware interrupt notification */
 						if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
+							printf("msg.notify\n");
 
 							MOUSE_int_handler();
 
@@ -226,18 +227,20 @@ int test_config(void) {
 							{
 							packets[0] = mouse_char;
 							contador++;
+							printf("contador=1\n");
 							}
 							else if (contador == 1)
 							{
 								packets[1] = mouse_char;
 								contador++;
+								printf("contador=2\n");
 							}
 							else if (contador == 2) {
+								printf("contador=3\n");
 								packets[2] = mouse_char;
 								print_config(packets);
-								break;
+								contador++;
 							}
-
 						}
 						break;
 					default:
@@ -253,7 +256,18 @@ int test_config(void) {
 			return 0;
 }
 
+
+
+
+
+
+
 int test_gesture(short length, unsigned short tolerance) {
+
+
+
+
+
 
 
 }
