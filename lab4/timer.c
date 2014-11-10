@@ -4,7 +4,7 @@
 #include "timer.h"
 
 int counter = 0;
-int hook_id = 0;
+extern int hook_id = 0;
 
 //123
 int getCounter() {return counter;}
