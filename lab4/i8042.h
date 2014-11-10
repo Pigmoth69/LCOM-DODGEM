@@ -11,6 +11,8 @@
 #define KBC_STAT_REG 0x64
 #define KBC_CMD_REG 0x64
 
+#define KBC_COMMAND_READ 0x20
+
 
 #define ACK 0xfa
 #define RESEND 0xfe

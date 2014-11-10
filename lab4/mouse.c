@@ -18,7 +18,6 @@
 #define SET_STREAM_MODE 0xEA
 
 int hook_id;
-int mouse_hook_id;
 
 
 int send_mouse_cmd(unsigned char cmd) {
@@ -42,32 +41,11 @@ int send_mouse_cmd(unsigned char cmd) {
 
 int MOUSE_subscribe_int()
 {
-/*	timer0_hook_id = TIMER0_HOOK_BIT
-	mouse_hook_id = MOUSE_HOOK_BIT
-
-	if (sys_irqsetpolicy(TIMER0_IRQ, IRQ_REENABLE, &timer0_hook_id) != OK)
-		return 1;
-	if (sys_irqenable(&timer0_hook_id) != OK)
-		return 1;
-
-	if (send_mouse_cmd(STREAM_DISABLE) == 0)
-		return 1;
-
-	if (sys_irqsetpolicy(MOUSE_IRQ, IRQ_REENABLE | IRQ_EXCLUSIVE, &mouse_hook_id) != OK)
-		return 1;
-	if (sys_irqenable(&mouse_hook_id) != OK)
-		return 1;
-
-	if (send_mouse_cmd(SET_STREAM_MODE) == 0)
-		return 1;
-*/
-
-
 	int hook;
 	hook = hook_id;
 	if (sys_irqsetpolicy(MOUSE_IRQ,IRQ_REENABLE | IRQ_EXCLUSIVE,&hook_id) == OK)
 		if (sys_irqenable(&hook_id) == OK)
-			return BIT(hook);
+			return 0;
 
 	return -1;
 
@@ -75,7 +53,9 @@ int MOUSE_subscribe_int()
 
 int MOUSE_unsubscribe_int()
 {
-
+	if(sys_irqrmpolicy(&hook_id) == OK)
+		if (sys_irqdisable(&hook_id) == OK)
+			return 0;
 }
 
 
