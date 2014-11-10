@@ -1,6 +1,6 @@
 #include"i8042.h"
 
-int hook_id = 1;
+int hook_id2 = 1;
 //int bts = 0;
 
 unsigned long mouse;
@@ -9,18 +9,18 @@ char mouse_char;
 int MOUSE_subscribe_int(void) {
 
 	int hook;
-	hook = hook_id;
+	hook = hook_id2;
 	if (sys_irqsetpolicy(MOUSE_IRQ, IRQ_REENABLE | IRQ_EXCLUSIVE,
-			&hook_id) == OK)
-		if (sys_irqenable(&hook_id) == OK)
+			&hook_id2) == OK)
+		if (sys_irqenable(&hook_id2) == OK)
 			return BIT(hook);
 
 	return -1;
 }
 
 int MOUSE_unsubscribe_int() {
-	if (sys_irqrmpolicy(&hook_id) == OK)
-		if (sys_irqdisable(&hook_id) == OK)
+	if (sys_irqrmpolicy(&hook_id2) == OK)
+		if (sys_irqdisable(&hook_id2) == OK)
 			return 0;
 
 	return 1;

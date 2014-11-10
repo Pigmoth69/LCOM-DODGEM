@@ -25,7 +25,7 @@ static void print_usage(char *argv[]) {
 	printf(
 			"Usage: one of the following:\n"
 					"\t service run %s -args \"test_packet <cnt>\" \n"
-					"\t service run %s -args \"kbd_test_leds <spaced vector elements>\" \n"
+					"\t service run %s -args \"test_async_<time>\" \n"
 					"\t service run %s -args \"kbd_test_timed_scan <tempo>\" \n",
 			argv[0], argv[0], argv[0], argv[0]);
 
@@ -44,28 +44,18 @@ static int proc_args(int argc, char *argv[]) {
 		test_packet(parse_ulong(argv[2], 10));
 		return 0;
 	}
-	/*
-	 else if (strncmp(argv[1], "kbd_test_leds", strlen("kbd_test_leds")) == 0)
+
+	 else if (strncmp(argv[1], "test_async", strlen("test_async")) == 0)
 	 {
 	 if( argc < 3)
 	 {
-	 printf("kbd_test_leds: wrong no of arguments for test of kbd_test_leds ");
+	 printf("test_async: wrong no of arguments for test of test_async ");
 	 return 1;
 	 }
-
-	 int list[argc - 2];
-	 int *lista1;
-	 int j;
-	 for (j = 0; j < (argc - 2); j++)
-	 {
-	 list[j] = parse_ulong(argv[2 + j],10);
-	 }
-	 lista1 = list;
-
-	 kbd_test_leds(argc - 2,(unsigned short*)lista1);
+	 test_async(parse_ulong(argv[2], 10));
 
 	 }
-	 else if (strncmp(argv[1], "kbd_test_timed_scan", strlen("kbd_test_timed_scan")) == 0)
+	/* else if (strncmp(argv[1], "kbd_test_timed_scan", strlen("kbd_test_timed_scan")) == 0)
 	 {
 	 if( argc != 3 )
 	 {
@@ -74,14 +64,14 @@ static int proc_args(int argc, char *argv[]) {
 	 }
 	 kbd_test_timed_scan(parse_ulong(argv[2],10));
 	 return 0;
-	 }
+
+	 }*/
 	 else
 	 {
 	 printf("Function not valid! \n");
 	 print_usage(argv);
 	 return 1;
 	 }
-	 */
 	return 1;
 
 }
