@@ -181,82 +181,89 @@ int test_async(unsigned short idle_time) {
 
 int test_config(void) {
 
+	int x = 0;
 	int ipc_status;
 	int r;
 	char packets[3];
 	unsigned long resp;
 	message msg;
 	int irq_set;
-	int x =0;
-	int contador=0;
+	int contador = 0;
+	char array[3];
+	int i;
 
 
-	if ((irq_set = MOUSE_subscribe_int()) == -1)
+	if(sys_outb(KBC_CMD_REG,ENABLE_MOUSE)!= OK)
 		return -1;
-	if (sys_outb(KBC_CMD_REG, ENABLE_MOUSE) != OK)
-		return -1;
-	if (sys_outb(KBC_CMD_REG, KBDCOMMAND) != OK)
-		return -1;
-	if(sys_outb(KBC_CMD_REG,DISABLE_STREAM) != OK)
-		return -1;
+
 	if(sys_outb(KBC_CMD_REG,KBDCOMMAND)!= OK)
 		return -1;
-	if (sys_outb(OUT_BUF, STATUSREQUEST) != OK)
+
+
+	if (sys_outb(OUT_BUF, DISABLE_STREAM) != OK)
 		return -1;
 
-	if (rec_cmd() != ACK) {
-		printf("Nenhum ACK recebido");
-		test_config();
+
+
+
+
+	if(sys_outb(KBC_CMD_REG,KBDCOMMAND)!= OK)
+	{
+
+		return -1;
 	}
 
-	while (contador < 3) {
-		/* Get a request message. */
-		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0) {
-			printf("driver_receive failed with: %d", r);
-			continue;
-		}
-		if (is_ipc_notify(ipc_status)) { /* received notification */
-			switch (_ENDPOINT_P(msg.m_source)) {
-			case HARDWARE: /* hardware interrupt notification */
-				if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
-					printf("msg.notify\n");
 
-					MOUSE_int_handler();
+	if (sys_outb(IN_BUF, STATUSREQUEST) != OK)
+	{
+		return -1;
+	}
 
-					if (((BIT(3) & mouse_char) == BIT(3)) && (contador == 0))
-					{
+	while (x < 3) {
+			/* Get a request message. */
+			if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0) {
+				printf("driver_receive failed with: %d", r);
+				continue;
+			}
+			if (is_ipc_notify(ipc_status)) { /* received notification */
+				switch (_ENDPOINT_P(msg.m_source)) {
+				case HARDWARE: /* hardware interrupt notification */
+					if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
+
+						MOUSE_int_handler();
+
+						if (((BIT(3) & mouse_char) == BIT(3)) && (contador == 0))
+						{
 						packets[0] = mouse_char;
 						contador++;
-						printf("contador=1\n");
+						}
+						else if (contador == 1)
+						{
+							packets[1] = mouse_char;
+							contador++;
+						}
+						else if (contador == 2) {
+							packets[2] = mouse_char;
+							print_config(packets);
+							contador++;
+						}
+
 					}
-					else if (contador == 1)
-					{
-						packets[1] = mouse_char;
-						contador++;
-						printf("contador=2\n");
-					}
-					else if (contador == 2) {
-						printf("contador=3\n");
-						packets[2] = mouse_char;
-						print_config(packets);
-						contador++;
-					}
+					break;
+				default:
+					break; /* no other notifications expected: do nothing */
 				}
-				break;
-			default:
-				break; /* no other notifications expected: do nothing */
+			} else { /* received a standard message, not a notification */
+				/* no standard messages expected: do nothing */
 			}
-		} else { /* received a standard message, not a notification */
-			/* no standard messages expected: do nothing */
 		}
-	}
 
 	if (MOUSE_unsubscribe_int() != OK)
-		return -1;
-	return 0;
+			return -1;
+		return 0;
+
+
 }
-
-
 
 int test_gesture(short length, unsigned short tolerance) {
 	int x = 0;
@@ -381,24 +388,3 @@ int test_gesture(short length, unsigned short tolerance) {
 	}
 	return 0;
 }
-
-
-//typedef enum {INIT, DRAW, COMP} state_t;
-//typedef enum {LDOW, LUP, MOVE} ev_type_t;
-//void check_hor_line(event_t *evt) {
-//	static state_t st = INIT; // initial state; keep state
-//	switch (st) {
-//	case INIT:
-//		if( evt->type == LDOWN )
-//			state = DRAW;
-//		break;
-//	case DRAW:
-//		if( evt->type == MOVE ) {
-//			[...] // need to check if HOR_LINE event occurs
-//		} else if( evt->type == LUP )
-//			state = INIT;
-//		break;
-//	default:
-//		break;
-//	}
-//}
