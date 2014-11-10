@@ -34,9 +34,10 @@
 #define KBDCOMMAND 0xD4
 #define MOUSE_IRQ 12
 #define STREAMMODE 0xEA
+#define STATUSREQUEST 0xE9
 #define ENABLE_MOUSE 0xA8
 #define SEND_PACKET 0xF4
-#define ENABLE_MOUSE 0xA8
+#define DISABLE_STREAM 0xF5
 
 
 
