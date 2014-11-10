@@ -2,13 +2,13 @@
 #include"i8254.h"
 
 extern unsigned long mouse;
-
+extern char mouse_char;
 int test_packet(unsigned short cnt) {
 
 	int x = 0;
 	int ipc_status;
 	int r;
-	unsigned char packets[3];
+	char packets[3];
 	unsigned long resp;
 	message msg;
 	int irq_set;
@@ -46,19 +46,23 @@ int test_packet(unsigned short cnt) {
 
 					MOUSE_int_handler();
 
-					if (((BIT(3) & mouse) == BIT(3)) && (contador == 0))
-						packets[0] = mouse;
+					if (((BIT(3) & mouse_char) == BIT(3)) && (contador == 0))
+					{
+					packets[0] = mouse_char;
+					contador++;
+					}
 					else if (contador == 1)
-						packets[1] = mouse;
+					{
+						packets[1] = mouse_char;
+						contador++;
+					}
 					else if (contador == 2) {
-						packets[2] = mouse;
+						packets[2] = mouse_char;
 						print_array(packets);
 						x++;
 						contador = 0;
-						continue;
 					}
 
-					contador++;
 				}
 				break;
 			default:

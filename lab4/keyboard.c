@@ -2,7 +2,9 @@
 
 int hook_id = 1;
 //int bts = 0;
+
 unsigned long mouse;
+char mouse_char;
 
 int MOUSE_subscribe_int(void) {
 
@@ -28,6 +30,7 @@ int MOUSE_int_handler() {
 
 	if (sys_inb(OUT_BUF, &mouse) != OK)
 		return -1;
+	mouse_char = (char)mouse;
 	return 0;
 }
 
