@@ -5,11 +5,11 @@ COMPILER_TYPE= gnu
 CC=gcc
 
 PROG=	lab4
-SRCS=	lab4.c test4.c keyboard.c timer.c
+SRCS=	lab4.c test4.c timer.c keyboard.c
 
 CCFLAGS= -Wall
 
-DPADD+=	${LIBDRIVER} ${LIBSYS}
+DPADD+=	${LIBDRIVER} ${LIBSYS} 
 LDADD+=	-ldriver -lsys
 
 LDFLAGS+= -L .
