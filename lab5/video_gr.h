@@ -7,6 +7,9 @@
  * Functions for outputing data to screen in graphics mode
  */
 
+
+
+
 /**
  * @brief Initializes the video module in graphics mode
  * 

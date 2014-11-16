@@ -1,7 +1,15 @@
 void *test_init(unsigned short mode, unsigned short delay) {
 	
-	/* To be completed */
-	
+	if(vg_init(mode)==0)
+	{
+		printf("ERRO\n");
+		return 0;
+	}
+
+	sleep(delay);
+
+	vg_exit();
+
 }
 
 
