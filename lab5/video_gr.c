@@ -60,7 +60,7 @@ void *vg_init(unsigned short mode)
 	rr.u.b.intno = videocard;		// video card macro
 	if( sys_int86(&rr) != OK ) {
 		printf("set_vbe_mode: sys_int86() failed \n");
-		return 1;
+		return NULL;
 	}
 	return video_mem;
 }
@@ -79,5 +79,7 @@ int vg_exit() {
   } else
       return 0;
 }
+
+
 
 

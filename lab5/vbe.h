@@ -16,6 +16,7 @@
  */ 
  
 #define videocard 0x10
+#define MODE1024 0x105
 
 
 typedef struct {
