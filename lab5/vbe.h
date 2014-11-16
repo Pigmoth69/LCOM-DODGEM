@@ -15,6 +15,9 @@
  * Packed VBE Mode Info Block 
  */ 
  
+#define videocard 0x10
+
+
 typedef struct {
   /*  Mandatory information for all VBE revisions */
   uint16_t ModeAttributes; 	/**< @brief mode attributes */
