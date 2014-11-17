@@ -40,21 +40,15 @@ int test_square(unsigned short x, unsigned short y, unsigned short size, unsigne
 			return 0;
 		}
 
-	if(x+size > 768||y+size>1024)
+	if(x+size > MODE1024_H_RES||y+size>MODE1024_V_RES)
 	{
 		vg_exit();
 		printf("writing ouf of memory\n");
 		return 0;
 	}
 
-	if(y==0)
-	{
-		PointerRam+=x;
-	}
-	else
-	{
-		PointerRam += 1024*(y-1)+x;
-	}
+
+		PointerRam += MODE1024_H_RES*y+x;
 
 
 	int i=0;
@@ -68,7 +62,7 @@ int test_square(unsigned short x, unsigned short y, unsigned short size, unsigne
 			PointerRam++;
 		}
 		c=0;
-		PointerRam+=(1024-size);
+		PointerRam+=(MODE1024_H_RES-size);
 	}
 
 
