@@ -7,6 +7,18 @@ int bts =0;
 
 static char *video_mem;
 
+void set_pixel(unsigned short x, unsigned short y, unsigned long color)
+{
+	char *pointer;
+
+	pointer = video_mem;
+
+	pointer += MODE1024_H_RES*y+x;
+
+	*pointer=(char)color;
+
+}
+
 void *test_init(unsigned short mode, unsigned short delay) {
 
 	video_mem = vg_init(mode);
@@ -133,14 +145,11 @@ int test_line(unsigned short xi, unsigned short yi,
 		           unsigned short xf, unsigned short yf, unsigned long color) {
 	
 	char *PointerRam;
-//	if(size==0)
-//	{
-//		printf("INVALID SIZE!\n");
-//		return -1;
-//	}
+
 
 	if((PointerRam=(char*)vg_init(MODE1024))==0)
 		{
+			vg_exit();
 			printf("ERRO\n");
 			return 0;
 		}
@@ -174,7 +183,7 @@ int test_line(unsigned short xi, unsigned short yi,
 	while(xatual != xf && yatual != yf)
 	{
 		//*PointerRam=(char)color; //pinta o pixel
-		set_pixel(xatual, yatual, color);
+		//set_pixel(xatual, yatual, color);
 
 		if (space >= 1)  //quando o espaco passa de 1
 			space -= 1;
@@ -415,16 +424,6 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 
 
 
-void set_pixel(unsigned short x, unsigned short y, unsigned long color)
-{
-	char *pointer;
 
-	pointer = video_mem;
-
-	pointer = MODE1024_H_RES*y+x;
-
-	*pointer=(char*)color;
-
-}
 
 
