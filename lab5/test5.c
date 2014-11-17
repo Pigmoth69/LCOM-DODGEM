@@ -132,43 +132,205 @@ int test_square(unsigned short x, unsigned short y, unsigned short size, unsigne
 int test_line(unsigned short xi, unsigned short yi, 
 		           unsigned short xf, unsigned short yf, unsigned long color) {
 	
+	char *PointerRam;
+//	if(size==0)
+//	{
+//		printf("INVALID SIZE!\n");
+//		return -1;
+//	}
 
-
-		if(xi<0||xf<0||yi<0||yf<0)
+	if((PointerRam=(char*)vg_init(MODE1024))==0)
 		{
-			printf("Erro nas coordenadas\n");
-			return 1;
+			printf("ERRO\n");
+			return 0;
 		}
 
+	if(xf > MODE1024_H_RES || yf > MODE1024_V_RES)
+	{
+		vg_exit();
+		printf("writing ouf of memory\n");
+		return 0;
+	}
 
-		char *PointerRam;
-		if((PointerRam=(char*)vg_init(MODE1024))==0)
+	float declive = abs(((float)yf-yi)/(xf-xi));
+
+	int quadrante;
+
+	if (xf > xi && yf < yi)
+		quadrante = 1;
+	else if (xf > xi && yf > yi)
+		quadrante = 2;
+	else if (xf < xi && yf > yi)
+		quadrante = 3;
+	else if (xf < xi && yf < yi)
+		quadrante = 4;
+	else
+		quadrante = 0;
+
+	float space = 0;
+	int xatual = xi;
+	int yatual = yi;
+
+	while(xatual != xf && yatual != yf)
+	{
+		//*PointerRam=(char)color; //pinta o pixel
+		set_pixel(xatual, yatual, color);
+
+		if (space >= 1)  //quando o espaco passa de 1
+			space -= 1;
+
+		if (yi == yf) //caso seja uma linha horizontal
+		{
+			if (xf > xi)
 			{
-				printf("ERRO\n");
-				return 0;
+				xatual++;
 			}
-		float declive;
-
-		declive = (yf-yi)/(xf-xi);
-
-		if(declive==0)
-		{
-
+			else
+			{
+				xatual--;
+			}
 		}
-		else if(declive > 0)
+		else if (xi == xf) //caso seja uma linha vertical
 		{
-
-
+			if (yf > yi)
+			{
+				yatual++;
+			}
+			else
+			{
+				yatual--;
+			}
 		}
-		else
+		else if (quadrante == 1) //Se for o 1º quadrante
 		{
+			if (declive == 1)
+			{
+				xatual++;
+				yatual--;
+			}
+			else if (declive > 1)
+			{
+				space += 1/declive; //adiciona o valor que aumenta em xx por cada yy
 
+				if (space < 0.5){
+					yatual--;
+				}
+				else{
+					xatual++;
+					yatual--;
+				}
+			}
+			else if (declive < 1)
+			{
+				space += declive;
+
+				if (space < 0.5){
+					xatual++;
+				}
+				else{
+					xatual++;
+					yatual--;
+				}
+			}
 		}
+		else if (quadrante == 2) //se for o 2º quadrante
+		{
+			if (declive == 1)
+			{
+				xatual++;
+				yatual++;
+			}
+			else if (declive > 1)
+			{
+				space += (float)1/declive; //adiciona o valor que aumenta em xx por cada yy
 
+				if (space < 0.5){
+					yatual++;
+				}
+				else{
+					xatual++;
+					yatual++;
+				}
+			}
+			else if (declive < 1)
+			{
+				space += declive;
 
+				if (space < 0.5){
+					xatual++;
+				}
+				else{
+					xatual++;
+					yatual++;
+				}
+			}
+		}
+		else if (quadrante == 3) //se for o 3º quadrante
+		{
+			if (declive == 1)
+			{
+				xatual--;
+				yatual++;
+			}
+			else if (declive > 1)
+			{
+				space += 1/declive; //adiciona o valor que aumenta em xx por cada yy
 
+				if (space < 0.5){
+					yatual++;
+				}
+				else{
+					xatual--;
+					yatual++;
+				}
+			}
+			else if (declive < 1)
+			{
+				space += declive;
 
+				if (space < 0.5){
+					xatual--;
+				}
+				else{
+					xatual--;
+					yatual++;
+				}
+			}
+		}
+		else if (quadrante == 4) //se for o 4º quadrante
+		{
+			if (declive == 1)
+			{
+				xatual--;
+				yatual--;
+			}
+			else if (declive > 1)
+			{
+				space += 1/declive; //adiciona o valor que aumenta em xx por cada yy
 
+				if (space < 0.5){
+					yatual--;
+				}
+				else{
+					PointerRam-= (MODE1024_H_RES + 1);
+					xatual--;
+					yatual--;
+				}
+			}
+			else if (declive < 1)
+			{
+				space += declive;
+
+				if (space < 0.5){
+					xatual--;
+				}
+				else{
+					xatual--;
+					yatual--;
+				}
+			}
+		}
+	}
 
 
 
@@ -195,24 +357,23 @@ int test_line(unsigned short xi, unsigned short yi,
 					if (msg.NOTIFY_ARG & irq_set)
 					{ /* subscribed interrupt */
 						sys_inb(OUT_BUF, &keyboard);// vai à porta buscar e coloca-o em &keyboard
-						printf("%x\n", keyboard);
-						if (keyboard == TWO_BYTES) // verifica se o endereço da tecla possui 2 bytes
-						{
-							bts = 1; //coloca a variavel bts a 1 para mais tarde ver se o endereço é de 2 bytes
-							return 1; //caso seja de 2 bytes passa ao proximo ciclo
-						}
+							if (keyboard == TWO_BYTES) // verifica se o endereço da tecla possui 2 bytes
+							{
+								bts = 1; //coloca a variavel bts a 1 para mais tarde ver se o endereço é de 2 bytes
+								return 1; //caso seja de 2 bytes passa ao proximo ciclo
+							}
 
-						if (bts == 1) //caso tenha 2 bytes
-						{
-							if ((keyboard & BIT_SIG_0) == keyboard) //verifica se é makecode ou breakcode (BIT mais significativo a 1 ou 0
+							if (bts == 1) //caso tenha 2 bytes
 							{
-								bts = 0;
+								if ((keyboard & BIT_SIG_0) == keyboard) //verifica se é makecode ou breakcode (BIT mais significativo a 1 ou 0
+								{
+									bts = 0;
+								}
+								else
+								{
+									bts = 0;
+								}
 							}
-							else
-							{
-								bts = 0;
-							}
-						}
 					}
 					break;
 				default:
@@ -227,10 +388,14 @@ int test_line(unsigned short xi, unsigned short yi,
 			return -1;
 
 
-		//tail -f /usr/log/messages
+//tail -f /usr/log/messages
 
 		vg_exit();
 		return 0;
+
+
+
+
 
 	
 }
