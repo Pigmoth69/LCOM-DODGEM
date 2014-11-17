@@ -22,7 +22,8 @@ int main(int argc, char **argv) {
 
   sef_startup();
 
-  test_square(50,50,250,0x3f);
+  //test_init(0x105,5);
+  test_square(0,0,500,0x3f);
   return 0;
 
   /* Get video text mode info */
