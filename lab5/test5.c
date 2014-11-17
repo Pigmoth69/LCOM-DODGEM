@@ -148,28 +148,22 @@ int test_line(unsigned short xi, unsigned short yi,
 				return 0;
 			}
 		float declive;
-		if(xf-xi <0 || yf-yi<0)
+
+		declive = (yf-yi)/(xf-xi);
+
+		if(declive==0)
+		{
+
+		}
+		else if(declive > 0)
 		{
 
 
 		}
 		else
 		{
-			if(xf-xi>yf-yi)
-			{
-				declive = (yf-yi)/(xf-xi);
-				int i=0;
-				//for(i;i< )
 
-
-
-			}
-			else
-			{
-
-			}
 		}
-
 
 
 
@@ -252,6 +246,20 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 	
 	/* To be completed */
 	
-}					
+}
+
+
+
+void set_pixel(unsigned short x, unsigned short y, unsigned long color)
+{
+	char *pointer;
+
+	pointer = video_mem;
+
+	pointer = MODE1024_H_RES*y+x;
+
+	*pointer=(char*)color;
+
+}
 
 
