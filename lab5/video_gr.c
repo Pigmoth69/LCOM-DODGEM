@@ -66,6 +66,7 @@ void *vg_init(unsigned short mode)
 }
 
 int vg_exit() {
+
   struct reg86u reg86;
 
   reg86.u.b.intno = 0x10; /* BIOS video services */
@@ -77,7 +78,10 @@ int vg_exit() {
       printf("\tvg_exit(): sys_int86() failed \n");
       return 1;
   } else
+
+
       return 0;
+
 }
 
 
