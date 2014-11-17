@@ -22,21 +22,6 @@ int main(int argc, char **argv) {
 
   sef_startup();
 
-  //test_init(0x105,5);
-  //test_square(0,8,760,3);
-
-  //return 0;
-
-  /* Get video text mode info */
-
- // vt_info_get(&vt_info);
-
-  /* Display video text mode info */
-  //vt_info_display(&vt_info);
-
- // video_mem = vt_init(&vt_info);
-
-  //printf("lab1: VRAM mapped on virtual address %p\n", video_mem);
 
   if ( argc == 1 ) {
       print_usage(argv);
@@ -50,57 +35,57 @@ int main(int argc, char **argv) {
 
 static void print_usage(char *argv[]) {
   printf("Usage: one of the following:\n"
-	 "\t service run %s -args \"fill <hex-code> <hex-attr>\" \n"
-	 "\t service run %s -args \"blank\" - to blank screen \n"
-	 "\t service run %s -args \"char <hex-code> <hex-attr> <line no> <col no>\" \n"
-	 "\t service run %s -args \"string <string> <hex-attr> <line no> <col no>\" \n"
-	 "\t service run %s -args \"int <decimal number> <hex-attr> <line no> <col no>\" \n"
-	 "\t service run %s -args \"frame <width> <height> <hex-attr> <line no> <col no>\" \n",
-	 argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
+	 "\t service run %s -args \"test_init <mode> <delay>\" \n"
+	 "\t service run %s -args \"test_square <x> <y> <size> <color>\" \n"
+	 "\t service run %s -args \"test_line <xi> <yi> <xf> <yf>\"\n",
+	 argv[0], argv[0], argv[0]);
 
 }
 
 static int proc_args(int argc, char *argv[]) {
 
-  unsigned long ch, row, col, attr, width, height;
-  char *str;
-  long num;
+	unsigned long mode,color;
+	int size,delay;
 
   /* check the function to test: if the first characters match, accept it */
-  if (strncmp(argv[1], "square", strlen("square")) == 0) {
-	  if( argc != 6 ) {
-		  printf("video_txt: wrong no of arguments for test of test_square() \n");
+  if (strncmp(argv[1], "test_int", strlen("test_int")) == 0) {
+	  if( argc != 4 ) {
+		  printf("test_init: wrong no of arguments for test of test_init \n");
 		  return 1;
 	  }
-	  test_square(parse_ulong(argv[2], 10), parse_ulong(argv[3], 10), parse_ulong(argv[4], 10), parse_ulong(argv[5], 10));
-	  //printf("video_txt:: vt_blank()\n"); /* Actually, it was already invoked */
-	  //vt_blank();
+	  if(parse_ulong(argv[2], 16) == ULONG_MAX)
+	  {
+		  printf("Out of range!\n");
+		  return -1;
+	  }
+	  test_init(parse_ulong(argv[2], 16),parse_ulong(argv[3], 10));
 	  return 0;
-  } else if (strncmp(argv[1], "line", strlen("line")) == 0) {
+  } else if (strncmp(argv[1], "test_square", strlen("test_square")) == 0) {
+	  if( argc != 6 ) {
+		  printf("test_square: wrong no of arguments for test of test_square \n");
+		  return 1;
+	  }
+	  if(parse_ulong(argv[5], 16)==ULONG_MAX)
+	  {
+		  printf("Out of range!\n");
+		  return -1;
+	  }
+	  test_square(parse_ulong(argv[2], 10),parse_ulong(argv[3], 10),parse_ulong(argv[4], 10),parse_ulong(argv[5], 16));
+	  return 0;
+  } else if (strncmp(argv[1], "test_line", strlen("test_line")) == 0) {
 	  if( argc != 7 ) {
-		  printf("video_txt: wrong no of arguments for test of test_line \n");
+		  printf("test_line: wrong no of arguments for test of test_line \n");
 		  return 1;
 	  }
-	  test_line(parse_ulong(argv[2], 10), parse_ulong(argv[3], 10), parse_ulong(argv[4], 10), parse_ulong(argv[5], 10), parse_ulong(argv[6], 10));
-	//  vt_fill(ch, attr);
+	  if(parse_ulong(argv[6], 16)==ULONG_MAX)
+	 	  {
+	 		  printf("Out of range!\n");
+	 		  return -1;
+	 	  }
+	  test_line(parse_ulong(argv[2], 10),parse_ulong(argv[3], 10),parse_ulong(argv[4], 10),parse_ulong(argv[5], 10),parse_ulong(argv[6], 16));
 	  return 0;
-  } else if (strncmp(argv[1], "char", strlen("char")) == 0) {
-	  if( argc != 6 ) {
-		  printf("video_txt: wrong no of arguments for test of vt_print_char() \n");
-		  return 1;
-	  }
-	  if( (ch = parse_ulong(argv[2], 16)) == ULONG_MAX )
-		  return 1;
-	  if( (attr = parse_ulong(argv[3], 16)) == ULONG_MAX )
-		  return 1;	
-	  if( (row = parse_ulong(argv[4], 10)) == ULONG_MAX )
-		  return 1;
-	  if( (col = parse_ulong(argv[5], 10)) == ULONG_MAX )
-		  return 1;
-	  printf("video_txt:: vt_print_char(0x%X, 0x%X, %lu, %lu)\n",
-			  (unsigned)ch, (unsigned)attr, row, col);
-	  return; //vt_print_char(ch, attr, row, col);
-  } else if (strncmp(argv[1], "string", strlen("string")) == 0) {
+
+  }/* else if (strncmp(argv[1], "string", strlen("string")) == 0) {
 	  if( argc != 6 ) {
 		  printf("video_txt: wrong no of arguments for test of vt_print_string() \n");
 		  return 1;
@@ -149,8 +134,8 @@ static int proc_args(int argc, char *argv[]) {
 	  printf("video_txt:: draw_frame(%lu, %lu, 0x%X, %lu, %lu)\n",
 		 width, height, (unsigned)attr, row, col);
 	  return; //vt_draw_frame(width, height, attr, row, col);
-  } else {
-	  printf("video_txt: non valid function \"%s\" to test\n", argv[1]);
+  } */else {
+	  printf("Non valid function \"%s\" to test\n", argv[1]);
 	  return 1;
   }
 }
