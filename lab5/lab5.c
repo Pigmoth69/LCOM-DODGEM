@@ -24,7 +24,8 @@ int main(int argc, char **argv) {
 
   //test_init(0x105,5);
   //test_square(0,8,760,3);
-  return 0;
+
+  //return 0;
 
   /* Get video text mode info */
 
@@ -66,25 +67,21 @@ static int proc_args(int argc, char *argv[]) {
   long num;
 
   /* check the function to test: if the first characters match, accept it */
-  if (strncmp(argv[1], "blank", strlen("blank")) == 0) {
-	  if( argc != 2 ) {
-		  printf("video_txt: wrong no of arguments for test of vt_blank() \n");
-		  return 1;
-	  }	  
-	  printf("video_txt:: vt_blank()\n"); /* Actually, it was already invoked */
-	  //vt_blank();
-	  return 0;
-  } else if (strncmp(argv[1], "fill", strlen("fill")) == 0) {
-	  if( argc != 4 ) {
-		  printf("video_txt: wrong no of arguments for test of vt_fill_char() \n");
+  if (strncmp(argv[1], "square", strlen("square")) == 0) {
+	  if( argc != 6 ) {
+		  printf("video_txt: wrong no of arguments for test of test_square() \n");
 		  return 1;
 	  }
-	  if( (ch = parse_ulong(argv[2], 16)) == ULONG_MAX )
+	  test_square(parse_ulong(argv[2], 10), parse_ulong(argv[3], 10), parse_ulong(argv[4], 10), parse_ulong(argv[5], 10));
+	  //printf("video_txt:: vt_blank()\n"); /* Actually, it was already invoked */
+	  //vt_blank();
+	  return 0;
+  } else if (strncmp(argv[1], "line", strlen("line")) == 0) {
+	  if( argc != 7 ) {
+		  printf("video_txt: wrong no of arguments for test of test_line \n");
 		  return 1;
-	  if( (attr = parse_ulong(argv[3], 16)) == ULONG_MAX )
-		  return 1;
-	  printf("video_txt:: vt_fill(0x%X, 0x%X)\n",
-			  (unsigned)ch, (unsigned)attr);
+	  }
+	  test_line(parse_ulong(argv[2], 10), parse_ulong(argv[3], 10), parse_ulong(argv[4], 10), parse_ulong(argv[5], 10), parse_ulong(argv[6], 10));
 	//  vt_fill(ch, attr);
 	  return 0;
   } else if (strncmp(argv[1], "char", strlen("char")) == 0) {
