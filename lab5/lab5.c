@@ -44,11 +44,8 @@ static void print_usage(char *argv[]) {
 
 static int proc_args(int argc, char *argv[]) {
 
-	unsigned long mode,color;
-	int size,delay;
-
   /* check the function to test: if the first characters match, accept it */
-  if (strncmp(argv[1], "test_int", strlen("test_int")) == 0) {
+  if (strncmp(argv[1], "test_init", strlen("test_init")) == 0) {
 	  if( argc != 4 ) {
 		  printf("test_init: wrong no of arguments for test of test_init \n");
 		  return 1;

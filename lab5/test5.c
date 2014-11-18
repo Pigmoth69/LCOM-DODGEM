@@ -31,9 +31,7 @@ void *test_init(unsigned short mode, unsigned short delay) {
 
 	timer_test_int(delay);
 
-
 	vg_exit();
-	printf("Memory 0x%x\n",video_mem);
 
 }
 
@@ -143,14 +141,12 @@ int test_square(unsigned short x, unsigned short y, unsigned short size, unsigne
 
 int test_line(unsigned short xi, unsigned short yi, 
 		           unsigned short xf, unsigned short yf, unsigned long color) {
-	
-	char *PointerRam;
 
 
-	if((PointerRam=(char*)vg_init(MODE1024))==0)
+	if((video_mem=(char*)vg_init(MODE1024))==0)
 		{
 			vg_exit();
-			printf("ERRO\n");
+			printf("ERRO vg_init(MODE1024)\n");
 			return 0;
 		}
 
@@ -161,6 +157,44 @@ int test_line(unsigned short xi, unsigned short yi,
 		return 0;
 	}
 
+	if(xf-xi ==0)
+	{
+		if(yf-yi>0)
+		{
+			int i=0;
+			for(i;i< yf-yi;i++)
+				set_pixel(xi,yi+i,color);
+		}else
+		{
+			int i=0;
+			for(i;i< yi-yf;i++)
+				set_pixel(xi,yf+i,color);
+
+		}
+
+	}
+	else if(yf-yi==0)
+	{
+
+		if(xf-xi>0)
+		{
+			int i=0;
+			for(i;i< xf-xi;i++)
+				set_pixel(xi+i,yi,color);
+		}else
+		{
+			int i=0;
+			for(i;i< xi-xf;i++)
+				set_pixel(xf+i,yf,color);
+		}
+	}
+
+
+
+
+
+
+/*
 	float declive = abs(((float)yf-yi)/(xf-xi));
 
 	int quadrante;
@@ -321,7 +355,7 @@ int test_line(unsigned short xi, unsigned short yi,
 					yatual--;
 				}
 				else{
-					PointerRam-= (MODE1024_H_RES + 1);
+					video_mem-= (MODE1024_H_RES + 1);
 					xatual--;
 					yatual--;
 				}
@@ -339,8 +373,7 @@ int test_line(unsigned short xi, unsigned short yi,
 				}
 			}
 		}
-	}
-
+	}*/
 
 
 
