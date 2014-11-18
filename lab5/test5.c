@@ -32,6 +32,7 @@ void *test_init(unsigned short mode, unsigned short delay) {
 	timer_test_int(delay);
 
 	vg_exit();
+	printf("PHYSICAL ADRESS: 0x%x\n",video_mem);
 
 }
 
@@ -144,237 +145,136 @@ int test_line(unsigned short xi, unsigned short yi,
 
 
 	if((video_mem=(char*)vg_init(MODE1024))==0)
-		{
-			vg_exit();
-			printf("ERRO vg_init(MODE1024)\n");
-			return 0;
-		}
+	{
+		vg_exit();
+		printf("ERRO vg_init(MODE1024)\n");
+		return 0;
+	}
 
-	if(xf > MODE1024_H_RES || yf > MODE1024_V_RES)
+	if(xf > MODE1024_H_RES || yf > MODE1024_V_RES || yi > MODE1024_V_RES || xi > MODE1024_H_RES)
 	{
 		vg_exit();
 		printf("writing ouf of memory\n");
 		return 0;
 	}
 
-	if(xf-xi ==0)
+	if((xi==0 && yi==0 && xf==0 && yf==0)| yf<0 || yi<0 || xf<0 || xi<0)
 	{
-		if(yf-yi>0)
-		{
-			int i=0;
-			for(i;i< yf-yi;i++)
-				set_pixel(xi,yi+i,color);
-		}else
-		{
-			int i=0;
-			for(i;i< yi-yf;i++)
-				set_pixel(xi,yf+i,color);
-
-		}
-
-	}
-	else if(yf-yi==0)
-	{
-
-		if(xf-xi>0)
-		{
-			int i=0;
-			for(i;i< xf-xi;i++)
-				set_pixel(xi+i,yi,color);
-		}else
-		{
-			int i=0;
-			for(i;i< xi-xf;i++)
-				set_pixel(xf+i,yf,color);
-		}
+		vg_exit();
+		printf("Invalid xi/xf/yi/yf\n");
+		return -1;
 	}
 
-
-
-
-
-
-/*
-	float declive = abs(((float)yf-yi)/(xf-xi));
-
-	int quadrante;
-
-	if (xf > xi && yf < yi)
-		quadrante = 1;
-	else if (xf > xi && yf > yi)
-		quadrante = 2;
-	else if (xf < xi && yf > yi)
-		quadrante = 3;
-	else if (xf < xi && yf < yi)
-		quadrante = 4;
-	else
-		quadrante = 0;
-
-	float space = 0;
-	int xatual = xi;
-	int yatual = yi;
-
-	while(xatual != xf && yatual != yf)
+	double declive;
+	if(xf==xi==yf==yi)
 	{
-		//*PointerRam=(char)color; //pinta o pixel
-		//set_pixel(xatual, yatual, color);
+		set_pixel(xi,yi,color);
+	}else
+	{
 
-		if (space >= 1)  //quando o espaco passa de 1
-			space -= 1;
-
-		if (yi == yf) //caso seja uma linha horizontal
+		if(xf-xi ==0)
 		{
-			if (xf > xi)
+			if(yf-yi>0)
 			{
-				xatual++;
-			}
-			else
+				int i=0;
+				for(i;i< yf-yi;i++)
+					set_pixel(xi,yi+i,color);
+			}else
 			{
-				xatual--;
+				int i=0;
+				for(i;i< yi-yf;i++)
+					set_pixel(xi,yf+i,color);
 			}
+
 		}
-		else if (xi == xf) //caso seja uma linha vertical
+		else if(yf-yi==0)
 		{
-			if (yf > yi)
+
+			if(xf-xi>0)
 			{
-				yatual++;
-			}
-			else
+				int i=0;
+				for(i;i< xf-xi;i++)
+					set_pixel(xi+i,yi,color);
+			}else
 			{
-				yatual--;
+				int i=0;
+				for(i;i< xi-xf;i++)
+					set_pixel(xf+i,yf,color);
 			}
-		}
-		else if (quadrante == 1) //Se for o 1º quadrante
+		}else if((declive = (double)(yf-yi)/(double)(xf-xi))>= 0)
 		{
-			if (declive == 1)
-			{
-				xatual++;
-				yatual--;
-			}
-			else if (declive > 1)
-			{
-				space += 1/declive; //adiciona o valor que aumenta em xx por cada yy
 
-				if (space < 0.5){
-					yatual--;
-				}
-				else{
-					xatual++;
-					yatual--;
-				}
-			}
-			else if (declive < 1)
+			if(yf-yi >0 && xf-xi >0)
 			{
-				space += declive;
+				if(xf-xi > yf-yi)
+				{
 
-				if (space < 0.5){
-					xatual++;
+					int i =0;
+					for(i; i< xf-xi;i++)
+						set_pixel(xi+i,(int)(declive*(xi+i)),color);
+
+				}else
+				{
+					int i =0;
+					for(i; i< yf-yi;i++)
+						set_pixel((int)((yi+i)/declive),yi+i,color);
 				}
-				else{
-					xatual++;
-					yatual--;
+			}else
+			{
+				if(xf-xi < yf-yi)
+				{
+
+					int i =0;
+					for(i; i< xi-xf;i++)
+						set_pixel(xf+i,(int)(declive*(xf+i)),color);
+
+				}else
+				{
+					int i =0;
+					for(i; i< yi-yf;i++)
+						set_pixel((int)((yf+i)/declive),yf+i,color);
 				}
+
 			}
-		}
-		else if (quadrante == 2) //se for o 2º quadrante
+
+		}else					//declive negativo
 		{
-			if (declive == 1)
-			{
-				xatual++;
-				yatual++;
-			}
-			else if (declive > 1)
-			{
-				space += (float)1/declive; //adiciona o valor que aumenta em xx por cada yy
 
-				if (space < 0.5){
-					yatual++;
-				}
-				else{
-					xatual++;
-					yatual++;
-				}
-			}
-			else if (declive < 1)
+			if(yf-yi <0 && xf-xi >0)
 			{
-				space += declive;
+				if(abs(xf-xi) > abs(yf-yi))
+				{
 
-				if (space < 0.5){
-					xatual++;
-				}
-				else{
-					xatual++;
-					yatual++;
-				}
-			}
-		}
-		else if (quadrante == 3) //se for o 3º quadrante
-		{
-			if (declive == 1)
-			{
-				xatual--;
-				yatual++;
-			}
-			else if (declive > 1)
-			{
-				space += 1/declive; //adiciona o valor que aumenta em xx por cada yy
+					int i =0;
+					for(i; i< xf-xi;i++)
+						set_pixel(xi+i,abs(yi+(int)(declive*(xi+i))),color);
 
-				if (space < 0.5){
-					yatual++;
+				}else
+				{
+					int i =0;
+					for(i; i< yf-yi;i++)
+						set_pixel((int)((yi+i)/declive),yi+i,color);
 				}
-				else{
-					xatual--;
-					yatual++;
-				}
-			}
-			else if (declive < 1)
+			}else
 			{
-				space += declive;
 
-				if (space < 0.5){
-					xatual--;
-				}
-				else{
-					xatual--;
-					yatual++;
+				if(abs(xf-xi) < abs(yf-yi))
+				{
+
+					int i =0;
+					for(i; i< xi-xf;i++)
+						set_pixel(xf+i,abs(yf+(int)(declive*(xf+i))),color);
+
+				}else
+				{
+					int i =0;
+					for(i; i< yi-yf;i++)
+						set_pixel((int)((yf+i)/declive),yf+i,color);
+
 				}
 			}
 		}
-		else if (quadrante == 4) //se for o 4º quadrante
-		{
-			if (declive == 1)
-			{
-				xatual--;
-				yatual--;
-			}
-			else if (declive > 1)
-			{
-				space += 1/declive; //adiciona o valor que aumenta em xx por cada yy
-
-				if (space < 0.5){
-					yatual--;
-				}
-				else{
-					video_mem-= (MODE1024_H_RES + 1);
-					xatual--;
-					yatual--;
-				}
-			}
-			else if (declive < 1)
-			{
-				space += declive;
-
-				if (space < 0.5){
-					xatual--;
-				}
-				else{
-					xatual--;
-					yatual--;
-				}
-			}
-		}
-	}*/
-
+	}
 
 
 

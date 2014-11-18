@@ -82,56 +82,7 @@ static int proc_args(int argc, char *argv[]) {
 	  test_line(parse_ulong(argv[2], 10),parse_ulong(argv[3], 10),parse_ulong(argv[4], 10),parse_ulong(argv[5], 10),parse_ulong(argv[6], 16));
 	  return 0;
 
-  }/* else if (strncmp(argv[1], "string", strlen("string")) == 0) {
-	  if( argc != 6 ) {
-		  printf("video_txt: wrong no of arguments for test of vt_print_string() \n");
-		  return 1;
-	  }
-	  str = argv[2];
-	  if( (attr = parse_ulong(argv[3], 16)) == ULONG_MAX )
-		  return 1;	
-	  if( (row = parse_ulong(argv[4], 10)) == ULONG_MAX )
-		  return 1;
-	  if( (col = parse_ulong(argv[5], 10)) == ULONG_MAX )
-		  return 1;
-	  printf("video_txt:: vt_print_string(%s, 0x%X, %lu, %lu)\n",
-			  str, (unsigned)attr, row, col);
-	  return; //vt_print_string(str, attr, row, col);
-  } else if (strncmp(argv[1], "int", strlen("int")) == 0) {
-	  if( argc != 6 ) {
-		  printf("video_txt: wrong no of arguments for test of vt_print_int() \n");
-		  return 1;
-	  }
-	  if( (num = parse_long(argv[2], 10)) == LONG_MAX )
-		  return 1;
-	  if( (attr = parse_ulong(argv[3], 16)) == ULONG_MAX )
-		  return 1;		  
-	  if( (row = parse_ulong(argv[4], 10)) == ULONG_MAX )
-		  return 1;		  
-	  if( (col = parse_ulong(argv[5], 10)) == ULONG_MAX )
-		  return 1;
-	  printf("video_txt:: vt_print_int(%lu, 0x%X, %lu, %lu)\n",
-		 num, (unsigned)attr, row, col);
-	  return; //vt_print_int(num, attr, row, col);
-  } else if (strncmp(argv[1], "frame", strlen("frame")) == 0) {
-	  if( argc != 7 ) {
-		  printf("video_txt: wrong no of arguments for test of vt_draw_frame() \n");
-		  return 1;
-	  }
-	  if( (width = parse_ulong(argv[2], 10)) == LONG_MAX )
-		  return 1;
-	  if( (height = parse_ulong(argv[3], 10)) == LONG_MAX )
-		  return 1;
-	  if( (attr = parse_ulong(argv[4], 16)) == ULONG_MAX )
-		  return 1;
-	  if( (row = parse_ulong(argv[5], 10)) == ULONG_MAX )
-		  return 1;
-	  if( (col = parse_ulong(argv[6], 10)) == ULONG_MAX )
-		  return 1;
-	  printf("video_txt:: draw_frame(%lu, %lu, 0x%X, %lu, %lu)\n",
-		 width, height, (unsigned)attr, row, col);
-	  return; //vt_draw_frame(width, height, attr, row, col);
-  } */else {
+  }else {
 	  printf("Non valid function \"%s\" to test\n", argv[1]);
 	  return 1;
   }
