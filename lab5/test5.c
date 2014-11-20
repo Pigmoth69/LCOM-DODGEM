@@ -144,6 +144,7 @@ int test_line(unsigned short xi, unsigned short yi,
 		           unsigned short xf, unsigned short yf, unsigned long color) {
 
 
+
 	if((video_mem=(char*)vg_init(MODE1024))==0)
 	{
 		vg_exit();
@@ -165,116 +166,119 @@ int test_line(unsigned short xi, unsigned short yi,
 		return -1;
 	}
 
+
+
 	double declive;
-	if(xf==xi==yf==yi)
+
+	if(xi == xf && xi == yi && xi == yf && xf == yi && xf == yf && yi == yf)
 	{
 		set_pixel(xi,yi,color);
-	}else
-	{
-
-		if(xf-xi ==0)
-		{
-			if(yf-yi>0)
-			{
-				int i=0;
-				for(i;i< yf-yi;i++)
-					set_pixel(xi,yi+i,color);
-			}else
-			{
-				int i=0;
-				for(i;i< yi-yf;i++)
-					set_pixel(xi,yf+i,color);
-			}
-
-		}
-		else if(yf-yi==0)
-		{
-
-			if(xf-xi>0)
-			{
-				int i=0;
-				for(i;i< xf-xi;i++)
-					set_pixel(xi+i,yi,color);
-			}else
-			{
-				int i=0;
-				for(i;i< xi-xf;i++)
-					set_pixel(xf+i,yf,color);
-			}
-		}else if((declive = (double)(yf-yi)/(double)(xf-xi))>= 0)
-		{
-
-			if(yf-yi >0 && xf-xi >0)
-			{
-				if(xf-xi > yf-yi)
-				{
-
-					int i =0;
-					for(i; i< xf-xi;i++)
-						set_pixel(xi+i,(int)(declive*(xi+i)),color);
-
-				}else
-				{
-					int i =0;
-					for(i; i< yf-yi;i++)
-						set_pixel((int)((yi+i)/declive),yi+i,color);
-				}
-			}else
-			{
-				if(xf-xi < yf-yi)
-				{
-
-					int i =0;
-					for(i; i< xi-xf;i++)
-						set_pixel(xf+i,(int)(declive*(xf+i)),color);
-
-				}else
-				{
-					int i =0;
-					for(i; i< yi-yf;i++)
-						set_pixel((int)((yf+i)/declive),yf+i,color);
-				}
-
-			}
-
-		}else					//declive negativo
-		{
-
-			if(yf-yi <0 && xf-xi >0)
-			{
-				if(abs(xf-xi) > abs(yf-yi))
-				{
-
-					int i =0;
-					for(i; i< xf-xi;i++)
-						set_pixel(xi+i,abs(yi+(int)(declive*(xi+i))),color);
-
-				}else
-				{
-					int i =0;
-					for(i; i< yf-yi;i++)
-						set_pixel((int)((yi+i)/declive),yi+i,color);
-				}
-			}else
-			{
-
-				if(abs(xf-xi) < abs(yf-yi))
-				{
-
-					int i =0;
-					for(i; i< xi-xf;i++)
-						set_pixel(xf+i,abs(yf+(int)(declive*(xf+i))),color);
-
-				}else
-				{
-					int i =0;
-					for(i; i< yi-yf;i++)
-						set_pixel((int)((yf+i)/declive),yf+i,color);
-
-				}
-			}
-		}
 	}
+	else
+	{
+        if(xf-xi ==0)
+        {
+                if(yf-yi>0)
+                {
+                        int i=0;
+                        for(i;i< yf-yi;i++)
+                                set_pixel(xi,yi+i,color);
+                }else
+                {
+                        int i=0;
+                        for(i;i< yi-yf;i++)
+                                set_pixel(xi,yf+i,color);
+                }
+        }
+        else if(yf-yi==0)
+        {
+                if(xf-xi>0)
+                {
+                        int i=0;
+                        for(i;i< xf-xi;i++)
+                                set_pixel(xi+i,yi,color);
+                }else
+                {
+                        int i=0;
+                        for(i;i< xi-xf;i++)
+                                set_pixel(xf+i,yf,color);
+                }
+        }else if((declive = (double)(yf-yi)/(double)(xf-xi))> 0)
+        {
+
+        	if(xf-xi > 0 && yf-yi > 0)
+        	{
+        		if(xf-xi > yf-yi)
+        		{
+        		int i = 0;
+        		int b = yi-declive*xi;
+        		for(i; i<xf-xi;i++)
+        			set_pixel(xi+i,(int)(declive*(xi+i)+b),color);
+        		}
+        		else
+        		{
+        			int i = 0;
+        			int b = yi-declive*xi;
+        			for(i; i<yf-yi;i++)
+        				set_pixel((int)((yi+i-b)/declive),yi+i,color);
+        		}
+        	}
+        	else		// significa que as coordenadas estão trocadas!
+        	{
+        		if(xi-xf > yi-yf)
+        		{
+        			int i = 0;
+        			int b = yi-declive*xi;
+        			for(i; i<xi-xf;i++)
+        				set_pixel(xf+i,(int)(declive*(xf+i)+b),color);
+        		}
+        		else
+        		{
+        			int i = 0;
+        			int b = yi-declive*xi;
+        			for(i; i<yi-yf;i++)
+        				set_pixel((int)((yf+i-b)/declive),yf+i,color);
+        		}
+        	}
+
+        }
+        else		//declive negativo!
+        {
+        	if(xf-xi > 0 && yf-yi <0)
+        	{
+        		if(abs(xf-xi) > abs(yf-yi))
+        		{
+        			int i = 0;
+        			int b = yi-declive*xi;
+        			for(i; i < abs(xf-xi);i++)
+        				set_pixel(xf-i,(int)(declive*(xf-i)+b),color);
+        		}else
+        		{
+        			int i = 0;
+        			int b = yi-declive*xi;
+        			for(i; i < abs(yf-yi);i++)
+        				set_pixel((int)((yf+i-b)/declive),yf+i,color);
+        		}
+
+        	}else
+        	{
+        		if(abs(xf-xi) > abs(yf-yi))
+        		{
+        			int i = 0;
+        			int b = yi-declive*xi;
+        			for(i; i < abs(xf-xi);i++)
+        				set_pixel(xi-i,(int)(declive*(xi-i)+b),color);
+        		}else
+        		{
+        			int i = 0;
+        			int b = yi-declive*xi;
+        			for(i; i < abs(yf-yi);i++)
+        				set_pixel((int)((yi+i-b)/declive),yi+i,color);
+        		}
+        	}
+        }
+	}
+
 
 
 
