@@ -22,6 +22,7 @@ void set_pixel(unsigned short x, unsigned short y, unsigned long color)
 void line(xi,yi,xf,yf,color)
 {
 	double declive;
+	int i=0;
 
 		if(xi == xf && xi == yi && xi == yf && xf == yi && xf == yf && yi == yf)
 		{
@@ -29,16 +30,15 @@ void line(xi,yi,xf,yf,color)
 		}
 		else
 		{
-	        if(xf-xi ==0)
-	        {
+
+			if(xf-xi ==0)
+			{
 	                if(yf-yi>0)
 	                {
-	                        int i=0;
 	                        for(i;i< yf-yi;i++)
 	                                set_pixel(xi,yi+i,color);
 	                }else
 	                {
-	                        int i=0;
 	                        for(i;i< yi-yf;i++)
 	                                set_pixel(xi,yf+i,color);
 	                }
@@ -47,31 +47,26 @@ void line(xi,yi,xf,yf,color)
 	        {
 	                if(xf-xi>0)
 	                {
-	                        int i=0;
 	                        for(i;i< xf-xi;i++)
 	                                set_pixel(xi+i,yi,color);
 	                }else
 	                {
-	                        int i=0;
 	                        for(i;i< xi-xf;i++)
 	                                set_pixel(xf+i,yf,color);
 	                }
 	        }else if((declive = (double)(yf-yi)/(double)(xf-xi))> 0)
 	        {
+        		int b = yi-declive*xi;
 
 	        	if(xf-xi > 0 && yf-yi > 0)
 	        	{
 	        		if(xf-xi > yf-yi)
 	        		{
-	        		int i = 0;
-	        		int b = yi-declive*xi;
 	        		for(i; i<xf-xi;i++)
 	        			set_pixel(xi+i,(int)(declive*(xi+i)+b),color);
 	        		}
 	        		else
 	        		{
-	        			int i = 0;
-	        			int b = yi-declive*xi;
 	        			for(i; i<yf-yi;i++)
 	        				set_pixel((int)((yi+i-b)/declive),yi+i,color);
 	        		}
@@ -80,35 +75,28 @@ void line(xi,yi,xf,yf,color)
 	        	{
 	        		if(xi-xf > yi-yf)
 	        		{
-	        			int i = 0;
-	        			int b = yi-declive*xi;
 	        			for(i; i<xi-xf;i++)
 	        				set_pixel(xf+i,(int)(declive*(xf+i)+b),color);
 	        		}
 	        		else
 	        		{
-	        			int i = 0;
-	        			int b = yi-declive*xi;
 	        			for(i; i<yi-yf;i++)
 	        				set_pixel((int)((yf+i-b)/declive),yf+i,color);
 	        		}
 	        	}
-
 	        }
 	        else		//declive negativo!
 	        {
+	        	int b = yi-declive*xi;
+
 	        	if(xf-xi > 0 && yf-yi <0)
 	        	{
 	        		if(abs(xf-xi) > abs(yf-yi))
 	        		{
-	        			int i = 0;
-	        			int b = yi-declive*xi;
 	        			for(i; i < abs(xf-xi);i++)
 	        				set_pixel(xf-i,(int)(declive*(xf-i)+b),color);
 	        		}else
 	        		{
-	        			int i = 0;
-	        			int b = yi-declive*xi;
 	        			for(i; i < abs(yf-yi);i++)
 	        				set_pixel((int)((yf+i-b)/declive),yf+i,color);
 	        		}
@@ -117,14 +105,10 @@ void line(xi,yi,xf,yf,color)
 	        	{
 	        		if(abs(xf-xi) > abs(yf-yi))
 	        		{
-	        			int i = 0;
-	        			int b = yi-declive*xi;
 	        			for(i; i < abs(xf-xi);i++)
 	        				set_pixel(xi-i,(int)(declive*(xi-i)+b),color);
 	        		}else
 	        		{
-	        			int i = 0;
-	        			int b = yi-declive*xi;
 	        			for(i; i < abs(yf-yi);i++)
 	        				set_pixel((int)((yi+i-b)/declive),yi+i,color);
 	        		}
@@ -166,7 +150,7 @@ int test_square(unsigned short x, unsigned short y, unsigned short size, unsigne
 			return 0;
 		}
 
-	if(x+size > MODE1024_H_RES||y+size>MODE1024_V_RES)
+	if(x+size >= MODE1024_H_RES||y+size>=MODE1024_V_RES)
 	{
 		vg_exit();
 		printf("writing ouf of memory\n");
@@ -267,7 +251,7 @@ int test_line(unsigned short xi, unsigned short yi,
 		return 0;
 	}
 
-	if(xf > MODE1024_H_RES || yf > MODE1024_V_RES || yi > MODE1024_V_RES || xi > MODE1024_H_RES)
+	if(xf >= MODE1024_H_RES || yf >= MODE1024_V_RES || yi >= MODE1024_V_RES || xi >= MODE1024_H_RES)
 	{
 		vg_exit();
 		printf("writing ouf of memory\n");
