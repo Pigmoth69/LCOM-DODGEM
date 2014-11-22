@@ -22,7 +22,6 @@ int main(int argc, char **argv) {
 
   sef_startup();
 
-
   if ( argc == 1 ) {
       print_usage(argv);
       return 0;
@@ -37,8 +36,11 @@ static void print_usage(char *argv[]) {
   printf("Usage: one of the following:\n"
 	 "\t service run %s -args \"test_init <mode> <delay>\" \n"
 	 "\t service run %s -args \"test_square <x> <y> <size> <color>\" \n"
+	 "\t service run %s -args \"test_line <xi> <yi> <xf> <yf>\"\n"
+	 "\t service run %s -args \"test_xpm <xi> <yi> <image>\"\n"
+	 "\t service run %s -args \"test_line <xi> <yi> <xf> <yf>\"\n"
 	 "\t service run %s -args \"test_line <xi> <yi> <xf> <yf>\"\n",
-	 argv[0], argv[0], argv[0]);
+	 argv[0], argv[0], argv[0],argv[0],argv[0],argv[0]);
 
 }
 
@@ -82,6 +84,56 @@ static int proc_args(int argc, char *argv[]) {
 	  test_line(parse_ulong(argv[2], 10),parse_ulong(argv[3], 10),parse_ulong(argv[4], 10),parse_ulong(argv[5], 10),parse_ulong(argv[6], 16));
 	  return 0;
 
+  }else if (strncmp(argv[1], "test_xpm", strlen("test_xpm")) == 0) {
+	  if( argc != 5 ) {
+		  printf("test_xpm: wrong no of arguments for test of test_xpm \n");
+		  return 1;
+	  }
+	  char ** imagem = readImage(argv[4]);
+	  if(imagem == NULL)
+	  {
+		  printf("Invalid image!\n");
+		  return 0;
+	  }
+
+
+	  test_xpm(parse_ulong(argv[2], 10),parse_ulong(argv[3], 10),imagem);
+	  return 0;
+
+
+
+
+
+
+
+
+
+
+
+  }else if (strncmp(argv[1], "test_line", strlen("test_line")) == 0) {
+	  if( argc != 7 ) {
+		  printf("test_line: wrong no of arguments for test of test_line \n");
+		  return 1;
+	  }
+	  if(parse_ulong(argv[6], 16)==ULONG_MAX)
+	 	  {
+	 		  printf("Out of range!\n");
+	 		  return -1;
+	 	  }
+	  test_line(parse_ulong(argv[2], 10),parse_ulong(argv[3], 10),parse_ulong(argv[4], 10),parse_ulong(argv[5], 10),parse_ulong(argv[6], 16));
+	  return 0;
+  }else if (strncmp(argv[1], "test_line", strlen("test_line")) == 0) {
+	  if( argc != 7 ) {
+		  printf("test_line: wrong no of arguments for test of test_line \n");
+		  return 1;
+	  }
+	  if(parse_ulong(argv[6], 16)==ULONG_MAX)
+	 	  {
+	 		  printf("Out of range!\n");
+	 		  return -1;
+	 	  }
+	  test_line(parse_ulong(argv[2], 10),parse_ulong(argv[3], 10),parse_ulong(argv[4], 10),parse_ulong(argv[5], 10),parse_ulong(argv[6], 16));
+	  return 0;
   }else {
 	  printf("Non valid function \"%s\" to test\n", argv[1]);
 	  return 1;
