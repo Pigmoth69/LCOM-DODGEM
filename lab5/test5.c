@@ -1,11 +1,74 @@
 #include "timer.h"
 #include "keyboard.h"
 #include "vbe.h"
+#include "pixmap.h"
+#include "sprite.h"
+#include "asprite.h"
+
 
 unsigned long keyboard = 0x00;
 int bts =0;
 
 static char *video_mem;
+
+
+int leave_event()
+{
+	int ipc_status;
+	int r;
+	message msg;
+	int irq_set;
+
+	if(( irq_set = KBD_subscribe_int())== -1)
+		return -1;
+
+	while(keyboard != ESC_BREAK_CODE) {
+		/* Get a request message. */
+		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
+		{
+			printf("driver_receive failed with: %d", r);
+			continue;
+		}
+		if (is_ipc_notify(ipc_status)) { /* received notification */
+			switch (_ENDPOINT_P(msg.m_source)) {
+			case HARDWARE: /* hardware interrupt notification */
+				if (msg.NOTIFY_ARG & irq_set)
+				{ /* subscribed interrupt */
+
+					sys_inb(OUT_BUF, &keyboard);// vai à porta buscar e coloca-o em &keyboard
+					printf("%x\n", keyboard);
+					if (keyboard == TWO_BYTES) // verifica se o endereço da tecla possui 2 bytes
+					{
+						bts = 1; //coloca a variavel bts a 1 para mais tarde ver se o endereço é de 2 bytes
+					}
+
+					if (bts == 1) //caso tenha 2 bytes
+					{
+						if ((keyboard & BIT_SIG_0) == keyboard) //verifica se é makecode ou breakcode (BIT mais significativo a 1 ou 0
+						{
+							bts = 0;
+						}
+						else
+						{
+							bts = 0;
+						}
+					}
+				}
+				break;
+			default:
+				break; /* no other notifications expected: do nothing */
+			}
+		} else { /* received a standard message, not a notification */
+			/* no standard messages expected: do nothing */
+		}
+	}
+
+	if(KBD_unsubscribe_int()!= 1)
+		return -1;
+
+	return 0;
+
+}
 
 void set_pixel(unsigned short x, unsigned short y, unsigned long color)
 {
@@ -19,7 +82,7 @@ void set_pixel(unsigned short x, unsigned short y, unsigned long color)
 
 }
 
-void line(xi,yi,xf,yf,color)
+void line(unsigned short xi, unsigned short yi,unsigned short xf, unsigned short yf, unsigned long color)
 {
 	double declive;
 	int i=0;
@@ -120,7 +183,7 @@ void line(xi,yi,xf,yf,color)
 
 void *test_init(unsigned short mode, unsigned short delay) {
 
-	video_mem = vg_init(mode);
+	video_mem = (char *)vg_init(mode);
 
 	if(video_mem == 0)
 	{
@@ -131,8 +194,45 @@ void *test_init(unsigned short mode, unsigned short delay) {
 	timer_test_int(delay);
 
 	vg_exit();
-	printf("PHYSICAL ADRESS: 0x%x\n",video_mem);
+	printf("VIRTUAL ADDRESS: 0x%x\n",video_mem);
 
+}
+
+void vg_fill(unsigned short mode,unsigned long color)
+{
+	int hres,vres;
+
+	switch(mode){
+
+	case 0x101 :
+		hres=MODE640_H_RES;
+		vres=MODE640_V_RES;
+		break;
+
+	case 0x103 :
+		hres=MODE800_H_RES;
+		vres=MODE800_V_RES;
+		break;
+
+	case 0x105 :
+		hres=MODE1024_H_RES;
+		vres=MODE1024_V_RES;
+		break;
+	case 0x107 :
+		hres=MODE1280_H_RES;
+		vres=MODE1280_V_RES;
+		break;
+
+	}
+
+	size_t x, y;
+	for(x = 0; x < hres; x++)
+	{
+		for(y = 0; y < vres; y++)
+		{
+			set_pixel(x, y, color);
+		}
+	}
 }
 
 int test_square(unsigned short x, unsigned short y, unsigned short size, unsigned long color) {
@@ -177,65 +277,19 @@ int test_square(unsigned short x, unsigned short y, unsigned short size, unsigne
 
 
 
-
-		int ipc_status;
-		int r;
-		message msg;
-		int irq_set;
-
-		if(( irq_set = KBD_subscribe_int())== -1)
-			return -1;
-
-		while(keyboard != ESC_BREAK_CODE) {
-			/* Get a request message. */
-			if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
-			{
-				printf("driver_receive failed with: %d", r);
-				continue;
-			}
-			if (is_ipc_notify(ipc_status)) { /* received notification */
-				switch (_ENDPOINT_P(msg.m_source)) {
-				case HARDWARE: /* hardware interrupt notification */
-					if (msg.NOTIFY_ARG & irq_set)
-					{ /* subscribed interrupt */
-						sys_inb(OUT_BUF, &keyboard);// vai à porta buscar e coloca-o em &keyboard
-						printf("%x\n", keyboard);
-							if (keyboard == TWO_BYTES) // verifica se o endereço da tecla possui 2 bytes
-							{
-								bts = 1; //coloca a variavel bts a 1 para mais tarde ver se o endereço é de 2 bytes
-								return 1; //caso seja de 2 bytes passa ao proximo ciclo
-							}
-
-							if (bts == 1) //caso tenha 2 bytes
-							{
-								if ((keyboard & BIT_SIG_0) == keyboard) //verifica se é makecode ou breakcode (BIT mais significativo a 1 ou 0
-								{
-									bts = 0;
-								}
-								else
-								{
-									bts = 0;
-								}
-							}
-					}
-					break;
-				default:
-					break; /* no other notifications expected: do nothing */
-				}
-			} else { /* received a standard message, not a notification */
-				/* no standard messages expected: do nothing */
-			}
-		}
-
-		if(KBD_unsubscribe_int()!= 1)
-			return -1;
-
-
-//tail -f /usr/log/messages
-
+	if(leave_event() == -1)
+	{
 		vg_exit();
-		return 0;
+		printf("Error leaving event!\n");
+		return -1;
+	}
 
+
+
+	//tail -f /usr/log/messages
+
+	vg_exit();
+	return 0;
 
 }
 
@@ -268,82 +322,112 @@ int test_line(unsigned short xi, unsigned short yi,
 
 	line(xi,yi,xf,yf,color);
 
-
-		int ipc_status;
-		int r;
-		message msg;
-		int irq_set;
-
-		if(( irq_set = KBD_subscribe_int())== -1)
-			return -1;
-
-		while(keyboard != ESC_BREAK_CODE) {
-			/* Get a request message. */
-			if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
-			{
-				printf("driver_receive failed with: %d", r);
-				continue;
-			}
-			if (is_ipc_notify(ipc_status)) { /* received notification */
-				switch (_ENDPOINT_P(msg.m_source)) {
-				case HARDWARE: /* hardware interrupt notification */
-					if (msg.NOTIFY_ARG & irq_set)
-					{ /* subscribed interrupt */
-						sys_inb(OUT_BUF, &keyboard);// vai à porta buscar e coloca-o em &keyboard
-							if (keyboard == TWO_BYTES) // verifica se o endereço da tecla possui 2 bytes
-							{
-								bts = 1; //coloca a variavel bts a 1 para mais tarde ver se o endereço é de 2 bytes
-								return 1; //caso seja de 2 bytes passa ao proximo ciclo
-							}
-
-							if (bts == 1) //caso tenha 2 bytes
-							{
-								if ((keyboard & BIT_SIG_0) == keyboard) //verifica se é makecode ou breakcode (BIT mais significativo a 1 ou 0
-								{
-									bts = 0;
-								}
-								else
-								{
-									bts = 0;
-								}
-							}
-					}
-					break;
-				default:
-					break; /* no other notifications expected: do nothing */
-				}
-			} else { /* received a standard message, not a notification */
-				/* no standard messages expected: do nothing */
-			}
-		}
-
-		if(KBD_unsubscribe_int()!= 1)
-			return -1;
-
-
-//tail -f /usr/log/messages
-
+	if(leave_event() == -1)
+	{
 		vg_exit();
-		return 0;
+		printf("Error leaving event!\n");
+		return -1;
+	}
 
 
 
+	//tail -f /usr/log/messages
 
-
-	
+	vg_exit();
+	return 0;
 }
 
 int test_xpm(unsigned short xi, unsigned short yi, char *xpm[]) {
 	
-	/* To be completed */
+	char *PointerRam;
+
+		if((PointerRam= video_mem = (char*)vg_init(MODE1024))==0)
+			{
+			printf("ERRO\n");
+			return -1;
+			}
+
+		Sprite *sp;
+		if((sp =create_sprite(xpm,PointerRam))==NULL)
+		{
+			vg_exit();
+			printf("Invalid sprite!\n");
+			return 0;
+		}
+
+
+
+		if(xi+(sp->width) >= MODE1024_H_RES||yi+(sp->height)>=MODE1024_V_RES)
+		{
+			vg_exit();
+			printf("writing ouf of screen bounds\n");
+			return 0;
+		}
+
+
+		PointerRam += MODE1024_H_RES*yi+xi;
+
+		int i = 0;
+		int x = 0;
+		int z = 0;
+
+		for(i; i < (sp->height);i++)
+		{
+			for(x;x < (sp->width);x++)
+			{
+				*PointerRam=(sp->map)[z];
+				PointerRam++;
+				z++;
+			}
+			x=0;
+			PointerRam+=(MODE1024_H_RES-(sp->width));
+		}
+
+		if(leave_event() == -1)
+		{
+			vg_exit();
+			printf("Error leaving event!\n");
+			return -1;
+		}
+
+
+
+	//tail -f /usr/log/messages
+
+			vg_exit();
+			return 0;
 	
 }	
 
 int test_move(unsigned short xi, unsigned short yi, char *xpm[], 
 				unsigned short hor, short delta, unsigned short time) {
 	
-	/* To be completed */
 	
+
+
+
+
+
+	if(leave_event() == -1)
+			{
+				vg_exit();
+				printf("Error leaving event!\n");
+				return -1;
+			}
+
+
+
+		//tail -f /usr/log/messages
+
+				vg_exit();
+				return 0;
+
+}
+
+int test_controller() {
+
+	/* To be completed */
+
 }
 
 

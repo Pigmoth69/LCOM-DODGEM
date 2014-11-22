@@ -21,6 +21,7 @@
 #define V_RES		  768
 #define BITS_PER_PIXEL	  8
 
+
 /* Private global variables */
 
 static char *video_mem;		/* Process address to which VRAM is mapped */
@@ -28,6 +29,7 @@ static char *video_mem;		/* Process address to which VRAM is mapped */
 static unsigned h_res;		/* Horizontal screen resolution in pixels */
 static unsigned v_res;		/* Vertical screen resolution in pixels */
 static unsigned bits_per_pixel; /* Number of VRAM bits per pixel */
+
 
 
 void *vg_init(unsigned short mode)

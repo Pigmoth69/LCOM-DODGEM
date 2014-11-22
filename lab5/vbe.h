@@ -16,9 +16,22 @@
  */ 
  
 #define videocard 0x10
+
 #define MODE1024 0x105
 #define MODE1024_H_RES 1024
 #define MODE1024_V_RES 768
+
+#define MODE1280 0x107
+#define MODE1280_H_RES 1280
+#define MODE1280_V_RES 1024
+
+#define MODE800 0x103
+#define MODE800_H_RES 800
+#define MODE800_V_RES 600
+
+#define MODE640 0x101
+#define MODE640_H_RES 640
+#define MODE640_V_RES 480
 
 
 
