@@ -9,8 +9,31 @@
 unsigned long keyboard = 0x00;
 int bts =0;
 
+
+
 static char *video_mem;
 
+void ESC_key_leave()
+{
+	sys_inb(OUT_BUF, &keyboard);// vai à porta buscar e coloca-o em &keyboard
+	printf("%x\n", keyboard);
+	if (keyboard == TWO_BYTES) // verifica se o endereço da tecla possui 2 bytes
+	{
+		bts = 1; //coloca a variavel bts a 1 para mais tarde ver se o endereço é de 2 bytes
+	}
+
+	if (bts == 1) //caso tenha 2 bytes
+	{
+		if ((keyboard & BIT_SIG_0) == keyboard) //verifica se é makecode ou breakcode (BIT mais significativo a 1 ou 0
+		{
+			bts = 0;
+		}
+		else
+		{
+			bts = 0;
+		}
+	}
+}
 
 int leave_event()
 {
@@ -20,7 +43,12 @@ int leave_event()
 	int irq_set;
 
 	if(( irq_set = KBD_subscribe_int())== -1)
-		return -1;
+	{
+		vg_exit();
+		printf("cenasaaaaaaaaaa\n");
+		return 1;
+	}
+
 
 	while(keyboard != ESC_BREAK_CODE) {
 		/* Get a request message. */
@@ -64,7 +92,11 @@ int leave_event()
 	}
 
 	if(KBD_unsubscribe_int()!= 1)
+	{
+		vg_exit();
+		printf("leave event unsubsc error!\n");
 		return -1;
+	}
 
 	return 0;
 
@@ -235,6 +267,16 @@ void vg_fill(unsigned short mode,unsigned long color)
 	}
 }
 
+int sprite_pos_delete(unsigned short xi, unsigned short yi, Sprite *sp)
+{
+	int x,y;
+	for(y=0;y<(sp->height);y++)
+	{
+		for(x=0;x<(sp->width);x++)
+			set_pixel(xi+x,yi+y,0x0);
+	}
+}
+
 int test_square(unsigned short x, unsigned short y, unsigned short size, unsigned long color) {
 	
 	char *PointerRam;
@@ -322,11 +364,14 @@ int test_line(unsigned short xi, unsigned short yi,
 
 	line(xi,yi,xf,yf,color);
 
-	if(leave_event() == -1)
+	if(keyboard != ESC_BREAK_CODE)
 	{
-		vg_exit();
-		printf("Error leaving event!\n");
-		return -1;
+		if(leave_event() == -1)
+		{
+			vg_exit();
+			printf("Error leaving event!\n");
+			return -1;
+		}
 	}
 
 
@@ -348,7 +393,7 @@ int test_xpm(unsigned short xi, unsigned short yi, char *xpm[]) {
 			}
 
 		Sprite *sp;
-		if((sp =create_sprite(xpm,PointerRam))==NULL)
+		if((sp =create_sprite(xpm))==NULL)
 		{
 			vg_exit();
 			printf("Invalid sprite!\n");
@@ -381,13 +426,22 @@ int test_xpm(unsigned short xi, unsigned short yi, char *xpm[]) {
 			}
 			x=0;
 			PointerRam+=(MODE1024_H_RES-(sp->width));
+			ESC_key_leave();
+			if(keyboard== ESC_BREAK_CODE)
+			{
+				x= (sp->height);
+				break;
+			}
 		}
 
-		if(leave_event() == -1)
+		if(keyboard != ESC_BREAK_CODE)
 		{
-			vg_exit();
-			printf("Error leaving event!\n");
-			return -1;
+			if(leave_event() == -1)
+			{
+				vg_exit();
+				printf("Error leaving event!\n");
+				return -1;
+			}
 		}
 
 
@@ -400,33 +454,230 @@ int test_xpm(unsigned short xi, unsigned short yi, char *xpm[]) {
 }	
 
 int test_move(unsigned short xi, unsigned short yi, char *xpm[], 
-				unsigned short hor, short delta, unsigned short time) {
-	
-	
+		unsigned short hor, short delta, unsigned short time) {
+
+
+	int counter = 0;
+
+
+	if((video_mem = (char*)vg_init(MODE1024))==0)
+	{
+		printf("ERRO\n");
+		return -1;
+	}
+
+	printf("time2: %d\n",time);                          // se n tiver isto aqui, o minix não me deixa fazer o time correr! LEL YOLOOOOOO
+
+	Sprite *sp;
+	if((sp =create_sprite(xpm))==NULL)
+	{
+		vg_exit();
+		printf("Invalid sprite!\n");
+		return 0;
+	}
+
+	double vel = (double)(delta)/((double)(time)*(double)(60));
+	double xi_float=(double)xi;
+	double yi_float=(double)yi;
 
 
 
 
 
-	if(leave_event() == -1)
+	unsigned i = 0;
+
+
+
+
+	///////PRIMEIRA POSICAO DA FIGURA È ASSEGURADA POR ESTE CODIGO
+
+	if((int)(xi_float+(sp->width))>= MODE1024_H_RES || (int)(xi_float)< 0 || (int)yi_float <= 0 || (int)(yi_float+(sp->height))>=MODE1024_V_RES-1)
+		i=time;
+
+	int y,x;
+	int pos =0;
+
+	if(hor != 0)
+	{
+		for(y=0;y<(sp->height);y++)
+		{
+			for(x=0;x<(sp->width);x++,pos++)
 			{
-				vg_exit();
-				printf("Error leaving event!\n");
-				return -1;
+				set_pixel(x+(int)(xi_float+vel),y+yi,(sp->map)[pos]);
 			}
+		}
+
+	}else
+	{
+		for(y=0;y<(sp->height);y++)
+		{
+			for(x=0;x<(sp->width);x++,pos++)
+			{
+				set_pixel(x+xi,y+(int)(yi_float+vel),(sp->map)[pos]);
+			}
+		}
+
+	}
+	///////FIM DA PRIMEIRA POSICAO/////
+
+
+	int irq_set;
+	int irq_set2;
+	timer_set_square(0,60); //coloca a frequencia a 60
+	int ipc_status;
+	int r;
+	message msg;
 
 
 
-		//tail -f /usr/log/messages
+	if((irq_set = timer_subscribe_int()) == -1) //subscreve e inicia as interrupções do timer0
+	{
+		vg_exit();
+		printf("erro no timer_subscribeeeeeee!\n");
+		return 1;
+	}
 
-				vg_exit();
-				return 0;
+	if((irq_set2 = KBD_subscribe_int() == -1))
+	{
+		vg_exit();
+		printf("erro no kbd_subscribe!\n");
+		return 1;
+	}
+
+
+	while( i < time) { // enquando a contagem é menor que o valor passado no parametro
+		/* Get a request message. */
+		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
+		{
+			printf("driver_receive failed with: %d", r);
+			continue;
+		}
+		if (is_ipc_notify(ipc_status)) { /* received notification */
+			switch (_ENDPOINT_P(msg.m_source)) {
+			case HARDWARE: /* hardware interrupt notification */
+				if (msg.NOTIFY_ARG & irq_set)
+				{ /* subscribed interrupt */
+					///////inicio//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+					if((int)(xi_float+(sp->width))>= MODE1024_H_RES || (int)(xi_float)< 0 || (int)yi_float <= 0 || (int)(yi_float+(sp->height))>=MODE1024_V_RES-1 )
+					{
+						i=time;
+						break;
+					}
+
+							if(hor != 0)
+							{
+								counter++;
+								if(counter % 60 ==0)
+								{
+									printf("segundos: %d\n",i);
+									i++;
+
+								}
+
+								if((int)xi_float !=(int)(xi_float+vel))
+								{
+									sprite_pos_delete((int)xi_float,yi,sp);
+									pos =0;
+
+									for(y=0;y<(sp->height);y++)
+									{
+										for(x=0;x<(sp->width);x++,pos++)
+										{
+											set_pixel(x+(int)(xi_float+vel),y+yi,(sp->map)[pos]);
+										}
+									}
+									xi_float+=vel;
+								}else
+									xi_float+=vel;
+
+
+							}else
+							{
+								counter++;
+								if(counter % 60 ==0)
+								{
+									printf("segundos: %d\n",i);
+									i++;
+
+								}
+
+								if((int)yi_float !=(int)(yi_float+vel))
+								{
+									sprite_pos_delete(xi,(int)yi_float,sp);
+									pos =0;
+
+									for(y=0;y<(sp->height);y++)
+									{
+										for(x=0;x<(sp->width);x++,pos++)
+										{
+											set_pixel(x+xi,y+(int)(yi_float+vel),(sp->map)[pos]);
+										}
+									}
+									yi_float+=vel;
+								}else
+									yi_float+=vel;
+
+							}
+							ESC_key_leave();
+							if(keyboard == ESC_BREAK_CODE)
+							{
+								i=time;
+								break;
+							}
+				}
+				break;
+			default:
+				break; /* no other notifications expected: do nothing */
+			}
+		} else { /* received a standard message, not a notification */
+			/* no standard messages expected: do nothing */
+
+		}
+	}
+
+	printf("x: %d\n",(int)xi_float);
+	printf("y: %d\n",(int)yi_float);
+
+
+	printf("cegou ao fim!\n");
+
+
+	if(KBD_unsubscribe_int()==-1)
+	{
+		vg_exit();
+		printf("erro no kbd_unsubscribe!\n");
+		return 1;
+	}
+
+
+	if (timer_unsubscribe_int() !=0)  //termina a subscrição, caso dê erro retorna 1
+	{
+		vg_exit();
+		printf("erro no timer_unsubscribe\n");
+		return 1;
+	}
+
+	if(keyboard !=ESC_BREAK_CODE )
+	{
+		if(leave_event() == -1)
+		{
+			vg_exit();
+			printf("Error leaving event!\n");
+			return -1;
+		}
+	}
+
+	//tail -f /usr/log/messages
+
+	vg_exit();
+	return 0;
 
 }
 
 int test_controller() {
 
-	/* To be completed */
+/////
 
 }
 
