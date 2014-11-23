@@ -4,7 +4,7 @@
 #include "timer.h"
 
 int counter = 0;
-int hook_id = 0;
+int hook_id3 = 5;
 
 //123
 int getCounter() {return counter;}
@@ -52,18 +52,20 @@ int timer_set_square(unsigned long timer, unsigned long freq)
 int timer_subscribe_int(void )
 {
 	int hook;
-	hook = hook_id;
-	if (sys_irqsetpolicy(TIMER0_IRQ,IRQ_REENABLE,&hook_id) == OK)
-		if (sys_irqenable(&hook_id) == OK)
+	hook = hook_id3;
+	if (sys_irqsetpolicy(TIMER0_IRQ,IRQ_REENABLE,&hook_id3) == OK)
+		if (sys_irqenable(&hook_id3) == OK)
 			return BIT(hook);
+
+	printf("erro no timer subscribe!!\n");
 
 	return -1;
 }
 
 int timer_unsubscribe_int()
 {
-	if(sys_irqrmpolicy(&hook_id) == OK)
-		if (sys_irqdisable(&hook_id) == OK)
+	if (sys_irqdisable(&hook_id3) == OK)
+		if(sys_irqrmpolicy(&hook_id3) == OK)
 			return 0;
 
 	return 1;
