@@ -19,12 +19,14 @@ int vbe_get_mode_info(unsigned short mode, vbe_mode_info_t *vmi_p) {
 
 
 	char *video_memory= lm_init();
-
-	lm_alloc();
-
 	mmap_t map;
+
+
+	lm_alloc(sizeof(vbe_mode_info_t), &map);
+
+
 	struct reg86u rx;
-	lm_alloc(sizeof(VbeInfoBlock) , &map);
+
 	rx.u.w.ax = 0x4F00;
 	rx.u.w.es = PB2BASE(map.phys);
 	rx.u.w.di = PB2OFF(map.phys);
@@ -35,14 +37,10 @@ int vbe_get_mode_info(unsigned short mode, vbe_mode_info_t *vmi_p) {
 	}
 
 
-	if((*vmi_p = *(vbe_mode_info_t*)map.virtual) == NULL)
-	{
-		lmfree(&map);
-		return 1;
-	}
+	*vmi_p = *(vbe_mode_info_t*)map.virtual;
 
 	lm_free( &map);
-	return video_memory;
+	return *video_memory;
 
 
 }
