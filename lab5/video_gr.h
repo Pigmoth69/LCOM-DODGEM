@@ -8,8 +8,6 @@
  */
 
 
-
-
 /**
  * @brief Initializes the video module in graphics mode
  * 

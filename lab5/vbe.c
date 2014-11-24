@@ -10,11 +10,41 @@
 #define PB2BASE(x) (((x) >> 4) & 0x0F000)
 #define PB2OFF(x) ((x) & 0x0FFFF)
 
+
+
+
+
+
 int vbe_get_mode_info(unsigned short mode, vbe_mode_info_t *vmi_p) {
-  
-  /* To be completed */
-  
-  return 1;
+
+
+	char *video_memory= lm_init();
+
+	lm_alloc();
+
+	mmap_t map;
+	struct reg86u rx;
+	lm_alloc(sizeof(VbeInfoBlock) , &map);
+	rx.u.w.ax = 0x4F00;
+	rx.u.w.es = PB2BASE(map.phys);
+	rx.u.w.di = PB2OFF(map.phys);
+
+	if( sys_int86(&rx) != OK ) { /* call BIOS */
+		printf("error sys_int 86 vbe_get_mode_info\n");
+		return 1;
+	}
+
+
+	if((*vmi_p = *(vbe_mode_info_t*)map.virtual) == NULL)
+	{
+		lmfree(&map);
+		return 1;
+	}
+
+	lm_free( &map);
+	return video_memory;
+
+
 }
 
 
