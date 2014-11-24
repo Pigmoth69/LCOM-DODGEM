@@ -225,8 +225,10 @@ void *test_init(unsigned short mode, unsigned short delay) {
 
 	timer_test_int(delay);
 
+
 	vg_exit();
-	printf("VIRTUAL ADDRESS: 0x%x\n",video_mem);
+	printf("PHYSICAL ADDRESS: 0x%x\n",physicalmem());
+	return video_mem;
 
 }
 
