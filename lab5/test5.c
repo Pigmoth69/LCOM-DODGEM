@@ -595,7 +595,7 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 int test_controller() {
 	VbeInfoBlock v1;
 
-	vbe_get_controller_info(&v1);
+	char* virtual = vbe_get_controller_info(&v1);
 	printf("0x%X \n", v1.VideoModePtr);
 
 	printf("Capabilities: \n");
@@ -632,15 +632,13 @@ int test_controller() {
 	cenas2 = cenas2 & 0xF0000;
 
 	int cenas3 = cenas1 + cenas2;
+	cenas3 = cenas3 + virtual;
+	char * posicao = cenas3;
 
-	printf("cenas: 0x%X\n", cenas3);
-
-
-
-
-
-
-
+	while(*posicao != -1){
+		printf("%x \t", *posicao);
+		posicao++;
+	}
 
 	return 0;
 
