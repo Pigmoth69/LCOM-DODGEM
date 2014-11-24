@@ -48,7 +48,7 @@ int vbe_get_mode_info(unsigned short mode, vbe_mode_info_t *vmi_p) {
 int vbe_get_controller_info(VbeInfoBlock *vmi_p) {
 
 	mmap_t map;
-	char *video_memory= lm_init();
+	int video_memory= lm_init();
 
 	lm_alloc(sizeof(VbeInfoBlock), &map);
 
@@ -73,7 +73,7 @@ int vbe_get_controller_info(VbeInfoBlock *vmi_p) {
 
 	lm_free( &map);
 
-	return *video_memory;
+	return video_memory;
 
 
 }
