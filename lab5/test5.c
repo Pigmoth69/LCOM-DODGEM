@@ -478,7 +478,10 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 		return 0;
 	}
 
-	double vel = (double)(delta)/((double)(time)*(double)(60));
+	double vel =0;
+	int x,y;
+	int pos = 0;
+
 	double xi_float=(double)xi;
 	double yi_float=(double)yi;
 
@@ -493,7 +496,7 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 
 	///////PRIMEIRA POSICAO DA FIGURA È ASSEGURADA POR ESTE CODIGO
 
-	if((int)(xi_float+(sp->width))>= MODE1024_H_RES || (int)(xi_float)< 0 || (int)yi_float <= 0 || (int)(yi_float+(sp->height))>=MODE1024_V_RES-1)
+	/*if((int)(xi_float+(sp->width))>= MODE1024_H_RES || (int)(xi_float)< 0 || (int)yi_float <= 0 || (int)(yi_float+(sp->height))>=MODE1024_V_RES-1)
 		i=time;
 
 	int y,x;
@@ -519,7 +522,7 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 			}
 		}
 
-	}
+	}*/
 	///////FIM DA PRIMEIRA POSICAO/////
 
 
@@ -577,6 +580,17 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 
 								}
 
+
+								for(y=0;y<(sp->height);y++)
+								{
+									for(x=0;x<(sp->width);x++,pos++)
+									{
+										set_pixel(x+(int)(xi_float+vel),y+yi,(sp->map)[pos]);
+									}
+								}
+
+
+
 								if((int)xi_float !=(int)(xi_float+vel))
 								{
 									sprite_pos_delete((int)xi_float,yi,sp);
@@ -592,6 +606,8 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 									xi_float+=vel;
 								}else
 									xi_float+=vel;
+
+								vel = (double)(delta)/((double)(time)*(double)(60));
 
 
 							}else
@@ -619,6 +635,8 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 									yi_float+=vel;
 								}else
 									yi_float+=vel;
+
+								vel = (double)(delta)/((double)(time)*(double)(60));
 
 							}
 							ESC_key_leave();
@@ -677,9 +695,14 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[],
 
 }
 
-int test_controller() {
 
-/////
+
+int test_controller()
+{
+
+
+
+
 
 }
 

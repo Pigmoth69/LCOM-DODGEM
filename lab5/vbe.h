@@ -94,6 +94,31 @@ typedef struct {
   uint8_t Reserved4[190]; 		 /* remainder of ModeInfoBlock */
 } __attribute__((packed)) vbe_mode_info_t;
 
+
+
+
+
+
+typedef struct {
+	uint8_t VbeSignature;
+	uint16_t VbeVersion;
+	uint16_t OemStringPtr;
+	uint8_t Capabilities[4];
+	uint16_t VideoModePtr;
+	uint16_t TotalMemory;
+	uint16_t OemSoftwareRev;
+	uint16_t OemVendorNamePtr;
+	uint16_t OemProductNamePtr;
+	uint16_t OemProductRevPtr;
+	uint8_t Reserved[222];
+	uint8_t OemData[256];
+
+}VbeInfoBlock;
+
+
+
+
+
 /** @} end of vbe_mode_info_t*/
 
 /**

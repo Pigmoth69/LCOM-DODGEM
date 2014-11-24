@@ -39,7 +39,7 @@ static void print_usage(char *argv[]) {
 	 "\t service run %s -args \"test_line <xi> <yi> <xf> <yf>\"\n"
 	 "\t service run %s -args \"test_xpm <xi> <yi> <image>\"\n"
 	 "\t service run %s -args \"test_move <xi> <yi> <image> <hor> <delta> <time>\"\n"
-	 "\t service run %s -args \"test_line <xi> <yi> <xf> <yf>\"\n",
+	 "\t service run %s -args \"test_controller\n",
 	 argv[0], argv[0], argv[0],argv[0],argv[0],argv[0]);
 
 }
@@ -118,18 +118,14 @@ static int proc_args(int argc, char *argv[]) {
 	  test_move(parse_ulong(argv[2], 10),parse_ulong(argv[3], 10),imagem,parse_ulong(argv[5], 10),parse_ulong(argv[6], 10),parse_ulong(argv[7], 10));
 	  return 0;
 
-  }else if (strncmp(argv[1], "test_line", strlen("test_line")) == 0) {
-	  if( argc != 7 ) {
-		  printf("test_line: wrong no of arguments for test of test_line \n");
+  }else if (strncmp(argv[1], "test_controller", strlen("test_controller")) == 0) {
+	  if( argc != 2 ) {
+		  printf("test_controller: wrong no of arguments for test of test_controller \n");
 		  return 1;
 	  }
-	  if(parse_ulong(argv[6], 16)==ULONG_MAX)
-	 	  {
-	 		  printf("Out of range!\n");
-	 		  return -1;
-	 	  }
-	  test_line(parse_ulong(argv[2], 10),parse_ulong(argv[3], 10),parse_ulong(argv[4], 10),parse_ulong(argv[5], 10),parse_ulong(argv[6], 16));
+	  test_controller();
 	  return 0;
+
   }else {
 	  printf("Non valid function \"%s\" to test\n", argv[1]);
 	  return 1;
