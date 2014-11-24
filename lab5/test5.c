@@ -633,10 +633,10 @@ int test_controller() {
 
 	int cenas3 = cenas1 + cenas2;
 	cenas3 = cenas3 + virtual;
-	char * posicao = cenas3;
+	short * posicao = cenas3;
 
 	while(*posicao != -1){
-		printf("%x \t", *posicao);
+		printf("0x%x \t", *posicao);
 		posicao++;
 	}
 
