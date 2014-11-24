@@ -11,10 +11,6 @@
 #define PB2OFF(x) ((x) & 0x0FFFF)
 
 
-
-
-
-
 int vbe_get_mode_info(unsigned short mode, vbe_mode_info_t *vmi_p) {
 
 
@@ -25,13 +21,16 @@ int vbe_get_mode_info(unsigned short mode, vbe_mode_info_t *vmi_p) {
 	lm_alloc(sizeof(vbe_mode_info_t), &map);
 
 
-	struct reg86u rx;
+	struct reg86u reg;
 
-	rx.u.w.ax = 0x4F00;
-	rx.u.w.es = PB2BASE(map.phys);
-	rx.u.w.di = PB2OFF(map.phys);
+	reg.u.w.ax = 0x4F01;
+	reg.u.w.es = PB2BASE(map.phys);
+	reg.u.w.di = PB2OFF(map.phys);
+	reg.u.w.cx = mode;
+	reg.u.b.intno = 0x10;
 
-	if( sys_int86(&rx) != OK ) { /* call BIOS */
+
+	if( sys_int86(&reg) != OK ) { /* call BIOS */
 		printf("error sys_int 86 vbe_get_mode_info\n");
 		return 1;
 	}
@@ -46,3 +45,35 @@ int vbe_get_mode_info(unsigned short mode, vbe_mode_info_t *vmi_p) {
 }
 
 
+int vbe_get_controller_info(VbeInfoBlock *vmi_p) {
+
+	mmap_t map;
+	char *video_memory= lm_init();
+
+	lm_alloc(sizeof(VbeInfoBlock), &map);
+
+
+	struct reg86u reg;
+
+	reg.u.w.ax = 0x4F00;
+	reg.u.w.es = PB2BASE(map.phys);
+	reg.u.w.di = PB2OFF(map.phys);
+	reg.u.b.intno = 0x10;
+
+
+
+	if( sys_int86(&reg) != OK ) { /* call BIOS */
+		printf("error sys_int 86 vbe_get_mode_info\n");
+		return 1;
+	}
+
+
+	*vmi_p = *(VbeInfoBlock*)map.virtual;
+;
+
+	lm_free( &map);
+
+	return *video_memory;
+
+
+}

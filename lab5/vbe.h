@@ -100,20 +100,20 @@ typedef struct {
 
 
 typedef struct {
-	uint8_t VbeSignature;
+	uint8_t VbeSignature[4];
 	uint16_t VbeVersion;
-	uint16_t OemStringPtr;
+	phys_bytes OemStringPtr;
 	uint8_t Capabilities[4];
-	uint16_t VideoModePtr;
+	phys_bytes VideoModePtr;
 	uint16_t TotalMemory;
-	uint16_t OemSoftwareRev;
-	uint16_t OemVendorNamePtr;
-	uint16_t OemProductNamePtr;
-	uint16_t OemProductRevPtr;
+	phys_bytes OemSoftwareRev;
+	phys_bytes OemVendorNamePtr;
+	phys_bytes OemProductNamePtr;
+	phys_bytes OemProductRevPtr;
 	uint8_t Reserved[222];
 	uint8_t OemData[256];
 
-}VbeInfoBlock;
+}__attribute__((packed)) VbeInfoBlock;
 
 
 
@@ -136,5 +136,8 @@ typedef struct {
 int vbe_get_mode_info(unsigned short mode, vbe_mode_info_t *vmi_p);
 
  /** @} end of vbe */
+
+
+int vbe_get_controller_info(VbeInfoBlock *vmi_p);
 
 #endif /* __VBE_H */
