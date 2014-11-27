@@ -1,2 +1,0 @@
-
-Assembly.o:	Assembly.S
