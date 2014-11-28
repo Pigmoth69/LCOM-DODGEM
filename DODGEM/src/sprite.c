@@ -13,7 +13,7 @@ Sprite * create_sprite(char *pic[])
 		return NULL;
 
 	// read the sprite pixmap
-	sp->map = (char*)read_xpm(pic, &(sp->width), &(sp->height));
+	//sp->map = (char*)read_xpm(pic, &(sp->width), &(sp->height));
 
 	if( sp->map == NULL )
 	{

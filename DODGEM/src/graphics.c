@@ -1,13 +1,21 @@
 #include "graphics.h"
 #include "utilities.h"
 #include "minix/syslib.h"
+#include "bitmap.h"
 
-static char *video_mem;
+static short *video_mem;
 
+short * getVideoBuffer()
+{
+	return video_mem;
+}
 
 void graphicsStart(unsigned short mode)
 {
-	video_mem =(char*)vg_init(mode);
+	video_mem =(short*)vg_init(mode);
+	Bitmap* teste;
+	teste= loadBitmap("/home/lcom/DODGEM/res/images/Untitled.bmp");
+	drawBitmap(teste,0,0,ALIGN_LEFT);
 }
 
 void graphicsExit()

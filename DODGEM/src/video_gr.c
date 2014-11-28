@@ -19,7 +19,7 @@
 #define VRAM_PHYS_ADDR	0xF0000000
 #define H_RES             1024
 #define V_RES		  768
-#define BITS_PER_PIXEL	  8
+#define BITS_PER_PIXEL	  16
 
 
 /* Private global variables */
@@ -44,14 +44,14 @@ void *vg_init(unsigned short mode)
 	bits_per_pixel = BITS_PER_PIXEL;
 
 	mr.mr_base = (phys_bytes)(VRAM_PHYS_ADDR);
-	mr.mr_limit = mr.mr_base + h_res*v_res;
+	mr.mr_limit = mr.mr_base + h_res*v_res*bits_per_pixel;
 
 	if( OK != (r = sys_privctl(SELF, SYS_PRIV_ADD_MEM, &mr)))
 		panic("video_txt: sys_privctl (ADD_MEM) failed: %d\n", r);
 
 	/* Map memory */
 
-	video_mem = vm_map_phys(SELF, (void *)mr.mr_base, h_res*v_res);
+	video_mem = vm_map_phys(SELF, (void *)mr.mr_base, h_res*v_res*bits_per_pixel/8);
 
 	if(video_mem == MAP_FAILED)
 		panic("video_txt couldn't map video memory");
