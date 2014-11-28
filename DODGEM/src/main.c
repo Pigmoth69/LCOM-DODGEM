@@ -2,6 +2,8 @@
 #include "graphics.h"
 #include "utilities.h"
 #include "vbe.h"
+#include "bitmap.h"
+#include "DODGEM.h"
 
 
 
@@ -19,7 +21,7 @@ int main(int argc, char **argv) {
 	 */
 
 	graphicsStart(MODE1024);
-	graphics_fill(WHITE);
+	//graphics_fill(WHITE);
 	sleep(5);
 	graphicsExit();
 	return 0;

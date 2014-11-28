@@ -28,6 +28,7 @@ graphics.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/limits.h
 graphics.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/stdio.h
 graphics.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/syslimits.h
 graphics.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include/stdarg.h
+graphics.o:	bitmap.h
 graphics.o:	graphics.c
 graphics.o:	graphics.h
 graphics.o:	utilities.h
