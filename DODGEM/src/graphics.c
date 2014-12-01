@@ -14,8 +14,21 @@ void graphicsStart(unsigned short mode)
 {
 	video_mem =(short*)vg_init(mode);
 	Bitmap* teste;
-	teste= loadBitmap("/home/lcom/DODGEM/res/images/untitled.bmp");
+	teste= loadBitmap("/home/lcom/DODGEM/res/images/menuPrincipal.bmp");
 	drawBitmap(teste,0,0,ALIGN_LEFT);
+	Bitmap* teste1;
+	teste1= loadBitmap("/home/lcom/DODGEM/res/images/DODG'EM.bmp");
+
+//	int i;
+//	int xa = 300;
+//	int ya = 300;
+//	for (i = 0; i < 5; i++){
+//		drawBitmap(teste,0,0,ALIGN_LEFT);
+//		drawBitmap(teste1,xa,ya,ALIGN_LEFT);
+//		xa += 50;
+//		ya += 50;
+//		sleep(1);
+//	}
 }
 
 void graphicsExit()
