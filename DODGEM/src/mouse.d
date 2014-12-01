@@ -48,8 +48,11 @@ mouse.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/string.h
 mouse.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/syslimits.h
 mouse.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/unistd.h
 mouse.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include/stdarg.h
+mouse.o:	DODGEM.h
+mouse.o:	bitmap.h
+mouse.o:	graphics.h
 mouse.o:	i8042.h
-mouse.o:	i8254.h
 mouse.o:	mouse.c
+mouse.o:	mouse.h
 mouse.o:	utilities.h
 mouse.o:	video_gr.h

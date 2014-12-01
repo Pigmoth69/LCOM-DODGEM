@@ -12,31 +12,25 @@
 
 
 int main(int argc, char **argv) {
-	bool correr =true;
 	srand(time(NULL));
 	sef_startup();
 
+	start_DODGEM();
 
+	int x = 0;
 
-	//load DODGEM
-	DODGEM *game = malloc(sizeof(DODGEM));
-	start_DODGEM(game);
-
-
-
-/*
 	do
 	{
+		//drawBitmap(game->MenuImage,0,0,ALIGN_LEFT);
+		show_mouse(100);
+		x++;
 
 
-			//graphics_fill(WHITE);
-			sleep(5);
-
-	}while(correr);*/
+	}while(x<200);
 	//showMainMenu(game);
 
-	drawBitmap(game->MenuImage,0,0,ALIGN_LEFT);
-	sleep(5);
+
+	//sleep(5);
 	//exit_DODGEM(game);
 	vg_exit();
 	return 0;
