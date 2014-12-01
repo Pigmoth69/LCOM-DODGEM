@@ -1,2 +1,0 @@
-
-DODGEM.o:	DODGEM.c
