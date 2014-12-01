@@ -1,2 +1,0 @@
-
-utilities.o:	utilities.c
