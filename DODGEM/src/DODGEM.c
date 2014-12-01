@@ -8,8 +8,9 @@
 
 
 
-void start_DODGEM(DODGEM *game)
+void start_DODGEM()
 {
+	game = malloc(sizeof(DODGEM));
 	graphicsStart(MODE1024);
 	game->MenuImage= loadBitmap("/home/lcom/DODGEM/res/images/MenuPrincipal.bmp");
 	game->GameField= loadBitmap("/home/lcom/DODGEM/res/images/MenuGame.bmp");
@@ -18,7 +19,9 @@ void start_DODGEM(DODGEM *game)
 	game->Enemy2= loadBitmap("/home/lcom/DODGEM/res/images/squareBR.bmp");
 	game->Enemy3= loadBitmap("/home/lcom/DODGEM/res/images/squareTL.bmp");
 	game->Enemy4= loadBitmap("/home/lcom/DODGEM/res/images/squareTR.bmp");
-	game->Cursor = loadBitmap("/home/lcom/DODGEM/res/images/cursor.bmp");
+	game->Cursor = loadBitmap("/home/lcom/DODGEM/res/images/mouse.bmp");
+	game->CursorLeft = loadBitmap("/home/lcom/DODGEM/res/images/mouseLeftButton.bmp");
+	game->CursorRight = loadBitmap("/home/lcom/DODGEM/res/images/mouseRightButton.bmp");
 	//game->irq_set_mouse = MOUSE_subscribe_int();
 	//game->irq_set_keyboard = KBD_subscribe_int();
 	//game->irq_set_time =;

@@ -13,16 +13,18 @@ typedef struct{
 	Bitmap* Enemy3;
 	Bitmap* Enemy4;
 	Bitmap* Cursor;
+	Bitmap* CursorLeft;
+	Bitmap* CursorRight;
 
 	int irq_set_mouse;
 	int irq_set_keyboard;
 	int irq_set_time;
 }DODGEM;
 
-DODGEM DODGEM_t;
+DODGEM * game;
 
 
-void start_DODGEM(DODGEM  *game);
+void start_DODGEM();
 void exit_DODGEM(DODGEM *game);
 //void showMainMenu(DODGEM *game);
 #endif
