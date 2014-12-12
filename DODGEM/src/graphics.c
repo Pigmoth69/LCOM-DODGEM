@@ -7,15 +7,23 @@
 
 
 static short *video_mem;
+static short *DOUB_BUF;
+
 
 short * getVideoBuffer()
+{
+	return DOUB_BUF;
+}
+
+short * getVideoMem()
 {
 	return video_mem;
 }
 
 void graphicsStart(unsigned short mode)
 {
-	video_mem =(short*)vg_init(mode);
+	video_mem = (short*)vg_init(mode);
+	DOUB_BUF = video_mem;
 }
 
 void graphicsExit()

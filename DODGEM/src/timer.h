@@ -2,6 +2,7 @@
 #define __TIMER_H
 
 
+extern int counter;
 
 /** @defgroup timer timer
  * @{
@@ -83,7 +84,7 @@ int timer_test_square(unsigned long freq);
  * @param time Length of time interval while interrupts are subscribed
  * @return Return 0 upon success and non-zero otherwise
  */
-int timer_test_int(unsigned long time);
+int timer_test_int();
 
 /**
  * @brief Tests display of timer config

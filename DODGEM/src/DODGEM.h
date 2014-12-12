@@ -21,10 +21,9 @@ typedef struct{
 	int irq_set_time;
 }DODGEM;
 
-DODGEM * game;
-
+extern DODGEM * game;
 
 void start_DODGEM();
-void exit_DODGEM(DODGEM *game);
-//void showMainMenu(DODGEM *game);
+void exit_DODGEM();
+void mainMenu();
 #endif

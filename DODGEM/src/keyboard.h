@@ -11,7 +11,6 @@
 #include <minix/sysutil.h>
 #include <minix/drivers.h>
 #include "i8254.h"
-#include "timer.h"
 
 //#define OK 0
 #define KBD_IRQ 1
@@ -33,24 +32,19 @@
 
 
 
-extern unsigned long keyboard;
+//extern unsigned long keyboard;
 
 
 #define DELAY_US 20000
 
-
-
 int KBD_subscribe_int(void );
 int KBD_unsubscribe_int();
-int KDB_handler_ASS();
-int KDB_handler_C();
-int KBD_toggle_led(int x);
-int asm_handler();
+int KBD_handler_C();
 
 int wait_a_second();
 
 
 int send_cmd();
-int rec_cmd();
+//int rec_cmd();
 
 #endif /* KEYBOARD_H_ */
