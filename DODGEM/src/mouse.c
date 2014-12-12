@@ -9,11 +9,21 @@
 
 int hook_id4 = 1;
 
+MOUSE * rato;
+
 unsigned long mouse;
 char mouse_char;
 
 static unsigned int xcoord = MODE1024_H_RES/2;
 static unsigned int ycoord = MODE1024_V_RES/2;
+
+void StartMouse(){
+	rato=malloc(sizeof(MOUSE));
+	rato->x = MODE1024_H_RES/2;
+	rato->y = MODE1024_V_RES/2;
+	rato->button = 0;
+	rato->lastButton = 0;
+}
 
 int MOUSE_subscribe_int() {
 	int hook;
@@ -89,38 +99,62 @@ int show_mouse() {
 	}
 }
 
-void drawMouse(int button, int x, int y) //Esta a imprimir a partir do local do rato para baixo e direiro, é preciso alterar
+void drawMouse() //Esta a imprimir a partir do local do rato para baixo e direiro, é preciso alterar
 {
-	if (button == 0)
-		drawBitmap(game->Cursor, x, y, ALIGN_LEFT);
-	else if (button == 1)
-		drawBitmap(game->CursorLeft, x, y, ALIGN_LEFT);
-	else if (button == 2)
-		drawBitmap(game->CursorRight, x, y, ALIGN_LEFT);
+	if (rato->button == 0)
+		drawBitmap(game->Cursor, rato->x, rato->y, ALIGN_LEFT);
+	else if (rato->button == 1)
+		drawBitmap(game->CursorLeft, rato->x, rato->y, ALIGN_LEFT);
+	else if (rato->button == 2)
+		drawBitmap(game->CursorRight, rato->x, rato->y, ALIGN_LEFT);
 }
 
 
 
 
 void print_mouse(unsigned char *packets) {
-	xcoord +=(char)packets[1];
-	ycoord -=(char)packets[2];
 
-	if (xcoord < 0)
-		xcoord = 0;
-	if (ycoord < 0)
-		ycoord = 0;
-	if (xcoord > MODE1024_H_RES)
-		xcoord = (MODE1024_H_RES - 16);
-	if (ycoord > MODE1024_V_RES)
-		ycoord = (MODE1024_V_RES - 16);
+	xcoord +=(char)packets[1];
+	ycoord -= (char)packets[2];
+
+//	if (xcoord + (char)packets[1] < 0)
+//		xcoord = 0;
+//	else
+//		xcoord +=(char)packets[1];
+//
+//	if (ycoord - (char)packets[2] < 0)
+//		ycoord = 0;
+//	else
+//		ycoord -=(char)packets[2];
+//
+//	if (xcoord + (char)packets[1] > MODE1024_H_RES)
+//		xcoord = (MODE1024_H_RES - 16);
+//	else
+//		xcoord += (char)packets[1];
+//
+//	if (ycoord - (char)packets[2] > MODE1024_V_RES)
+//		ycoord = (MODE1024_V_RES - 16);
+//	else
+//		ycoord -= (char)packets[2];
+
+	rato->x = xcoord;
+	rato->y = ycoord;
+
+	rato->lastButton = rato->button;
 
 	if((BIT(0) & packets[0]) != 0)
-		drawMouse(1,(int)(xcoord+(char)packets[1]),(int)(ycoord+(char)packets[2]));
+		rato->button = 1;
 	else if (((BIT(1) & packets[0]) >> 1) != 0)
-		drawMouse(2,(int)(xcoord+(char)packets[1]),(int)(ycoord+(char)packets[2]));
+		rato->button = 2;
 	else
-		drawMouse(0,(int)(xcoord+(char)packets[1]),(int)(ycoord+(char)packets[2]));
+		rato->button = 0;
+
+//	if((BIT(0) & packets[0]) != 0)
+//		drawMouse(1,(int)(xcoord),(int)(ycoord));
+//	else if (((BIT(1) & packets[0]) >> 1) != 0)
+//		drawMouse(2,(int)(xcoord),(int)(ycoord));
+//	else
+//		drawMouse(0,(int)(xcoord),(int)(ycoord));
 }
 
 
@@ -161,5 +195,13 @@ int rec_cmd(){
 		tickdelay(micros_to_ticks(DELAY_US));
 	}
 }
+
+//int checkOption(){
+//	if ()
+//}
+
+
+
+
 
 
