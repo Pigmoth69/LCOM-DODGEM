@@ -6,8 +6,8 @@
 #include <stdbool.h>
 
 
-static short *video_mem;
-static short *DOUB_BUF;
+static uint16_t *video_mem;
+static uint16_t *DOUB_BUF;
 
 
 short * getVideoBuffer()
@@ -23,13 +23,14 @@ short * getVideoMem()
 void graphicsStart(unsigned short mode)
 {
 	video_mem = (short*)vg_init(mode);
-	DOUB_BUF = video_mem;
+	DOUB_BUF = malloc(MODE1024_H_RES * MODE1024_V_RES * 2);
 }
 
 void graphicsExit()
 {
 	vg_exit();
 }
+
 
 void set_pixel(unsigned short x, unsigned short y, unsigned long color) {
 	*(video_mem + x + y * MODE1024_H_RES) = color;

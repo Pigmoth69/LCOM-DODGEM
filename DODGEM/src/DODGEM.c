@@ -9,6 +9,13 @@
 
 DODGEM * game;
 
+void test123(){
+	drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
+	//drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
+	memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+	sleep(5);
+}
+
 void start_DODGEM()
 {
 	game = malloc(sizeof(DODGEM));
@@ -55,7 +62,7 @@ void mainMenu()
 
 
 	drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
-	//memcpy(getVideoBuffer(), getVideoMem(), MODE1024_H_RES*MODE1024_V_RES);
+	memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
 	while(keyboard!= ESC_KEY) {
 		/* Get a request message. */
@@ -66,8 +73,6 @@ void mainMenu()
 		}
 
 
-
-		drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
 
 
 
@@ -86,9 +91,9 @@ void mainMenu()
 				if (msg.NOTIFY_ARG & game->irq_set_mouse)
 				{ /* subscribed interrupt */
 					MOUSE_int_handler();
+					drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
 					show_mouse();
-
-					//memcpy(getVideoBuffer(), getVideoMem(), sizeof(getVideoMem()));
+					memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 					break;
 				}
 
