@@ -26,4 +26,5 @@ extern DODGEM * game;
 void start_DODGEM();
 void exit_DODGEM();
 void mainMenu();
+void test123();
 #endif

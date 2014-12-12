@@ -16,6 +16,7 @@ int main(int argc, char **argv) {
 	sef_startup();
 
 	start_DODGEM();
+	//test123();
 	mainMenu();
 
 	exit_DODGEM();
