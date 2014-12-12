@@ -33,6 +33,28 @@ void start_DODGEM()
 	game->irq_set_mouse = MOUSE_send_command();
 	game->irq_set_keyboard = KBD_subscribe_int();
 	game->irq_set_time = timer_subscribe_int();
+	game->FPS = 60;
+	StartOptions();
+	StartMouse();
+}
+
+void StartOptions(){
+	game->PlayOption = malloc(sizeof(rectangle));
+	game->HSOption = malloc(sizeof(rectangle));
+	game->ExitOption = malloc(sizeof(rectangle));
+
+	game->PlayOption->xi = 340;
+	game->PlayOption->xf = 684;
+	game->PlayOption->yi = 256;
+	game->PlayOption->yf = 334;
+	game->HSOption->xi = game->PlayOption->xi;
+	game->HSOption->xf = game->PlayOption->xf;
+	game->HSOption->yi = 338;
+	game->HSOption->yf = 416;
+	game->ExitOption->xi = game->PlayOption->xi;
+	game->ExitOption->xf = game->PlayOption->xf;
+	game->ExitOption->yi = 420;
+	game->ExitOption->yf = 496;
 }
 
 void exit_DODGEM()
@@ -82,7 +104,14 @@ void mainMenu()
 				if (msg.NOTIFY_ARG & game->irq_set_time)
 				{ /* subscribed interrupt */
 					timer_int_handler();
+					printf("subscreve timer \n");
 
+					if (getCounter() % (60/game->FPS) == 0){
+						printf("int \n");
+						drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
+						drawMouse();
+						memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+					}
 				}
 				if (msg.NOTIFY_ARG & game->irq_set_keyboard)
 				{ /* subscribed interrupt */
@@ -91,10 +120,8 @@ void mainMenu()
 				if (msg.NOTIFY_ARG & game->irq_set_mouse)
 				{ /* subscribed interrupt */
 					MOUSE_int_handler();
-					drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
 					show_mouse();
-					memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-					break;
+
 				}
 
 				break;
