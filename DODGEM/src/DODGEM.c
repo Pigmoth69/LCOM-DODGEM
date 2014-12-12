@@ -55,7 +55,7 @@ void mainMenu()
 
 
 	drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
-	memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES*MODE1024_V_RES);
+	//memcpy(getVideoBuffer(), getVideoMem(), MODE1024_H_RES*MODE1024_V_RES);
 
 	while(keyboard!= ESC_KEY) {
 		/* Get a request message. */
@@ -88,7 +88,7 @@ void mainMenu()
 					MOUSE_int_handler();
 					show_mouse();
 
-					memcpy(getVideoMem(), getVideoBuffer(), sizeof(getVideoMem()));
+					//memcpy(getVideoBuffer(), getVideoMem(), sizeof(getVideoMem()));
 					break;
 				}
 
