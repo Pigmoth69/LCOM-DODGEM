@@ -5,8 +5,9 @@
 #include "video_gr.h"
 #include "graphics.h"
 #include "mouse.h"
+#include "timer.h"
 
-
+DODGEM * game;
 
 void start_DODGEM()
 {
@@ -22,12 +23,12 @@ void start_DODGEM()
 	game->Cursor = loadBitmap("/home/lcom/DODGEM/res/images/mouse.bmp");
 	game->CursorLeft = loadBitmap("/home/lcom/DODGEM/res/images/mouseLeftButton.bmp");
 	game->CursorRight = loadBitmap("/home/lcom/DODGEM/res/images/mouseRightButton.bmp");
-	//game->irq_set_mouse = MOUSE_subscribe_int();
-	//game->irq_set_keyboard = KBD_subscribe_int();
-	//game->irq_set_time =;
+	game->irq_set_mouse = MOUSE_send_command();
+	game->irq_set_keyboard = KBD_subscribe_int();
+	game->irq_set_time = timer_subscribe_int();
 }
 
-void exit_DODGEM(DODGEM *game)
+void exit_DODGEM()
 {
 	deleteBitmap(game->MenuImage);
 	deleteBitmap(game->GameField);
@@ -39,11 +40,65 @@ void exit_DODGEM(DODGEM *game)
 	deleteBitmap(game->Cursor);
 	game->irq_set_mouse = MOUSE_unsubscribe_int();
 	game->irq_set_keyboard = KBD_unsubscribe_int();
+	game->irq_set_time = timer_unsubscribe_int();
 	graphicsExit();
 }
-/*
-void showMainMenu(DODGEM *game)
+
+void mainMenu()
 {
+	timer_set_square(0, 60);
+
+	int ipc_status;
+	int r;
+	message msg;
+	unsigned long keyboard = 0x0;
+
+
 	drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
+	memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES*MODE1024_V_RES);
+
+	while(keyboard!= ESC_KEY) {
+		/* Get a request message. */
+		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
+		{
+			printf("driver_receive failed with: %d", r);
+			continue;
+		}
+
+
+
+		drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
+
+
+
+		if (is_ipc_notify(ipc_status)) { /* received notification */
+			switch (_ENDPOINT_P(msg.m_source)) {
+			case HARDWARE: /* hardware interrupt notification */
+				if (msg.NOTIFY_ARG & game->irq_set_time)
+				{ /* subscribed interrupt */
+					timer_int_handler();
+
+				}
+				if (msg.NOTIFY_ARG & game->irq_set_keyboard)
+				{ /* subscribed interrupt */
+					keyboard = KBD_handler_C();
+				}
+				if (msg.NOTIFY_ARG & game->irq_set_mouse)
+				{ /* subscribed interrupt */
+					MOUSE_int_handler();
+					show_mouse();
+
+					memcpy(getVideoMem(), getVideoBuffer(), sizeof(getVideoMem()));
+					break;
+				}
+
+				break;
+			default:
+				break; /* no other notifications expected: do nothing */
+			}
+		} else { /* received a standard message, not a notification */
+			/* no standard messages expected: do nothing */
+		}
+	}
 }
-*/
+

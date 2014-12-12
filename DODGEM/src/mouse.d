@@ -54,5 +54,6 @@ mouse.o:	graphics.h
 mouse.o:	i8042.h
 mouse.o:	mouse.c
 mouse.o:	mouse.h
+mouse.o:	timer.h
 mouse.o:	utilities.h
 mouse.o:	video_gr.h

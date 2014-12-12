@@ -16,22 +16,8 @@ int main(int argc, char **argv) {
 	sef_startup();
 
 	start_DODGEM();
+	mainMenu();
 
-	int x = 0;
-
-	do
-	{
-		//drawBitmap(game->MenuImage,0,0,ALIGN_LEFT);
-		show_mouse(100);
-		x++;
-
-
-	}while(x<200);
-	//showMainMenu(game);
-
-
-	//sleep(5);
-	//exit_DODGEM(game);
-	vg_exit();
+	exit_DODGEM();
 	return 0;
 }

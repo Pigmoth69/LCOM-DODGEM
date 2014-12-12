@@ -51,5 +51,4 @@ keyboard.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include/stdarg.h
 keyboard.o:	i8254.h
 keyboard.o:	keyboard.c
 keyboard.o:	keyboard.h
-keyboard.o:	timer.h
 keyboard.o:	utilities.h
