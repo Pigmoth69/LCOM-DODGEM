@@ -17,8 +17,17 @@ int main(int argc, char **argv) {
 
 	start_DODGEM();
 	//test123();
-	mainMenu();
+	int MainOption = mainMenu();
 
 	exit_DODGEM();
+	printf("O Utilizador escolheu a opcao %d: ", MainOption);
+	if (MainOption == 1)
+		printf("PLAY \n");
+	else if (MainOption == 2)
+		printf("HIGHSCORES \n");
+	else if (MainOption == 3)
+		printf("EXIT \n");
+
+
 	return 0;
 }

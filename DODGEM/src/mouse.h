@@ -4,7 +4,7 @@
 typedef struct{
 	int x;
 	int y;
-	int button; //0(None), 1(Left), 2(Right)
+	int button; //0(None), 1(Left), 2(Right), 3(Middle), 4(LR), 5(LRM)
 	int lastButton;
 }MOUSE;
 

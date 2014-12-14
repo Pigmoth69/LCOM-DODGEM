@@ -23,6 +23,9 @@ typedef struct{
 	Bitmap* Cursor;
 	Bitmap* CursorLeft;
 	Bitmap* CursorRight;
+	Bitmap* CursorLR;
+	Bitmap* CursorLRM;
+	Bitmap* CursorMiddle;
 	rectangle * PlayOption;
 	rectangle * HSOption;
 	rectangle * ExitOption;
@@ -39,6 +42,7 @@ extern DODGEM * game;
 void StartOptions();
 void start_DODGEM();
 void exit_DODGEM();
-void mainMenu();
+int mainMenu(); //return the option chosen
 void test123();
+int checkOption(); //see if the user clicked any option from menu. 0(None), 1(Play), 2(HS), 3(Exit)
 #endif
