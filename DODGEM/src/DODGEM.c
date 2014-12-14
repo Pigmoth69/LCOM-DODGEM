@@ -27,9 +27,12 @@ void start_DODGEM()
 	game->Enemy2= loadBitmap("/home/lcom/DODGEM/res/images/squareBR.bmp");
 	game->Enemy3= loadBitmap("/home/lcom/DODGEM/res/images/squareTL.bmp");
 	game->Enemy4= loadBitmap("/home/lcom/DODGEM/res/images/squareTR.bmp");
-	game->Cursor = loadBitmap("/home/lcom/DODGEM/res/images/mouse.bmp");
-	game->CursorLeft = loadBitmap("/home/lcom/DODGEM/res/images/mouseLeftButton.bmp");
-	game->CursorRight = loadBitmap("/home/lcom/DODGEM/res/images/mouseRightButton.bmp");
+	game->Cursor = loadBitmap("/home/lcom/DODGEM/res/images/rato20.bmp");
+	game->CursorLeft = loadBitmap("/home/lcom/DODGEM/res/images/rato20L.bmp");
+	game->CursorRight = loadBitmap("/home/lcom/DODGEM/res/images/rato20R.bmp");
+	game->CursorLR = loadBitmap("/home/lcom/DODGEM/res/images/rato20LR.bmp");
+	game->CursorLRM = loadBitmap("/home/lcom/DODGEM/res/images/rato20LRM.bmp");
+	game->CursorMiddle = loadBitmap("/home/lcom/DODGEM/res/images/rato20M.bmp");
 	game->irq_set_mouse = MOUSE_send_command();
 	game->irq_set_keyboard = KBD_subscribe_int();
 	game->irq_set_time = timer_subscribe_int();
@@ -73,7 +76,7 @@ void exit_DODGEM()
 	graphicsExit();
 }
 
-void mainMenu()
+int mainMenu()
 {
 	timer_set_square(0, 60);
 
@@ -81,6 +84,7 @@ void mainMenu()
 	int r;
 	message msg;
 	unsigned long keyboard = 0x0;
+	int firstMove = 0;
 
 
 	drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
@@ -104,13 +108,17 @@ void mainMenu()
 				if (msg.NOTIFY_ARG & game->irq_set_time)
 				{ /* subscribed interrupt */
 					timer_int_handler();
-					printf("subscreve timer \n");
 
 					if (getCounter() % (60/game->FPS) == 0){
-						printf("int \n");
+
+
 						drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
 						drawMouse();
 						memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+						int option = 0;
+						option = checkOption();
+						if (option == 1 || option == 2 || option == 3)
+							return option;
 					}
 				}
 				if (msg.NOTIFY_ARG & game->irq_set_keyboard)
@@ -132,5 +140,43 @@ void mainMenu()
 			/* no standard messages expected: do nothing */
 		}
 	}
+
+	return 3;
 }
+
+int checkOption(){
+	if (rato->x < game->PlayOption->xi || rato->x > game->PlayOption->xf)
+		return 0;
+	if (rato->y < game->PlayOption->yi || rato->y > game->ExitOption->yf)
+		return 0;
+
+	if (rato->y < game->PlayOption->yf)
+	{
+		if (rato->button != 1)
+			return 0;
+		else
+			return 1;
+	}
+	else if (rato->y > game->HSOption->yi && rato->y < game->HSOption->yf)
+	{
+		if (rato->button != 1)
+			return 0;
+		else
+			return 2;
+	}
+	else if (rato->y > game->ExitOption->yi && rato->y < game->ExitOption->yf)
+	{
+		if (rato->button != 1)
+			return 0;
+		else
+			return 3;
+	}
+	else
+	{
+		return 0;
+	}
+
+
+}
+
 

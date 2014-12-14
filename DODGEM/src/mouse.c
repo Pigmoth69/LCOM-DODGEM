@@ -99,7 +99,7 @@ int show_mouse() {
 	}
 }
 
-void drawMouse() //Esta a imprimir a partir do local do rato para baixo e direiro, é preciso alterar
+void drawMouse()
 {
 	if (rato->button == 0)
 		drawBitmap(game->Cursor, rato->x, rato->y, ALIGN_LEFT);
@@ -107,6 +107,12 @@ void drawMouse() //Esta a imprimir a partir do local do rato para baixo e direir
 		drawBitmap(game->CursorLeft, rato->x, rato->y, ALIGN_LEFT);
 	else if (rato->button == 2)
 		drawBitmap(game->CursorRight, rato->x, rato->y, ALIGN_LEFT);
+	else if (rato->button == 3)
+		drawBitmap(game->CursorMiddle, rato->x, rato->y, ALIGN_LEFT);
+	else if (rato->button == 4)
+		drawBitmap(game->CursorLR, rato->x, rato->y, ALIGN_LEFT);
+	else if (rato->button == 5)
+		drawBitmap(game->CursorLRM, rato->x, rato->y, ALIGN_LEFT);
 }
 
 
@@ -142,12 +148,18 @@ void print_mouse(unsigned char *packets) {
 
 	rato->lastButton = rato->button;
 
-	if((BIT(0) & packets[0]) != 0)
-		rato->button = 1;
+	if ((BIT(0) & packets[0]) != 0 && (BIT(1) & packets[0]) >> 1 != 0 && (BIT(2) & packets[0]) >> 2 != 0)
+		rato->button = 5; //LRM
+	else if ((BIT(0) & packets[0]) != 0 && (BIT(1) & packets[0]) >> 1 != 0)
+		rato->button = 4; //LR
 	else if (((BIT(1) & packets[0]) >> 1) != 0)
-		rato->button = 2;
+		rato->button = 2; //R
+	else if ((BIT(2) & packets[0]) >> 2 != 0)
+		rato->button = 3; //M
+	else if((BIT(0) & packets[0]) != 0)
+		rato->button = 1; //L
 	else
-		rato->button = 0;
+		rato->button = 0; //None
 
 //	if((BIT(0) & packets[0]) != 0)
 //		drawMouse(1,(int)(xcoord),(int)(ycoord));
@@ -166,10 +178,10 @@ void print_mouse(unsigned char *packets) {
 			packets[0],
 			 packets[1],
 			  packets[2],
-			   (BIT(0) & packets[0]),
+			   (BIT(0) & packets[0]),  //LB
 
-			(BIT(2) & packets[0]) >> 2,
-			(BIT(1) & packets[0]) >> 1,
+			(BIT(2) & packets[0]) >> 2,   //MD
+			(BIT(1) & packets[0]) >> 1,	  //RB
 
 			(BIT(6) & packets[0]) >> 6,
 			 (BIT(7) & packets[0]) >> 7,
