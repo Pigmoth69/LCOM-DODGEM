@@ -14,8 +14,8 @@ MOUSE * rato;
 unsigned long mouse;
 char mouse_char;
 
-static unsigned int xcoord = MODE1024_H_RES/2;
-static unsigned int ycoord = MODE1024_V_RES/2;
+static  int xcoord = MODE1024_H_RES/2;
+static  int ycoord = MODE1024_V_RES/2;
 
 void StartMouse(){
 	rato=malloc(sizeof(MOUSE));
@@ -120,28 +120,19 @@ void drawMouse()
 
 void print_mouse(unsigned char *packets) {
 
-	xcoord +=(char)packets[1];
-	ycoord -= (char)packets[2];
+	if (xcoord + (char)packets[1] < 0)
+		xcoord = 0;
+	else if (xcoord + (char)packets[1] > (MODE1024_H_RES - 20))
+		xcoord = (MODE1024_H_RES - 20);
+	else
+		xcoord += (char)packets[1];
 
-//	if (xcoord + (char)packets[1] < 0)
-//		xcoord = 0;
-//	else
-//		xcoord +=(char)packets[1];
-//
-//	if (ycoord - (char)packets[2] < 0)
-//		ycoord = 0;
-//	else
-//		ycoord -=(char)packets[2];
-//
-//	if (xcoord + (char)packets[1] > MODE1024_H_RES)
-//		xcoord = (MODE1024_H_RES - 16);
-//	else
-//		xcoord += (char)packets[1];
-//
-//	if (ycoord - (char)packets[2] > MODE1024_V_RES)
-//		ycoord = (MODE1024_V_RES - 16);
-//	else
-//		ycoord -= (char)packets[2];
+	if (ycoord - (char)packets[2] < 0)
+		ycoord = 0;
+	else if (ycoord - (char)packets[2] > (MODE1024_V_RES - 20))
+		ycoord = (MODE1024_V_RES - 20);
+	else
+		ycoord -= (char)packets[2];
 
 	rato->x = xcoord;
 	rato->y = ycoord;

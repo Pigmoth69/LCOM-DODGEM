@@ -111,14 +111,15 @@ int mainMenu()
 
 					if (getCounter() % (60/game->FPS) == 0){
 
-
-						drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
-						drawMouse();
-						memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-						int option = 0;
-						option = checkOption();
-						if (option == 1 || option == 2 || option == 3)
-							return option;
+						//if (firstMove > 2){
+							drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
+							drawMouse();
+							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+							int option = 0;
+							option = checkOption();
+							if (option == 1 || option == 2 || option == 3)
+								return option;
+						//}
 					}
 				}
 				if (msg.NOTIFY_ARG & game->irq_set_keyboard)
@@ -129,6 +130,8 @@ int mainMenu()
 				{ /* subscribed interrupt */
 					MOUSE_int_handler();
 					show_mouse();
+//					if (firstMove < 3)
+//						firstMove++;
 
 				}
 

@@ -19,6 +19,7 @@ int main(int argc, char **argv) {
 	//test123();
 	int MainOption = mainMenu();
 
+
 	exit_DODGEM();
 	printf("O Utilizador escolheu a opcao %d: ", MainOption);
 	if (MainOption == 1)
