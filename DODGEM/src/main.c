@@ -15,20 +15,34 @@ int main(int argc, char **argv) {
 	srand(time(NULL));
 	sef_startup();
 
+	int MainOption;
+
 	start_DODGEM();
-	//test123();
-	int MainOption = mainMenu();
+	do
+	{
+		//test123(); // falta fazer uma função para checkar a opção escolhida!
 
+		MainOption = mainMenu();
 
+		switch(MainOption)
+		{
+		case 1:// Menu em que aparece o jogo!
+			MainOption = gameMenu();
+			break;
+		case 2:// Menu em que aparecem os highscores
+			MainOption = highscoreMenu();
+			break;
+		case 3:
+		{
+			MainOption = exitMenu();
+			break;
+		}
+
+		}
+
+	}while(MainOption!= 3);
 	exit_DODGEM();
-	printf("O Utilizador escolheu a opcao %d: ", MainOption);
-	if (MainOption == 1)
-		printf("PLAY \n");
-	else if (MainOption == 2)
-		printf("HIGHSCORES \n");
-	else if (MainOption == 3)
-		printf("EXIT \n");
 
 
 	return 0;
-}
+	}

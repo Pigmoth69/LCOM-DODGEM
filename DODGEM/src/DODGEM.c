@@ -45,19 +45,35 @@ void StartOptions(){
 	game->PlayOption = malloc(sizeof(rectangle));
 	game->HSOption = malloc(sizeof(rectangle));
 	game->ExitOption = malloc(sizeof(rectangle));
+	game->gameMenuOption = malloc(sizeof(rectangle));
+	game->submitScore = malloc(sizeof(rectangle));
 
 	game->PlayOption->xi = 340;
 	game->PlayOption->xf = 684;
 	game->PlayOption->yi = 256;
 	game->PlayOption->yf = 334;
+
 	game->HSOption->xi = game->PlayOption->xi;
 	game->HSOption->xf = game->PlayOption->xf;
 	game->HSOption->yi = 338;
 	game->HSOption->yf = 416;
+
 	game->ExitOption->xi = game->PlayOption->xi;
 	game->ExitOption->xf = game->PlayOption->xf;
 	game->ExitOption->yi = 420;
 	game->ExitOption->yf = 496;
+
+	game->gameMenuOption->xi = 55;
+	game->gameMenuOption->xf = 175;
+	game->gameMenuOption->yi = 55;
+	game->gameMenuOption->yf = 95;
+
+	game->submitScore->xi=55;
+	game->submitScore->xf=295;
+	game->submitScore->yi=685;
+	game->submitScore->yf=745;
+
+
 }
 
 void exit_DODGEM()
@@ -97,11 +113,6 @@ int mainMenu()
 			printf("driver_receive failed with: %d", r);
 			continue;
 		}
-
-
-
-
-
 		if (is_ipc_notify(ipc_status)) { /* received notification */
 			switch (_ENDPOINT_P(msg.m_source)) {
 			case HARDWARE: /* hardware interrupt notification */
@@ -116,7 +127,7 @@ int mainMenu()
 							drawMouse();
 							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 							int option = 0;
-							option = checkOption();
+							option = checkMenuOption();
 							if (option == 1 || option == 2 || option == 3)
 								return option;
 						//}
@@ -147,7 +158,7 @@ int mainMenu()
 	return 3;
 }
 
-int checkOption(){
+int checkMenuOption(){
 	if (rato->x < game->PlayOption->xi || rato->x > game->PlayOption->xf)
 		return 0;
 	if (rato->y < game->PlayOption->yi || rato->y > game->ExitOption->yf)
@@ -181,5 +192,113 @@ int checkOption(){
 
 
 }
+
+int gameMenu() // esta função tem os menus de jogo todos juntamente com os powerups(talvez) e tem e a chamada à função de jogo!
+{
+	timer_set_square(0, 60);
+
+	int ipc_status;
+	int r;
+	message msg;
+	unsigned long keyboard = 0x0;
+	int firstMove = 0;
+
+
+	drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
+	memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+
+	while(keyboard!= ESC_KEY) {
+		/* Get a request message. */
+		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
+		{
+			printf("driver_receive failed with: %d", r);
+			continue;
+		}
+		if (is_ipc_notify(ipc_status)) { /* received notification */
+			switch (_ENDPOINT_P(msg.m_source)) {
+			case HARDWARE: /* hardware interrupt notification */
+				if (msg.NOTIFY_ARG & game->irq_set_time)
+				{ /* subscribed interrupt */
+					timer_int_handler();
+
+					if (getCounter() % (60/game->FPS) == 0){
+
+						//if (firstMove > 2){
+							drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
+							drawMouse();
+							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+
+							if (checkGameOption() == 1)
+								keyboard = ESC_KEY;
+
+						//}
+					}
+				}
+				if (msg.NOTIFY_ARG & game->irq_set_keyboard)
+				{ /* subscribed interrupt */
+					keyboard = KBD_handler_C();
+				}
+				if (msg.NOTIFY_ARG & game->irq_set_mouse)
+				{ /* subscribed interrupt */
+					MOUSE_int_handler();
+					show_mouse();
+//					if (firstMove < 3)
+//						firstMove++;
+				}
+
+				break;
+			default:
+				break; /* no other notifications expected: do nothing */
+			}
+		} else { /* received a standard message, not a notification */
+			/* no standard messages expected: do nothing */
+		}
+	}
+	printf("gameMenu()\n");
+	return 1;
+}
+
+int checkGameOption()
+{
+	if((rato->x > game->gameMenuOption->xi) && (rato->x < game->gameMenuOption->xf)&&
+			(rato->y > game->gameMenuOption->yi) && (rato->y < game->gameMenuOption->yf))
+	{
+		if (rato->button == 1)
+		{
+			return 1;
+		}
+		else
+			return 0;
+	}
+
+
+
+
+  /*
+    game->gameMenuOption->xi = 55;
+	game->gameMenuOption->xf = 175;
+	game->gameMenuOption->yi = 55;
+	game->gameMenuOption->yi = 95;
+
+	game->submitScore->xi=55;
+	game->submitScore->xf=295;
+	game->submitScore->yi=685;
+	game->submitScore->yf=745;
+	*/
+}
+
+int highscoreMenu() // esta função chama o menu de highscores
+{
+	printf("highscoreMenu()\n");
+	return 2;
+}
+
+int exitMenu()	//esta função faz exit de tudo
+{
+	printf("exitMenu()\n");
+	return 3;
+}
+
+
 
 

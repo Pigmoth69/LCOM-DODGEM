@@ -29,6 +29,8 @@ typedef struct{
 	rectangle * PlayOption;
 	rectangle * HSOption;
 	rectangle * ExitOption;
+	rectangle * gameMenuOption;
+	rectangle * submitScore;
 
 	int FPS;
 	int irq_set_mouse;
@@ -44,5 +46,10 @@ void start_DODGEM();
 void exit_DODGEM();
 int mainMenu(); //return the option chosen
 void test123();
-int checkOption(); //see if the user clicked any option from menu. 0(None), 1(Play), 2(HS), 3(Exit)
+int checkMenuOption(); //see if the user clicked any option from menu. 0(None), 1(Play), 2(HS), 3(Exit)
+int gameMenu(); //menu de jogo
+int highscoreMenu(); // menu de pontuações
+int exitMenu(); //sair do jogo
+int checkGameOption(); //verificar a opção de jogo escolhida (juntamente com os powers)
+
 #endif
