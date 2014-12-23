@@ -51,5 +51,8 @@ int gameMenu(); //menu de jogo
 int highscoreMenu(); // menu de pontuações
 int exitMenu(); //sair do jogo
 int checkGameOption(); //verificar a opção de jogo escolhida (juntamente com os powers)
+int playGame(); //função que permite jogar o jogo
+void drawSquares(); //desenha os quadrados do jogo
+
 
 #endif
