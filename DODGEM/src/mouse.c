@@ -101,6 +101,7 @@ int show_mouse() {
 
 void drawMouse()
 {
+
 	if (rato->button == 0)
 		drawBitmap(game->Cursor, rato->x, rato->y, ALIGN_LEFT);
 	else if (rato->button == 1)
@@ -113,6 +114,7 @@ void drawMouse()
 		drawBitmap(game->CursorLR, rato->x, rato->y, ALIGN_LEFT);
 	else if (rato->button == 5)
 		drawBitmap(game->CursorLRM, rato->x, rato->y, ALIGN_LEFT);
+
 }
 
 

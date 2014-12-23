@@ -17,10 +17,10 @@ typedef struct{
 	Bitmap *MenuImage;
 	Bitmap* GameField;
 	Bitmap* PlaySquare;
-	Bitmap* Enemy1;
-	Bitmap* Enemy2;
-	Bitmap* Enemy3;
-	Bitmap* Enemy4;
+	Bitmap* EnemyBL;
+	Bitmap* EnemyBR;
+	Bitmap* EnemyTL;
+	Bitmap* EnemyTR;
 	Bitmap* Cursor;
 	Bitmap* CursorLeft;
 	Bitmap* CursorRight;
@@ -61,7 +61,8 @@ int highscoreMenu(); // menu de pontuações
 int exitMenu(); //sair do jogo
 int checkGameOption(); //verificar a opção de jogo escolhida (juntamente com os powers)
 int playGame(); //função que permite jogar o jogo
-void UpdateObjPosition(); //atualiza a posicao dos objetos
-
+void UpdateObjPosition(rectangle * Objeto); //atualiza a posicao dos objetos
+void UpdateAllObjects(); // faz o update dos objetos todos
+void drawAllObjects(); // desenha todos os objetos
 
 #endif

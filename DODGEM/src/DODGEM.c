@@ -11,10 +11,7 @@
 
 DODGEM * game;
 
-int xpos =500;
-int ypos =100;
-int direcao1 = 1;
-int direcao2 = 1;
+int vel = 8;
 
 void test123(){
 	drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
@@ -30,10 +27,10 @@ void start_DODGEM()
 	game->MenuImage= loadBitmap("/home/lcom/DODGEM/res/images/MenuPrincipal.bmp");
 	game->GameField= loadBitmap("/home/lcom/DODGEM/res/images/MenuGame.bmp");
 	game->PlaySquare= loadBitmap("/home/lcom/DODGEM/res/images/MainSquare.bmp");
-	game->Enemy1= loadBitmap("/home/lcom/DODGEM/res/images/squareBL.bmp");
-	game->Enemy2= loadBitmap("/home/lcom/DODGEM/res/images/squareBR.bmp");
-	game->Enemy3= loadBitmap("/home/lcom/DODGEM/res/images/squareTL.bmp");
-	game->Enemy4= loadBitmap("/home/lcom/DODGEM/res/images/squareTR.bmp");
+	game->EnemyBL= loadBitmap("/home/lcom/DODGEM/res/images/squareBL.bmp");
+	game->EnemyBR= loadBitmap("/home/lcom/DODGEM/res/images/squareBR.bmp");
+	game->EnemyTL= loadBitmap("/home/lcom/DODGEM/res/images/squareTL.bmp");
+	game->EnemyTR= loadBitmap("/home/lcom/DODGEM/res/images/squareTR.bmp");
 	game->Cursor = loadBitmap("/home/lcom/DODGEM/res/images/rato20.bmp");
 	game->CursorLeft = loadBitmap("/home/lcom/DODGEM/res/images/rato20L.bmp");
 	game->CursorRight = loadBitmap("/home/lcom/DODGEM/res/images/rato20R.bmp");
@@ -127,10 +124,10 @@ void exit_DODGEM()
 	deleteBitmap(game->MenuImage);
 	deleteBitmap(game->GameField);
 	deleteBitmap(game->PlaySquare);
-	deleteBitmap(game->Enemy1);
-	deleteBitmap(game->Enemy2);
-	deleteBitmap(game->Enemy3);
-	deleteBitmap(game->Enemy4);
+	deleteBitmap(game->EnemyBL);
+	deleteBitmap(game->EnemyBR);
+	deleteBitmap(game->EnemyTL);
+	deleteBitmap(game->EnemyTR);
 	deleteBitmap(game->Cursor);
 	game->irq_set_mouse = MOUSE_unsubscribe_int();
 	game->irq_set_keyboard = KBD_unsubscribe_int();
@@ -251,8 +248,10 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 
 
 	drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
+	drawAllObjects();
 	memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
+	sleep(2);
 	while(keyboard!= ESC_KEY) {
 		/* Get a request message. */
 		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
@@ -273,11 +272,13 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 							drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
 							drawMouse();
 							//CENAS DE CODIGO
+							UpdateAllObjects();
+							drawAllObjects();
 							printf("cenas\n");
 							//drawSquares();
 
 							//CENAS DE CODIGO
-
+							//memcpy(getTripleBuffer(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
 
@@ -313,8 +314,7 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 			/* no standard messages expected: do nothing */
 		}
 	}
-	xpos =350;
-	ypos =300;
+
 	printf("gameMenu()\n");
 	return 1;
 }
@@ -359,89 +359,80 @@ int exitMenu()	//esta função faz exit de tudo
 }
 
 
-
-int playGame()
-{
-	timer_set_square(0, 60);
-
-		int ipc_status;
-		int r;
-		message msg;
-		unsigned long keyboard = 0x0;
-		int firstMove = 0;
-
-
-		drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
-		memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-
-		while(keyboard!= ESC_KEY) {
-			/* Get a request message. */
-			if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
-			{
-				printf("driver_receive failed with: %d", r);
-				continue;
-			}
-			if (is_ipc_notify(ipc_status)) { /* received notification */
-				switch (_ENDPOINT_P(msg.m_source)) {
-				case HARDWARE: /* hardware interrupt notification */
-					if (msg.NOTIFY_ARG & game->irq_set_time)
-					{ /* subscribed interrupt */
-						timer_int_handler();
-
-						if (getCounter() % (60/game->FPS) == 0){
-
-							//if (firstMove > 2){
-								drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
-								drawMouse();
-								//printf("cenas\n");
-								//drawSquares();
-
-								memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-
-								if (checkGameOption() == 1)
-									keyboard = ESC_KEY;
-								if(checkGameOption() == 2)
-								{
-									highscoreMenu();
-									keyboard = ESC_KEY;
-								}
-
-
-							//}
-						}
-					}
-					if (msg.NOTIFY_ARG & game->irq_set_keyboard)
-					{ /* subscribed interrupt */
-						keyboard = KBD_handler_C();
-					}
-					if (msg.NOTIFY_ARG & game->irq_set_mouse)
-					{ /* subscribed interrupt */
-						MOUSE_int_handler();
-						show_mouse();
-	//					if (firstMove < 3)
-	//						firstMove++;
-					}
-
-					break;
-				default:
-					break; /* no other notifications expected: do nothing */
-				}
-			} else { /* received a standard message, not a notification */
-				/* no standard messages expected: do nothing */
-			}
-		}
-		printf("gameMenu()\n");
-		return 1;
-}
-
-void UpdateObjPosition()
+void UpdateObjPosition(rectangle * Objeto)
 {
 	/*Area jogo -> x[350, 950]; y[50, 650]*/
 	/*squareBL -> x[470, 510]; y[490, 600]*/
+	//Area objetos azuis -> x[300, 1010]; y[5, 675]
 
+	//game->BL->xi
+	//game->BL->direction (1, 2, 3, 4)
 
+	switch(Objeto->direction)
+	{
+	case 1:
+		Objeto->xi += vel; Objeto->xf += vel;
+		Objeto->yi -= vel; Objeto->yf -= vel;
+		break;
+	case 2:
+		Objeto->xi -= vel; Objeto->xf -= vel;
+		Objeto->yi -= vel; Objeto->yf -= vel;
+		break;
+	case 3:
+		Objeto->xi -= vel; Objeto->xf -= vel;
+		Objeto->yi += vel; Objeto->yf += vel;
+		break;
+	case 4:
+		Objeto->xi += vel; Objeto->xf += vel;
+		Objeto->yi += vel; Objeto->yf += vel;
+		break;
+	default:
+		printf("direction tem um valor esquisito \n");
+	}
+
+	if (Objeto->yi <= 5){
+		if (Objeto->direction == 1)
+			Objeto->direction = 4;
+		else
+			Objeto->direction = 3;
+		Objeto->yi = 5;
+	}
+	else if (Objeto->xi <= 300){
+		if (Objeto->direction == 3)
+			Objeto->direction = 4;
+		else
+			Objeto->direction = 1;
+		Objeto->xi = 300;
+	}
+	else if (Objeto->yf >= 675){
+		if (Objeto->direction == 4)
+			Objeto->direction = 1;
+		else
+			Objeto->direction = 2;
+		Objeto->yf = 675;
+	}
+	else if (Objeto->xf >= 1010){
+		if (Objeto->direction == 4)
+			Objeto->direction = 3;
+		else
+			Objeto->direction = 2;
+		Objeto->xf = 1010;
+	}
 }
 
+void UpdateAllObjects()
+{
+	UpdateObjPosition(game->BL);
+	UpdateObjPosition(game->TL);
+	UpdateObjPosition(game->BR);
+	UpdateObjPosition(game->TR);
+}
 
-
+void drawAllObjects()
+{
+	drawBitmap(game->EnemyBL, game->BL->xi, game->BL->yi, ALIGN_LEFT);
+	drawBitmap(game->EnemyBR, game->BR->xi, game->BR->yi, ALIGN_LEFT);
+	drawBitmap(game->EnemyTL, game->TL->xi, game->TL->yi, ALIGN_LEFT);
+	drawBitmap(game->EnemyTR, game->TR->xi, game->TR->yi, ALIGN_LEFT);
+}
 

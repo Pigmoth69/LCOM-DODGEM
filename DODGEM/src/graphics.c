@@ -8,7 +8,12 @@
 
 static uint16_t *video_mem;
 static uint16_t *DOUB_BUF;
+static uint16_t *TRIPLE_BUF;
 
+short * getTripleBuffer()
+{
+	return TRIPLE_BUF;
+}
 
 short * getVideoBuffer()
 {
@@ -24,6 +29,7 @@ void graphicsStart(unsigned short mode)
 {
 	video_mem = (short*)vg_init(mode);
 	DOUB_BUF = malloc(MODE1024_H_RES * MODE1024_V_RES * 2);
+	TRIPLE_BUF = malloc(MODE1024_H_RES * MODE1024_V_RES * 2);
 }
 
 void graphicsExit()
