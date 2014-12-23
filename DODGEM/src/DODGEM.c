@@ -45,6 +45,7 @@ void start_DODGEM()
 	game->irq_set_time = timer_subscribe_int();
 	game->FPS = 60;
 	StartOptions();
+	start_Objects();
 	StartMouse();
 }
 
@@ -81,6 +82,38 @@ void StartOptions(){
 	game->submitScore->yf=745;
 
 
+}
+
+void start_Objects(){
+	game->TL = malloc(sizeof(rectangle));
+	game->TR = malloc(sizeof(rectangle));
+	game->BL = malloc(sizeof(rectangle));
+	game->BR = malloc(sizeof(rectangle));
+
+	game->TL->xi = 400;
+	game->TL->xf = 480;
+	game->TL->yi = 100;
+	game->TL->yf = 180;
+
+	game->TR->xi = 750;
+	game->TR->xf = 850;
+	game->TR->yi = 100;
+	game->TR->yf = 160;
+
+	game->BL->xi = 470;
+	game->BL->xf = 510;
+	game->BL->yi = 490;
+	game->BL->yf = 600;
+
+	game->BR->xi = 730;
+	game->BR->xf = 900;
+	game->BR->yi = 470;
+	game->BR->yf = 520;
+
+	game->MainSquare->xi = 615;
+	game->MainSquare->xf = 685;
+	game->MainSquare->yi = 315;
+	game->MainSquare->yf = 385;
 }
 
 void exit_DODGEM()
@@ -402,7 +435,7 @@ void drawSquares()
 	printf("drawSquare()\n");
 	int rand(void);
 	time_t t;
-	srand((unsigned) time(&t));
+	srand(time(NULL));
 	int x = rand()%1+1;
 	if(x==1)
 		x=1;
