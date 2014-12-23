@@ -89,34 +89,7 @@ void start_Objects(){
 	game->BR = malloc(sizeof(rectangle));
 	game->MainSquare = malloc(sizeof(rectangle));
 
-	game->TL->xi = 400;
-	game->TL->xf = 480;
-	game->TL->yi = 100;
-	game->TL->yf = 180;
-	game->TL->direction = rand() % 4 + 1;
-
-	game->TR->xi = 750;
-	game->TR->xf = 850;
-	game->TR->yi = 100;
-	game->TR->yf = 160;
-	game->TR->direction = rand() % 4 + 1;
-
-	game->BL->xi = 470;
-	game->BL->xf = 510;
-	game->BL->yi = 490;
-	game->BL->yf = 600;
-	game->BL->direction = rand() % 4 + 1;
-
-	game->BR->xi = 730;
-	game->BR->xf = 900;
-	game->BR->yi = 470;
-	game->BR->yf = 520;
-	game->BR->direction = rand() % 4 + 1;
-
-	game->MainSquare->xi = 615;
-	game->MainSquare->xf = 685;
-	game->MainSquare->yi = 315;
-	game->MainSquare->yf = 385;
+	ResetObjects();
 }
 
 void exit_DODGEM()
@@ -346,6 +319,12 @@ int PlayGame(){
 							drawMouseJogo();
 							//CENAS DE CODIGO
 							UpdateAllObjects();
+
+							if (CheckPLayerColision() == 1){
+								keyboard = ESC_KEY;
+								break;
+							}
+
 							drawAllObjects();
 							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
@@ -386,6 +365,8 @@ int PlayGame(){
 			/* no standard messages expected: do nothing */
 		}
 	}
+
+	ResetObjects();
 
 }
 
@@ -517,5 +498,69 @@ void drawAllObjects()
 	drawBitmap(game->EnemyBR, game->BR->xi, game->BR->yi, ALIGN_LEFT);
 	drawBitmap(game->EnemyTL, game->TL->xi, game->TL->yi, ALIGN_LEFT);
 	drawBitmap(game->EnemyTR, game->TR->xi, game->TR->yi, ALIGN_LEFT);
+}
+
+void ResetObjects(){
+	game->TL->xi = 400;
+	game->TL->xf = 480;
+	game->TL->yi = 100;
+	game->TL->yf = 180;
+	game->TL->direction = rand() % 4 + 1;
+
+	game->TR->xi = 750;
+	game->TR->xf = 850;
+	game->TR->yi = 100;
+	game->TR->yf = 160;
+	game->TR->direction = rand() % 4 + 1;
+
+	game->BL->xi = 470;
+	game->BL->xf = 510;
+	game->BL->yi = 490;
+	game->BL->yf = 600;
+	game->BL->direction = rand() % 4 + 1;
+
+	game->BR->xi = 730;
+	game->BR->xf = 900;
+	game->BR->yi = 470;
+	game->BR->yf = 520;
+	game->BR->direction = rand() % 4 + 1;
+
+	game->MainSquare->xi = 615;
+	game->MainSquare->xf = 685;
+	game->MainSquare->yi = 315;
+	game->MainSquare->yf = 385;
+}
+
+int CheckPLayerColision(){
+	if (rato->x < 350 || rato->y < 50 ||
+			(rato->x + 70) > 950 || (rato->y + 70) > 650)
+		return 1;
+	else{
+		if (CheckColisionObj(game->BL) == 1)
+			return 1;
+		if (CheckColisionObj(game->TL) == 1)
+			return 1;
+		if (CheckColisionObj(game->TR) == 1)
+			return 1;
+		if (CheckColisionObj(game->BR) == 1)
+			return 1;
+
+		return 0;
+	}
+}
+
+
+//E preciso verificar colisao entre o rato e os objetos
+int CheckColisionObj(rectangle * Objeto){
+	if (rato->y > Objeto->yf)
+		return 0;
+	else if ((rato->y + (game->MainSquare->yf - game->MainSquare->yi)) < Objeto->yi)
+		return 0;
+	else if (rato->x > Objeto->xf)
+		return 0;
+	else if ((rato->x + (game->MainSquare->xf - game->MainSquare->xi)) < Objeto->xi)
+		return 0;
+	else
+		return 1;
 }
 
