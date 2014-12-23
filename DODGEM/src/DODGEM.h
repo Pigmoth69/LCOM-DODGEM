@@ -64,6 +64,10 @@ int playGame(); //função que permite jogar o jogo
 void UpdateObjPosition(rectangle * Objeto); //atualiza a posicao dos objetos
 void UpdateAllObjects(); // faz o update dos objetos todos
 void drawAllObjects(); // desenha todos os objetos
+void ResetObjects(); //reset nas coordenadas dos objetos
+int CheckPLayerColision(); //verifica se o jogador colidiu (0 - Não, 1 - Sim)
+int CheckColisionObj(rectangle * Objeto); // (0 Não, 1 Sim)
 int PlayGame(); //O jogo em si
+
 
 #endif
