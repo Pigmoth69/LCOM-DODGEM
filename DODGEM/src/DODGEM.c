@@ -6,10 +6,12 @@
 #include "graphics.h"
 #include "mouse.h"
 #include "timer.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 DODGEM * game;
 
-int xpos =350;
+int xpos =500;
 int ypos =100;
 int direcao1 = 1;
 int direcao2 = 1;
@@ -398,21 +400,30 @@ void drawSquares()
 	/*Area jogo -> x[350, 950]; y[50, 650]*/
 	/*squareBL -> x[470, 510]; y[490, 600]*/
 	printf("drawSquare()\n");
-	int vel = 6;
+	int rand(void);
+	time_t t;
+	srand((unsigned) time(&t));
+	int x = rand()%1+1;
+	if(x==1)
+		x=1;
+	else
+		x=-1;
+	int vel1 =  6*x;
+	int vel2 = 6*x;
 
 	switch(direcao1)
 	{
 	case 1:
 	{
 
-		if(xpos+40 < 950)
+		if(xpos+40 < 950 && ypos > 50)
 		{
 			switch(direcao2){
 			case 1:
 			{
 				drawBitmap(game->Enemy1, xpos, ypos, ALIGN_LEFT);
-				xpos+=vel;
-				ypos+=vel;
+				xpos+=vel1;
+				ypos+=vel2;
 				if(ypos+110 >= 650)
 					direcao2=-1;
 				break;
@@ -421,8 +432,8 @@ void drawSquares()
 			case -1:
 			{
 				drawBitmap(game->Enemy1, xpos, ypos, ALIGN_LEFT);
-				xpos+=vel;
-				ypos-=vel;
+				xpos+=vel1;
+				ypos-=vel2;
 				break;
 
 			}
@@ -431,7 +442,7 @@ void drawSquares()
 		}
 		else
 		{
-			drawBitmap(game->Enemy1, xpos-vel, ypos-vel, ALIGN_LEFT);
+			drawBitmap(game->Enemy1, xpos-vel1, ypos-vel2, ALIGN_LEFT);
 			direcao2 = 1;
 			direcao1 =-1;
 			printf("case=-1\n");
@@ -447,8 +458,8 @@ void drawSquares()
 		case 1:
 		{
 			drawBitmap(game->Enemy1, xpos, ypos, ALIGN_LEFT);
-			xpos-=vel;
-			ypos-=vel;
+			xpos-=vel1;
+			ypos-=vel2;
 			if(ypos < 50)
 				direcao2=-1;
 			break;
@@ -458,8 +469,8 @@ void drawSquares()
 		{
 			printf("erro no case -1 da segunda\n");
 			drawBitmap(game->Enemy1, xpos, ypos, ALIGN_LEFT);
-			xpos-=vel;
-			ypos+=vel;
+			xpos-=vel1;
+			ypos+=vel2;
 			if(xpos < 350)
 			{
 				direcao1 = 1;
