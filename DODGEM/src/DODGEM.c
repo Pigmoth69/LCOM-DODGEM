@@ -85,30 +85,36 @@ void StartOptions(){
 }
 
 void start_Objects(){
+	srand(time(NULL));
 	game->TL = malloc(sizeof(rectangle));
 	game->TR = malloc(sizeof(rectangle));
 	game->BL = malloc(sizeof(rectangle));
 	game->BR = malloc(sizeof(rectangle));
+	game->MainSquare = malloc(sizeof(rectangle));
 
 	game->TL->xi = 400;
 	game->TL->xf = 480;
 	game->TL->yi = 100;
 	game->TL->yf = 180;
+	game->TL->direction = rand() % 4 + 1;
 
 	game->TR->xi = 750;
 	game->TR->xf = 850;
 	game->TR->yi = 100;
 	game->TR->yf = 160;
+	game->TR->direction = rand() % 4 + 1;
 
 	game->BL->xi = 470;
 	game->BL->xf = 510;
 	game->BL->yi = 490;
 	game->BL->yf = 600;
+	game->BL->direction = rand() % 4 + 1;
 
 	game->BR->xi = 730;
 	game->BR->xf = 900;
 	game->BR->yi = 470;
 	game->BR->yf = 520;
+	game->BR->direction = rand() % 4 + 1;
 
 	game->MainSquare->xi = 615;
 	game->MainSquare->xf = 685;
@@ -268,7 +274,7 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 							drawMouse();
 							//CENAS DE CODIGO
 							printf("cenas\n");
-							drawSquares();
+							//drawSquares();
 
 							//CENAS DE CODIGO
 
@@ -428,98 +434,10 @@ int playGame()
 		return 1;
 }
 
-void drawSquares()
+void UpdateObjPosition()
 {
 	/*Area jogo -> x[350, 950]; y[50, 650]*/
 	/*squareBL -> x[470, 510]; y[490, 600]*/
-	printf("drawSquare()\n");
-	int rand(void);
-	time_t t;
-	srand(time(NULL));
-	int x = rand()%1+1;
-	if(x==1)
-		x=1;
-	else
-		x=-1;
-	int vel1 =  6*x;
-	int vel2 = 6*x;
-
-	switch(direcao1)
-	{
-	case 1:
-	{
-
-		if(xpos+40 < 950 && ypos > 50)
-		{
-			switch(direcao2){
-			case 1:
-			{
-				drawBitmap(game->Enemy1, xpos, ypos, ALIGN_LEFT);
-				xpos+=vel1;
-				ypos+=vel2;
-				if(ypos+110 >= 650)
-					direcao2=-1;
-				break;
-
-			}
-			case -1:
-			{
-				drawBitmap(game->Enemy1, xpos, ypos, ALIGN_LEFT);
-				xpos+=vel1;
-				ypos-=vel2;
-				break;
-
-			}
-			}
-
-		}
-		else
-		{
-			drawBitmap(game->Enemy1, xpos-vel1, ypos-vel2, ALIGN_LEFT);
-			direcao2 = 1;
-			direcao1 =-1;
-			printf("case=-1\n");
-
-		}
-		break;
-	}
-	case -1:
-	{
-		printf("erro no case-1\n");
-		switch(direcao2)
-		{
-		case 1:
-		{
-			drawBitmap(game->Enemy1, xpos, ypos, ALIGN_LEFT);
-			xpos-=vel1;
-			ypos-=vel2;
-			if(ypos < 50)
-				direcao2=-1;
-			break;
-
-		}
-		case -1:
-		{
-			printf("erro no case -1 da segunda\n");
-			drawBitmap(game->Enemy1, xpos, ypos, ALIGN_LEFT);
-			xpos-=vel1;
-			ypos+=vel2;
-			if(xpos < 350)
-			{
-				direcao1 = 1;
-				direcao2 = 1;
-			}
-			break;
-
-		}
-		}
-
-
-	}
-
-	}
-
-
 
 
 }
