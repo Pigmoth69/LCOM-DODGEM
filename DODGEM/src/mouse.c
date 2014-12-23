@@ -117,7 +117,9 @@ void drawMouse()
 
 }
 
-
+void drawMouseJogo(){
+	drawBitmap(game->PlaySquare, rato->x, rato->y, ALIGN_LEFT);
+}
 
 
 void print_mouse(unsigned char *packets) {

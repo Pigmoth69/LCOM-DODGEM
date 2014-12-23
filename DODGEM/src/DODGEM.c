@@ -251,8 +251,79 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 	drawAllObjects();
 	drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
 	memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+	memcpy(getTripleBuffer(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
-	sleep(2);
+	while(keyboard!= ESC_KEY) {
+		/* Get a request message. */
+		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
+		{
+			printf("driver_receive failed with: %d", r);
+			continue;
+		}
+		if (is_ipc_notify(ipc_status)) { /* received notification */
+			switch (_ENDPOINT_P(msg.m_source)) {
+			case HARDWARE: /* hardware interrupt notification */
+
+				if (msg.NOTIFY_ARG & game->irq_set_time)
+				{ /* subscribed interrupt */
+					timer_int_handler();
+
+					if (getCounter() % (60/game->FPS) == 0){
+
+						memcpy(getVideoBuffer(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+						drawMouse();
+						memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+
+
+						int option = checkGameOption();
+
+						if (option == 1)
+							keyboard = ESC_KEY;
+						else if(option == 2)
+						{
+							highscoreMenu();
+							keyboard = ESC_KEY;
+						}
+						else if(option == 3){
+							PlayGame(); //Comeca o jogo
+							//E necessario fazer algo para quando retorna do jogo
+						}
+
+					}
+				}
+				if (msg.NOTIFY_ARG & game->irq_set_keyboard)
+				{ /* subscribed interrupt */
+					keyboard = KBD_handler_C();
+				}
+				if (msg.NOTIFY_ARG & game->irq_set_mouse)
+				{ /* subscribed interrupt */
+					MOUSE_int_handler();
+					show_mouse();
+//					if (firstMove < 3)
+//						firstMove++;
+				}
+
+				break;
+			default:
+				break; /* no other notifications expected: do nothing */
+			}
+		} else { /* received a standard message, not a notification */
+			/* no standard messages expected: do nothing */
+		}
+	}
+
+
+	return 1;
+}
+
+int PlayGame(){
+
+	int ipc_status;
+	int r;
+	message msg;
+	unsigned long keyboard = 0x0;
+	memcpy(getVideoMem(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+
 	while(keyboard!= ESC_KEY) {
 		/* Get a request message. */
 		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
@@ -272,10 +343,11 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 
 						//if (firstMove > 2){
 							drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
-							drawMouse();
+							drawMouseJogo();
 							//CENAS DE CODIGO
 							UpdateAllObjects();
 							drawAllObjects();
+							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
 							int segundos = (int)getCounter()/60;
 							int centesimas= (int)getCounter()%60;
@@ -291,17 +363,6 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 							//CENAS DE CODIGO
 							//memcpy(getTripleBuffer(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-
-
-							if (checkGameOption() == 1)
-								keyboard = ESC_KEY;
-							if(checkGameOption() == 2)
-							{
-								highscoreMenu();
-								keyboard = ESC_KEY;
-							}
-
-
 						//}
 					}
 				}
@@ -326,8 +387,6 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 		}
 	}
 
-	printf("gameMenu()\n");
-	return 1;
 }
 
 int checkGameOption()
@@ -354,6 +413,19 @@ int checkGameOption()
 		else
 			return 0;
 	}
+	else if ((rato->x > game->MainSquare->xi) && (rato->x < game->MainSquare->xf)&&
+			(rato->y > game->MainSquare->yi) && (rato->y < game->MainSquare->yf))
+	{
+		if ((rato->button == 1) && (rato->lastButton != 1))
+		{
+			printf("PlayGame\n");
+			return 3;
+		}
+		else
+			return 0;
+	}
+	else
+		return 0;
 
 }
 
