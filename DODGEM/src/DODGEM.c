@@ -249,6 +249,7 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 
 	drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
 	drawAllObjects();
+	drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
 	memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
 	sleep(2);
@@ -262,6 +263,7 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 		if (is_ipc_notify(ipc_status)) { /* received notification */
 			switch (_ENDPOINT_P(msg.m_source)) {
 			case HARDWARE: /* hardware interrupt notification */
+
 				if (msg.NOTIFY_ARG & game->irq_set_time)
 				{ /* subscribed interrupt */
 					timer_int_handler();
@@ -274,7 +276,16 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 							//CENAS DE CODIGO
 							UpdateAllObjects();
 							drawAllObjects();
-							printf("cenas\n");
+
+							int segundos = (int)getCounter()/60;
+							int centesimas= (int)getCounter()%60;
+							centesimas= centesimas*100/60;
+							printf("counter %d    ",getCounter());
+
+							if(centesimas <10)
+								printf("%d,0%d s\n",segundos,centesimas);
+							else
+								printf("%d,%d s\n",segundos,centesimas);
 							//drawSquares();
 
 							//CENAS DE CODIGO
