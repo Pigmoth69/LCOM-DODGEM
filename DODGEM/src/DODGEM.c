@@ -9,6 +9,11 @@
 
 DODGEM * game;
 
+int xpos =350;
+int ypos =100;
+int direcao1 = 1;
+int direcao2 = 1;
+
 void test123(){
 	drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
 	//drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
@@ -166,24 +171,24 @@ int checkMenuOption(){
 
 	if (rato->y < game->PlayOption->yf)
 	{
-		if (rato->button != 1)
-			return 0;
-		else
+		if ((rato->button == 1) && (rato->lastButton != 1))
 			return 1;
+		else
+			return 0;
 	}
 	else if (rato->y > game->HSOption->yi && rato->y < game->HSOption->yf)
 	{
-		if (rato->button != 1)
-			return 0;
-		else
-			return 2;
+		if ((rato->button == 1) && (rato->lastButton != 1))
+					return 2;
+				else
+					return 0;
 	}
 	else if (rato->y > game->ExitOption->yi && rato->y < game->ExitOption->yf)
 	{
-		if (rato->button != 1)
-			return 0;
-		else
-			return 3;
+		if ((rato->button == 1) && (rato->lastButton != 1))
+					return 3;
+				else
+					return 0;
 	}
 	else
 	{
@@ -226,10 +231,23 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 						//if (firstMove > 2){
 							drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
 							drawMouse();
+							//CENAS DE CODIGO
+							printf("cenas\n");
+							drawSquares();
+
+							//CENAS DE CODIGO
+
 							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+
 
 							if (checkGameOption() == 1)
 								keyboard = ESC_KEY;
+							if(checkGameOption() == 2)
+							{
+								highscoreMenu();
+								keyboard = ESC_KEY;
+							}
+
 
 						//}
 					}
@@ -254,6 +272,8 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 			/* no standard messages expected: do nothing */
 		}
 	}
+	xpos =350;
+	ypos =300;
 	printf("gameMenu()\n");
 	return 1;
 }
@@ -263,28 +283,26 @@ int checkGameOption()
 	if((rato->x > game->gameMenuOption->xi) && (rato->x < game->gameMenuOption->xf)&&
 			(rato->y > game->gameMenuOption->yi) && (rato->y < game->gameMenuOption->yf))
 	{
-		if (rato->button == 1)
+		if ((rato->button == 1) && (rato->lastButton != 1))
 		{
+			printf("MainMenuButton\n");
 			return 1;
 		}
 		else
 			return 0;
 	}
+	else if((rato->x > game->submitScore->xi) && (rato->x < game->submitScore->xf)&&
+			(rato->y > game->submitScore->yi) && (rato->y < game->submitScore->yf))
+	{
+		if ((rato->button == 1) && (rato->lastButton != 1))
+		{
+			printf("submitScore\n");
+			return 2;
+		}
+		else
+			return 0;
+	}
 
-
-
-
-  /*
-    game->gameMenuOption->xi = 55;
-	game->gameMenuOption->xf = 175;
-	game->gameMenuOption->yi = 55;
-	game->gameMenuOption->yi = 95;
-
-	game->submitScore->xi=55;
-	game->submitScore->xf=295;
-	game->submitScore->yi=685;
-	game->submitScore->yf=745;
-	*/
 }
 
 int highscoreMenu() // esta função chama o menu de highscores
@@ -297,6 +315,169 @@ int exitMenu()	//esta função faz exit de tudo
 {
 	printf("exitMenu()\n");
 	return 3;
+}
+
+
+
+int playGame()
+{
+	timer_set_square(0, 60);
+
+		int ipc_status;
+		int r;
+		message msg;
+		unsigned long keyboard = 0x0;
+		int firstMove = 0;
+
+
+		drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
+		memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+
+		while(keyboard!= ESC_KEY) {
+			/* Get a request message. */
+			if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
+			{
+				printf("driver_receive failed with: %d", r);
+				continue;
+			}
+			if (is_ipc_notify(ipc_status)) { /* received notification */
+				switch (_ENDPOINT_P(msg.m_source)) {
+				case HARDWARE: /* hardware interrupt notification */
+					if (msg.NOTIFY_ARG & game->irq_set_time)
+					{ /* subscribed interrupt */
+						timer_int_handler();
+
+						if (getCounter() % (60/game->FPS) == 0){
+
+							//if (firstMove > 2){
+								drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
+								drawMouse();
+								//printf("cenas\n");
+								//drawSquares();
+
+								memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+
+								if (checkGameOption() == 1)
+									keyboard = ESC_KEY;
+								if(checkGameOption() == 2)
+								{
+									highscoreMenu();
+									keyboard = ESC_KEY;
+								}
+
+
+							//}
+						}
+					}
+					if (msg.NOTIFY_ARG & game->irq_set_keyboard)
+					{ /* subscribed interrupt */
+						keyboard = KBD_handler_C();
+					}
+					if (msg.NOTIFY_ARG & game->irq_set_mouse)
+					{ /* subscribed interrupt */
+						MOUSE_int_handler();
+						show_mouse();
+	//					if (firstMove < 3)
+	//						firstMove++;
+					}
+
+					break;
+				default:
+					break; /* no other notifications expected: do nothing */
+				}
+			} else { /* received a standard message, not a notification */
+				/* no standard messages expected: do nothing */
+			}
+		}
+		printf("gameMenu()\n");
+		return 1;
+}
+
+void drawSquares()
+{
+	/*Area jogo -> x[350, 950]; y[50, 650]*/
+	/*squareBL -> x[470, 510]; y[490, 600]*/
+	printf("drawSquare()\n");
+	int vel = 6;
+
+	switch(direcao1)
+	{
+	case 1:
+	{
+
+		if(xpos+40 < 950)
+		{
+			switch(direcao2){
+			case 1:
+			{
+				drawBitmap(game->Enemy1, xpos, ypos, ALIGN_LEFT);
+				xpos+=vel;
+				ypos+=vel;
+				if(ypos+110 >= 650)
+					direcao2=-1;
+				break;
+
+			}
+			case -1:
+			{
+				drawBitmap(game->Enemy1, xpos, ypos, ALIGN_LEFT);
+				xpos+=vel;
+				ypos-=vel;
+				break;
+
+			}
+			}
+
+		}
+		else
+		{
+			drawBitmap(game->Enemy1, xpos-vel, ypos-vel, ALIGN_LEFT);
+			direcao2 = 1;
+			direcao1 =-1;
+			printf("case=-1\n");
+
+		}
+		break;
+	}
+	case -1:
+	{
+		printf("erro no case-1\n");
+		switch(direcao2)
+		{
+		case 1:
+		{
+			drawBitmap(game->Enemy1, xpos, ypos, ALIGN_LEFT);
+			xpos-=vel;
+			ypos-=vel;
+			if(ypos < 50)
+				direcao2=-1;
+			break;
+
+		}
+		case -1:
+		{
+			printf("erro no case -1 da segunda\n");
+			drawBitmap(game->Enemy1, xpos, ypos, ALIGN_LEFT);
+			xpos-=vel;
+			ypos+=vel;
+			if(xpos < 350)
+			{
+				direcao1 = 1;
+				direcao2 = 1;
+			}
+			break;
+
+		}
+		}
+
+
+	}
+
+	}
+
+
+
+
 }
 
 
