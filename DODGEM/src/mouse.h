@@ -18,6 +18,7 @@ int show_mouse();
 void print_mouse(unsigned char *packets);
 int rec_cmd();
 void drawMouse();
+void drawMouseJogo();
 void StartMouse();
 
 //Check if the user clicked in an option. 0(Exit), 1(play), 2(highscores)
