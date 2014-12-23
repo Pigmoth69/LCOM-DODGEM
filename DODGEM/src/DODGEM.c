@@ -326,7 +326,8 @@ int PlayGame(){
 							}
 
 							drawAllObjects();
-							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+							//draw score!
+							//
 
 							int segundos = (int)getCounter()/60;
 							int centesimas= (int)getCounter()%60;
@@ -337,6 +338,11 @@ int PlayGame(){
 								printf("%d,0%d s\n",segundos,centesimas);
 							else
 								printf("%d,%d s\n",segundos,centesimas);
+							//
+							//end draw score
+
+							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+
 							//drawSquares();
 
 							//CENAS DE CODIGO
