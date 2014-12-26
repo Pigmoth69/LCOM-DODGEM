@@ -199,12 +199,11 @@ void drawBitmapNumber(Bitmap* bmp, int x, int y,int number, Alignment alignment)
 	}
 }
 
-void drawScore(int segundos,int centesimas)
+void drawScore(int x_inicial,int y_inicial,int segundos,int centesimas)
 {
 	/*drawBitmapNumber(game->Numbers,800, 690,segundos, ALIGN_LEFT);*/
 
-	int x_inicial =800;
-	int y_inicial =	690;
+
 
 	unsigned char string[50];
 
