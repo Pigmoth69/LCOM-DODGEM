@@ -37,6 +37,7 @@ void start_DODGEM()
 	game->CursorLR = loadBitmap("/home/lcom/DODGEM/res/images/rato20LR.bmp");
 	game->CursorLRM = loadBitmap("/home/lcom/DODGEM/res/images/rato20LRM.bmp");
 	game->CursorMiddle = loadBitmap("/home/lcom/DODGEM/res/images/rato20M.bmp");
+	game->Numbers = loadBitmap("/home/lcom/DODGEM/res/images/Algarismos.bmp");
 	game->irq_set_mouse = MOUSE_send_command();
 	game->irq_set_keyboard = KBD_subscribe_int();
 	game->irq_set_time = timer_subscribe_int();
@@ -102,6 +103,7 @@ void exit_DODGEM()
 	deleteBitmap(game->EnemyTL);
 	deleteBitmap(game->EnemyTR);
 	deleteBitmap(game->Cursor);
+	deleteBitmap(game->Numbers);
 	game->irq_set_mouse = MOUSE_unsubscribe_int();
 	game->irq_set_keyboard = KBD_unsubscribe_int();
 	game->irq_set_time = timer_unsubscribe_int();
@@ -139,13 +141,17 @@ int mainMenu()
 					if (getCounter() % (60/game->FPS) == 0){
 
 						//if (firstMove > 2){
-							drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
-							drawMouse();
-							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-							int option = 0;
-							option = checkMenuOption();
-							if (option == 1 || option == 2 || option == 3)
-								return option;
+
+						drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
+
+						drawBitmapNumber(game->Numbers,100, 100,5, ALIGN_LEFT);
+						drawBitmapNumber(game->Numbers,139, 100,9, ALIGN_LEFT);
+						drawMouse();
+						memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+						int option = 0;
+						option = checkMenuOption();
+						if (option == 1 || option == 2 || option == 3)
+							return option;
 						//}
 					}
 				}

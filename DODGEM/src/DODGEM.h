@@ -27,11 +27,13 @@ typedef struct{
 	Bitmap* CursorLR;
 	Bitmap* CursorLRM;
 	Bitmap* CursorMiddle;
+	Bitmap* Numbers;
 	rectangle * PlayOption;
 	rectangle * HSOption;
 	rectangle * ExitOption;
 	rectangle * gameMenuOption;
 	rectangle * submitScore;
+
 
 	rectangle * TL;
 	rectangle * TR;

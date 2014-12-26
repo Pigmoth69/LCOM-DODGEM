@@ -126,6 +126,80 @@ void drawBitmap(Bitmap* bmp, int x, int y, Alignment alignment) {
     }
 }
 
+int number_draw_width(int number)
+{
+	if(number == 1)
+		return 39;
+	return 40-1;
+}
+
+void drawBitmapNumber(Bitmap* bmp, int x, int y,int number, Alignment alignment) {
+
+
+	if (bmp == NULL)
+        return;
+
+
+    int width = bmp->bitmapInfoHeader.width;
+    int height = bmp->bitmapInfoHeader.height;
+
+
+    int drawWidth = number_draw_width(number);
+    int xCorrection=0;
+
+    if(number == 0)
+    	xCorrection=0;
+    else if(number == 1)
+    	xCorrection+= 40;
+    else
+    	xCorrection+=(number-1)*40+39+1;
+
+
+
+    if (alignment == ALIGN_CENTER)
+        x -= width / 2;
+    else if (alignment == ALIGN_RIGHT)
+        x -= width;
+
+    if (x + width < 0 || x > MODE1024_H_RES || y + height < 0
+            || y > MODE1024_V_RES)
+        return;
+
+
+    if (x < 0) {
+        xCorrection = -x;
+        drawWidth -= xCorrection;
+        x = 0;
+
+        if (drawWidth > MODE1024_H_RES)
+            drawWidth = MODE1024_H_RES;
+    } else if (x + drawWidth >= MODE1024_H_RES) {
+        drawWidth = MODE1024_H_RES - x;
+    }
+
+    char* bufferStartPos;
+    char* imgStartPos;
+
+
+    int i;
+    for (i = 0; i < height; i++) {
+        int pos = y + height - 1 - i;
+
+        if (pos < 0|| pos >= MODE1024_V_RES)
+        	continue;
+
+        bufferStartPos = getVideoBuffer();
+        bufferStartPos += x * 2 + pos * MODE1024_H_RES * 2;
+
+        imgStartPos = bmp->bitmapData + xCorrection * 2 + i * width * 2;
+
+        memcpy(bufferStartPos, imgStartPos, drawWidth * 2);
+    }
+}
+
+
+
+
 void deleteBitmap(Bitmap* bmp) {
     if (bmp == NULL)
         return;
