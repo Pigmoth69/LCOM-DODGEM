@@ -11,7 +11,7 @@
 
 DODGEM * game;
 
-int vel = 8;
+int vel = 3;
 
 void test123(){
 	drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
@@ -143,9 +143,6 @@ int mainMenu()
 						//if (firstMove > 2){
 
 						drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
-
-						drawBitmapNumber(game->Numbers,100, 100,5, ALIGN_LEFT);
-						drawBitmapNumber(game->Numbers,139, 100,9, ALIGN_LEFT);
 						drawMouse();
 						memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 						int option = 0;
@@ -250,6 +247,7 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 					if (getCounter() % (60/game->FPS) == 0){
 
 						memcpy(getVideoBuffer(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+					//	drawBitmapNumber(game->Numbers,100, 100,10, ALIGN_LEFT);
 						drawMouse();
 						memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
@@ -327,11 +325,13 @@ int PlayGame(){
 							UpdateAllObjects();
 
 							if (CheckPLayerColision() == 1){
+								sleep(5);
 								keyboard = ESC_KEY;
 								break;
 							}
 
 							drawAllObjects();
+
 							//draw score!
 							//
 
@@ -344,6 +344,9 @@ int PlayGame(){
 								printf("%d,0%d s\n",segundos,centesimas);
 							else
 								printf("%d,%d s\n",segundos,centesimas);
+
+							drawScore(segundos,centesimas);
+
 							//
 							//end draw score
 

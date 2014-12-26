@@ -3,6 +3,7 @@
 #include "stdio.h"
 #include "graphics.h"
 #include "utilities.h"
+#include "string.h"
 
 
 
@@ -128,76 +129,108 @@ void drawBitmap(Bitmap* bmp, int x, int y, Alignment alignment) {
 
 int number_draw_width(int number)
 {
-	if(number == 1)
+	if(number == 10)
+		return 20;
+	else
 		return 39;
-	return 40-1;
 }
 
 void drawBitmapNumber(Bitmap* bmp, int x, int y,int number, Alignment alignment) {
 
 
 	if (bmp == NULL)
-        return;
+		return;
 
 
-    int width = bmp->bitmapInfoHeader.width;
-    int height = bmp->bitmapInfoHeader.height;
+	int width = bmp->bitmapInfoHeader.width;
+	int height = bmp->bitmapInfoHeader.height;
 
 
-    int drawWidth = number_draw_width(number);
-    int xCorrection=0;
+	int drawWidth = number_draw_width(number);
+	int xCorrection=0;
 
-    if(number == 0)
-    	xCorrection=0;
-    else if(number == 1)
-    	xCorrection+= 40;
-    else
-    	xCorrection+=(number-1)*40+39+1;
-
-
-
-    if (alignment == ALIGN_CENTER)
-        x -= width / 2;
-    else if (alignment == ALIGN_RIGHT)
-        x -= width;
-
-    if (x + width < 0 || x > MODE1024_H_RES || y + height < 0
-            || y > MODE1024_V_RES)
-        return;
+	if(number == 0)
+		xCorrection=0;
+	else if(number == 1)
+		xCorrection+= 40;
+	else
+		xCorrection+=(number-1)*40+40;
 
 
-    if (x < 0) {
-        xCorrection = -x;
-        drawWidth -= xCorrection;
-        x = 0;
 
-        if (drawWidth > MODE1024_H_RES)
-            drawWidth = MODE1024_H_RES;
-    } else if (x + drawWidth >= MODE1024_H_RES) {
-        drawWidth = MODE1024_H_RES - x;
-    }
+	if (alignment == ALIGN_CENTER)
+		x -= width / 2;
+	else if (alignment == ALIGN_RIGHT)
+		x -= width;
 
-    char* bufferStartPos;
-    char* imgStartPos;
+	if (x + width < 0 || x > MODE1024_H_RES || y + height < 0
+			|| y > MODE1024_V_RES)
+		return;
 
 
-    int i;
-    for (i = 0; i < height; i++) {
-        int pos = y + height - 1 - i;
+	if (x < 0) {
+		xCorrection = -x;
+		drawWidth -= xCorrection;
+		x = 0;
 
-        if (pos < 0|| pos >= MODE1024_V_RES)
-        	continue;
+		if (drawWidth > MODE1024_H_RES)
+			drawWidth = MODE1024_H_RES;
+	} else if (x + drawWidth >= MODE1024_H_RES) {
+		drawWidth = MODE1024_H_RES - x;
+	}
 
-        bufferStartPos = getVideoBuffer();
-        bufferStartPos += x * 2 + pos * MODE1024_H_RES * 2;
+	char* bufferStartPos;
+	char* imgStartPos;
 
-        imgStartPos = bmp->bitmapData + xCorrection * 2 + i * width * 2;
 
-        memcpy(bufferStartPos, imgStartPos, drawWidth * 2);
-    }
+	int i;
+	for (i = 0; i < height; i++) {
+		int pos = y + height - 1 - i;
+
+		if (pos < 0|| pos >= MODE1024_V_RES)
+			continue;
+
+		bufferStartPos = getVideoBuffer();
+		bufferStartPos += x * 2 + pos * MODE1024_H_RES * 2;
+
+		imgStartPos = bmp->bitmapData + xCorrection * 2 + i * width * 2;
+
+		memcpy(bufferStartPos, imgStartPos, drawWidth * 2);
+	}
 }
 
+void drawScore(int segundos,int centesimas)
+{
+	/*drawBitmapNumber(game->Numbers,800, 690,segundos, ALIGN_LEFT);*/
 
+	int x_inicial =800;
+	int y_inicial =	690;
+
+	unsigned char string[50];
+
+	sprintf(string,"%d",segundos);
+
+	int i = 0;
+	for(i; i < strlen(string);i++)
+	{
+		drawBitmapNumber(game->Numbers,x_inicial, y_inicial,string[i]-'0', ALIGN_LEFT);
+		x_inicial+=number_draw_width(string[i]-'0');
+	}
+
+
+	drawBitmapNumber(game->Numbers,x_inicial,y_inicial ,10, ALIGN_LEFT);
+	x_inicial+=number_draw_width(10);
+
+	i = 0;
+	sprintf(string,"%d",centesimas);
+
+	for(i; i < strlen(string);i++)
+		{
+			drawBitmapNumber(game->Numbers,x_inicial, y_inicial,string[i]-'0', ALIGN_LEFT);
+			x_inicial+=number_draw_width(string[i]-'0');
+		}
+
+}
 
 
 void deleteBitmap(Bitmap* bmp) {
