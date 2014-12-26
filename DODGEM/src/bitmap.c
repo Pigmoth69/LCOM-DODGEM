@@ -239,3 +239,9 @@ void deleteBitmap(Bitmap* bmp) {
     free(bmp->bitmapData);
     free(bmp);
 }
+
+void drawLosingText(int segundos, int centesimas){
+    drawBitmap(game->ScoreBackground, 450, 250, ALIGN_LEFT);
+    drawScore(580,350,segundos,centesimas);
+    memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+}

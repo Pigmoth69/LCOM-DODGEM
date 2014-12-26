@@ -12,6 +12,11 @@
 DODGEM * game;
 
 int vel = 8;
+unsigned long keyboard = 0x0;
+int invencibilidade = 0;
+int stopMovement = 0;
+int segundos = 0;
+int centesimas=0;
 
 void test123(){
 	drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
@@ -300,8 +305,12 @@ int PlayGame(){
 	int ipc_status;
 	int r;
 	message msg;
-	unsigned long keyboard = 0x0;
 	memcpy(getVideoMem(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+	int perdeu = 0;
+	invencibilidade = 0;
+	keyboard = 0x0;
+	vel = 8;
+	stopMovement = 0;
 
 	resetCounter();
 	while(keyboard!= ESC_KEY) {
@@ -320,56 +329,45 @@ int PlayGame(){
 					timer_int_handler();
 
 					if (getCounter() % (60/game->FPS) == 0){
-
-						//if (firstMove > 2){
+						if (!perdeu){
 							drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
-							drawMouseJogo();
-							//CENAS DE CODIGO
-							UpdateAllObjects();
 
+							//get time
+							segundos = (int)getCounter()/60;
+							centesimas= (int)getCounter()%60;
+							centesimas= centesimas*100/60;
+							drawScore(800,690,segundos,centesimas);
+
+							UpdatePowers();
+
+							drawMouseJogo();
+
+							//Faz update aos objetos
+							if (!stopMovement)
+								UpdateAllObjects();
 
 							drawAllObjects();
 
-
-							//draw score!
-							//
-
-							int segundos = (int)getCounter()/60;
-							int centesimas= (int)getCounter()%60;
-							centesimas= centesimas*100/60;
-							printf("counter %d    ",getCounter());
-
-							if(centesimas <10)
-								printf("%d,0%d s\n",segundos,centesimas);
-							else
-								printf("%d,%d s\n",segundos,centesimas);
-							/*
-							  int x_inicial =800;
-							int y_inicial =	690;
-							*/
-							drawScore(800,690,segundos,centesimas);
-
-							//
-							//end draw score
-
+							//drawSquares();
 							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
-							//drawSquares();
-							if (CheckPLayerColision() == 1){
-								drawBitmap(game->ScoreBackground, 450, 250, ALIGN_LEFT);
-								drawScore(580,350,segundos,centesimas);
-								memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-								sleep(2);
+
+							if (CheckPLayerColision(invencibilidade) == 1){
+								drawLosingText(segundos, centesimas);
+								perdeu = 1;
+								break;
+							}
+						}
+						else{
+							if (keyboard == ENTER_KEY){
 								keyboard = ESC_KEY;
 								break;
 							}
-
-							//CENAS DE CODIGO
-							//memcpy(getTripleBuffer(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-							//memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-
-
-						//}
+							if (checkClick()){
+								keyboard = ESC_KEY;
+								break;
+							}
+						}
 					}
 				}
 				if (msg.NOTIFY_ARG & game->irq_set_keyboard)
@@ -558,22 +556,24 @@ void ResetObjects(){
 	game->MainSquare->yf = 385;
 }
 
-int CheckPLayerColision(){
-/*	if (rato->x < 350 || rato->y < 50 ||
+int CheckPLayerColision(int Inven){
+	if (rato->x < 350 || rato->y < 50 ||
 			(rato->x + 70) > 950 || (rato->y + 70) > 650)
 		return 1;
-	else{*/
-		if (CheckColisionObj(game->BL) == 1)
-			return 1;
-		if (CheckColisionObj(game->TL) == 1)
-			return 1;
-		if (CheckColisionObj(game->TR) == 1)
-			return 1;
-		if (CheckColisionObj(game->BR) == 1)
-			return 1;
+	else{
+		if (!Inven){
+			if (CheckColisionObj(game->BL) == 1)
+				return 1;
+			if (CheckColisionObj(game->TL) == 1)
+				return 1;
+			if (CheckColisionObj(game->TR) == 1)
+				return 1;
+			if (CheckColisionObj(game->BR) == 1)
+				return 1;
+		}
 
 		return 0;
-	//}
+	}
 }
 
 
@@ -591,3 +591,51 @@ int CheckColisionObj(rectangle * Objeto){
 		return 1;
 }
 
+int checkClick(){
+	if ((rato->button == 1) && (rato->lastButton != 1)){
+		rato->button = 0;
+		rato->lastButton = 1;
+		return 1;
+	}
+	else
+		return 0;
+}
+
+void UpdatePowers(){
+
+	//Invencibilidade
+	if (segundos == 0)
+		invencibilidade = 2;
+	else if (keyboard == KEY_1 && invencibilidade == 0){
+		keyboard = 0;
+		invencibilidade = 1;
+	}
+	else if (keyboard == KEY_1 && invencibilidade == 1){
+		keyboard = 0;
+		invencibilidade = 0;
+	}
+	else if (segundos != 0){
+		if (invencibilidade == 2)
+			invencibilidade = 0;
+	}
+
+	//Stop
+	if (keyboard == KEY_2 && stopMovement == 0){
+		stopMovement = 1;
+		keyboard = 0;
+	}
+	else if (keyboard == KEY_2 && stopMovement == 1){
+		stopMovement = 0;
+		keyboard = 0;
+	}
+
+	//Slow
+	if (keyboard == KEY_3 && vel == 8){
+		keyboard = 0;
+		vel = 4;
+	}
+	else if (keyboard == KEY_3 && vel == 4){
+		keyboard = 0;
+		vel = 8;
+	}
+}

@@ -29,6 +29,12 @@
 #define PAR_ERR 0x80
 #define TO_ERR 0x40
 #define ESC_BREAK_CODE 0x81
+#define ENTER_KEY 0x009C
+#define W_KEY 0x0091
+#define S_KEY 0x009F
+#define KEY_1 0x0082
+#define KEY_2 0x0083
+#define KEY_3 0x0084
 
 
 
