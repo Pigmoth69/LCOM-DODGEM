@@ -10,6 +10,12 @@ int hook_id3 = 5;
 //123
 int getCounter() {return counter;}
 
+void resetCounter()
+{
+	counter = 0;
+}
+
+
 int timer_set_square(unsigned long timer, unsigned long freq)
 {
 	unsigned long div = TIMER_FREQ/freq;

@@ -98,4 +98,6 @@ int timer_test_config(unsigned long timer);
 
 int getCounter();
 
+void resetCounter();
+
 #endif /* __TIMER_H */

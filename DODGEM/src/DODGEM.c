@@ -301,6 +301,7 @@ int PlayGame(){
 	unsigned long keyboard = 0x0;
 	memcpy(getVideoMem(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
+	resetCounter();
 	while(keyboard!= ESC_KEY) {
 		/* Get a request message. */
 		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
@@ -325,7 +326,7 @@ int PlayGame(){
 							UpdateAllObjects();
 
 							if (CheckPLayerColision() == 1){
-								sleep(5);
+								sleep(1);
 								keyboard = ESC_KEY;
 								break;
 							}
