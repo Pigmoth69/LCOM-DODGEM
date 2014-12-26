@@ -66,4 +66,6 @@ int number_draw_width(int number);//return the number width to draw
  */
 void deleteBitmap(Bitmap* bmp);
 
+void drawLosingText(int segundos, int centesimas);
+
 /**@}*/
