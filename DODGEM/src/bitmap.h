@@ -55,7 +55,8 @@ Bitmap* loadBitmap(const char* filename);
 void drawBitmap(Bitmap* bitmap, int x, int y, Alignment alignment);
 
 void drawBitmapNumber(Bitmap* bmp, int x, int y,int number, Alignment alignment);
-void drawBitmapScore(int x, int y, double number);
+
+void drawScore(int segundos,int centesimas);
 
 int number_draw_width(int number);//return the number width to draw
 /**

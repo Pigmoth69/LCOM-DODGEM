@@ -1,9 +1,17 @@
 
+bitmap.o:	/usr/include/limits.h
 bitmap.o:	/usr/include/minix/dir.h
+bitmap.o:	/usr/include/minix/limits.h
+bitmap.o:	/usr/include/minix/sys_config.h
 bitmap.o:	/usr/include/minix/types.h
+bitmap.o:	/usr/include/stdint.h
+bitmap.o:	/usr/include/sys/cdefs.h
 bitmap.o:	/usr/include/sys/null.h
 bitmap.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/ansi.h
+bitmap.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/limits.h
 bitmap.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/stdio.h
+bitmap.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/string.h
+bitmap.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/syslimits.h
 bitmap.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include/stdarg.h
 bitmap.o:	DODGEM.h
 bitmap.o:	bitmap.c

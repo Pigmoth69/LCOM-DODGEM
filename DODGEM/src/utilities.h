@@ -6,3 +6,7 @@
 #define MODE1024_H_RES 1024
 #define MODE1024_V_RES 768
 
+
+int invert_number(int number);
+
+
