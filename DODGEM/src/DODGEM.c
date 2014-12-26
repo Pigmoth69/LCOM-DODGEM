@@ -11,7 +11,7 @@
 
 DODGEM * game;
 
-int vel = 3;
+int vel = 8;
 
 void test123(){
 	drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
@@ -38,6 +38,7 @@ void start_DODGEM()
 	game->CursorLRM = loadBitmap("/home/lcom/DODGEM/res/images/rato20LRM.bmp");
 	game->CursorMiddle = loadBitmap("/home/lcom/DODGEM/res/images/rato20M.bmp");
 	game->Numbers = loadBitmap("/home/lcom/DODGEM/res/images/Algarismos.bmp");
+	game->ScoreBackground = loadBitmap("/home/lcom/DODGEM/res/images/ScoreBackground.bmp");
 	game->irq_set_mouse = MOUSE_send_command();
 	game->irq_set_keyboard = KBD_subscribe_int();
 	game->irq_set_time = timer_subscribe_int();
@@ -104,6 +105,7 @@ void exit_DODGEM()
 	deleteBitmap(game->EnemyTR);
 	deleteBitmap(game->Cursor);
 	deleteBitmap(game->Numbers);
+	deleteBitmap(game->ScoreBackground);
 	game->irq_set_mouse = MOUSE_unsubscribe_int();
 	game->irq_set_keyboard = KBD_unsubscribe_int();
 	game->irq_set_time = timer_unsubscribe_int();
@@ -325,13 +327,9 @@ int PlayGame(){
 							//CENAS DE CODIGO
 							UpdateAllObjects();
 
-							if (CheckPLayerColision() == 1){
-								sleep(1);
-								keyboard = ESC_KEY;
-								break;
-							}
 
 							drawAllObjects();
+
 
 							//draw score!
 							//
@@ -345,8 +343,11 @@ int PlayGame(){
 								printf("%d,0%d s\n",segundos,centesimas);
 							else
 								printf("%d,%d s\n",segundos,centesimas);
-
-							drawScore(segundos,centesimas);
+							/*
+							  int x_inicial =800;
+							int y_inicial =	690;
+							*/
+							drawScore(800,690,segundos,centesimas);
 
 							//
 							//end draw score
@@ -354,10 +355,20 @@ int PlayGame(){
 							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
 							//drawSquares();
+							if (CheckPLayerColision() == 1){
+								drawBitmap(game->ScoreBackground, 450, 250, ALIGN_LEFT);
+								drawScore(580,350,segundos,centesimas);
+								memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+								sleep(2);
+								keyboard = ESC_KEY;
+								break;
+							}
 
 							//CENAS DE CODIGO
 							//memcpy(getTripleBuffer(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+							//memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+
+
 						//}
 					}
 				}
@@ -548,10 +559,10 @@ void ResetObjects(){
 }
 
 int CheckPLayerColision(){
-	if (rato->x < 350 || rato->y < 50 ||
+/*	if (rato->x < 350 || rato->y < 50 ||
 			(rato->x + 70) > 950 || (rato->y + 70) > 650)
 		return 1;
-	else{
+	else{*/
 		if (CheckColisionObj(game->BL) == 1)
 			return 1;
 		if (CheckColisionObj(game->TL) == 1)
@@ -562,7 +573,7 @@ int CheckPLayerColision(){
 			return 1;
 
 		return 0;
-	}
+	//}
 }
 
 

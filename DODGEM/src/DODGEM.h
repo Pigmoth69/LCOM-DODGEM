@@ -28,6 +28,7 @@ typedef struct{
 	Bitmap* CursorLRM;
 	Bitmap* CursorMiddle;
 	Bitmap* Numbers;
+	Bitmap* ScoreBackground;
 	rectangle * PlayOption;
 	rectangle * HSOption;
 	rectangle * ExitOption;
