@@ -29,6 +29,9 @@ typedef struct{
 	Bitmap* CursorMiddle;
 	Bitmap* Numbers;
 	Bitmap* ScoreBackground;
+	Bitmap* EnergyBar;
+	Bitmap* Border;
+	Bitmap* PlayInv;
 	rectangle * PlayOption;
 	rectangle * HSOption;
 	rectangle * ExitOption;
@@ -49,7 +52,16 @@ typedef struct{
 	int irq_set_time;
 }DODGEM;
 
+typedef struct{
+	int invencibilidade;
+	int stopMovement;
+	int vel;
+	long PowerBeginTime; //Quando se ativa um poder guarda aqui o valor do counter de quando foi iniciado
+	int Energy;
+}POWER;
+
 extern DODGEM * game;
+extern POWER * Poderes;
 
 
 void StartOptions();
@@ -73,5 +85,7 @@ int CheckColisionObj(rectangle * Objeto); // (0 Não, 1 Sim)
 int PlayGame(); //O jogo em si
 int checkClick(); //verifica se clicou no botao do rato
 void UpdatePowers(); //faz update aos poderes
+void StartGamePowers(); //inicia os valores dos poderes (inicio do jogo)
+
 
 #endif

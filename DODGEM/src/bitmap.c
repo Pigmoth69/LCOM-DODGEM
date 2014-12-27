@@ -216,9 +216,13 @@ void drawScore(int x_inicial,int y_inicial,int segundos,int centesimas)
 		x_inicial+=number_draw_width(string[i]-'0');
 	}
 
+	if (centesimas == NULL)
+		return;
+
 
 	drawBitmapNumber(game->Numbers,x_inicial,y_inicial ,10, ALIGN_LEFT);
 	x_inicial+=number_draw_width(10);
+
 
 	i = 0;
 	sprintf(string,"%d",centesimas);
@@ -231,6 +235,60 @@ void drawScore(int x_inicial,int y_inicial,int segundos,int centesimas)
 
 }
 
+void drawPart(Bitmap* bmp, int x, int y, int x_inicial, int y_inicial, int x_final, int y_final, Alignment alignment){
+
+
+	if (bmp == NULL)
+		return;
+
+
+	int width = bmp->bitmapInfoHeader.width;
+	int height = bmp->bitmapInfoHeader.height;
+
+
+	int drawWidth = x_final - x_inicial;
+	int xCorrection = 0;
+
+	if (alignment == ALIGN_CENTER)
+		x -= width / 2;
+	else if (alignment == ALIGN_RIGHT)
+		x -= width;
+
+	if (x + width < 0 || x > MODE1024_H_RES || y + height < 0
+			|| y > MODE1024_V_RES)
+		return;
+
+
+	if (x < 0) {
+		xCorrection = -x;
+		drawWidth -= xCorrection;
+		x = 0;
+
+		if (drawWidth > MODE1024_H_RES)
+			drawWidth = MODE1024_H_RES;
+	} else if (x + drawWidth >= MODE1024_H_RES) {
+		drawWidth = MODE1024_H_RES - x;
+	}
+
+	char* bufferStartPos;
+	char* imgStartPos;
+
+
+	int i;
+	for (i = 0; i < height; i++) {
+		int pos = y + height - 1 - i;
+
+		if (pos < 0|| pos >= MODE1024_V_RES)
+			continue;
+
+		bufferStartPos = getVideoBuffer();
+		bufferStartPos += x * 2 + pos * MODE1024_H_RES * 2;
+
+		imgStartPos = bmp->bitmapData + xCorrection * 2 + i * width * 2;
+
+		memcpy(bufferStartPos, imgStartPos, drawWidth * 2);
+	}
+}
 
 void deleteBitmap(Bitmap* bmp) {
     if (bmp == NULL)

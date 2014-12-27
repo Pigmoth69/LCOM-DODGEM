@@ -118,28 +118,33 @@ void drawMouse()
 }
 
 void drawMouseJogo(){
-	drawBitmap(game->PlaySquare, rato->x, rato->y, ALIGN_LEFT);
+	if (Poderes->invencibilidade){
+		drawBitmap(game->PlayInv, rato->x, rato->y, ALIGN_LEFT);
+	}
+	else{
+		drawBitmap(game->PlaySquare, rato->x, rato->y, ALIGN_LEFT);
+	}
 }
 
 
 void print_mouse(unsigned char *packets) {
 
-	if (xcoord + (char)packets[1] < 0)
-		xcoord = 0;
-	else if (xcoord + (char)packets[1] > (MODE1024_H_RES - 20))
-		xcoord = (MODE1024_H_RES - 20);
+	if (rato->x + (char)packets[1] < 0)
+		rato->x = 0;
+	else if (rato->x + (char)packets[1] > (MODE1024_H_RES - 20))
+		rato->x = (MODE1024_H_RES - 20);
 	else
-		xcoord += (char)packets[1];
+		rato->x += (char)packets[1];
 
-	if (ycoord - (char)packets[2] < 0)
-		ycoord = 0;
-	else if (ycoord - (char)packets[2] > (MODE1024_V_RES - 20))
-		ycoord = (MODE1024_V_RES - 20);
+	if (rato->y - (char)packets[2] < 0)
+		rato->y = 0;
+	else if (rato->y - (char)packets[2] > (MODE1024_V_RES - 20))
+		rato->y = (MODE1024_V_RES - 20);
 	else
-		ycoord -= (char)packets[2];
+		rato->y -= (char)packets[2];
 
-	rato->x = xcoord;
-	rato->y = ycoord;
+//	rato->x = xcoord;
+//	rato->y = ycoord;
 
 	rato->lastButton = rato->button;
 
@@ -155,35 +160,7 @@ void print_mouse(unsigned char *packets) {
 		rato->button = 1; //L
 	else
 		rato->button = 0; //None
-
-//	if((BIT(0) & packets[0]) != 0)
-//		drawMouse(1,(int)(xcoord),(int)(ycoord));
-//	else if (((BIT(1) & packets[0]) >> 1) != 0)
-//		drawMouse(2,(int)(xcoord),(int)(ycoord));
-//	else
-//		drawMouse(0,(int)(xcoord),(int)(ycoord));
 }
-
-
-/*
-	printf(
-
-			"B1= 0x%X B2= 0x%X B3= 0x%X LB=%d MB=%d RB=%d XOV=%d YOV=%d X=%d Y=%d\n\n",
-
-			packets[0],
-			 packets[1],
-			  packets[2],
-			   (BIT(0) & packets[0]),  //LB
-
-			(BIT(2) & packets[0]) >> 2,   //MD
-			(BIT(1) & packets[0]) >> 1,	  //RB
-
-			(BIT(6) & packets[0]) >> 6,
-			 (BIT(7) & packets[0]) >> 7,
-
-			(char)packets[1],
-			(char)packets[2]);*/
-
 
 int rec_cmd(){
 	unsigned long stat = 0;
@@ -203,11 +180,16 @@ int rec_cmd(){
 	}
 }
 
-//int checkOption(){
-//	if ()
-//}
-
-
+void MouseBorder(){
+	if (rato->x < 350)
+		rato->x = 350;
+	if (rato->y < 50)
+		rato->y = 50;
+	if (rato->y > (650 - (game->MainSquare->yf - game->MainSquare->yi)))
+		rato->y = (650 - (game->MainSquare->yf - game->MainSquare->yi));
+	if (rato->x > (950 - (game->MainSquare->xf - game->MainSquare->xi)))
+		rato->x = (950 - (game->MainSquare->xf - game->MainSquare->xi));
+}
 
 
 
