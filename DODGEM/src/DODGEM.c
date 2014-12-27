@@ -10,13 +10,12 @@
 #include <stdlib.h>
 
 DODGEM * game;
+POWER * Poderes;
 
-int vel = 8;
 unsigned long keyboard = 0x0;
-int invencibilidade = 0;
-int stopMovement = 0;
 int segundos = 0;
-int centesimas=0;
+int centesimas = 0;
+int Border = 0;
 
 void test123(){
 	drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
@@ -44,6 +43,9 @@ void start_DODGEM()
 	game->CursorMiddle = loadBitmap("/home/lcom/DODGEM/res/images/rato20M.bmp");
 	game->Numbers = loadBitmap("/home/lcom/DODGEM/res/images/Algarismos.bmp");
 	game->ScoreBackground = loadBitmap("/home/lcom/DODGEM/res/images/ScoreBackground.bmp");
+	game->EnergyBar = loadBitmap("home/lcom/DODGEM/res/images/Energy.bmp");
+	game->Border = loadBitmap("home/lcom/DODGEM/res/images/Fronteira.bmp");
+	game->PlayInv = loadBitmap("home/lcom/DODGEM/res/images/MainInv.bmp");
 	game->irq_set_mouse = MOUSE_send_command();
 	game->irq_set_keyboard = KBD_subscribe_int();
 	game->irq_set_time = timer_subscribe_int();
@@ -51,6 +53,7 @@ void start_DODGEM()
 	StartOptions();
 	start_Objects();
 	StartMouse();
+	Poderes = malloc(sizeof(POWER));
 }
 
 void StartOptions(){
@@ -111,6 +114,8 @@ void exit_DODGEM()
 	deleteBitmap(game->Cursor);
 	deleteBitmap(game->Numbers);
 	deleteBitmap(game->ScoreBackground);
+	deleteBitmap(game->EnergyBar);
+	deleteBitmap(game->Border);
 	game->irq_set_mouse = MOUSE_unsubscribe_int();
 	game->irq_set_keyboard = KBD_unsubscribe_int();
 	game->irq_set_time = timer_unsubscribe_int();
@@ -147,8 +152,6 @@ int mainMenu()
 
 					if (getCounter() % (60/game->FPS) == 0){
 
-						//if (firstMove > 2){
-
 						drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
 						drawMouse();
 						memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
@@ -156,7 +159,7 @@ int mainMenu()
 						option = checkMenuOption();
 						if (option == 1 || option == 2 || option == 3)
 							return option;
-						//}
+
 					}
 				}
 				if (msg.NOTIFY_ARG & game->irq_set_keyboard)
@@ -253,8 +256,23 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 
 					if (getCounter() % (60/game->FPS) == 0){
 
-						memcpy(getVideoBuffer(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-					//	drawBitmapNumber(game->Numbers,100, 100,10, ALIGN_LEFT);
+						if (keyboard == B_KEY && Border == 0){
+							keyboard = 0;
+							Border = 1;
+						}
+						if (keyboard == B_KEY && Border == 1){
+							keyboard = 0;
+							Border = 0;
+						}
+
+						//memcpy(getVideoBuffer(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+						drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
+
+						if (Border)
+							drawBitmap(game->Border, 340, 40, ALIGN_LEFT);
+
+						drawAllObjects();
+						drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
 						drawMouse();
 						memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
@@ -307,12 +325,12 @@ int PlayGame(){
 	message msg;
 	memcpy(getVideoMem(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 	int perdeu = 0;
-	invencibilidade = 0;
-	keyboard = 0x0;
-	vel = 8;
-	stopMovement = 0;
 
+	keyboard = 0x0;
+
+	StartGamePowers();
 	resetCounter();
+
 	while(keyboard!= ESC_KEY) {
 		/* Get a request message. */
 		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
@@ -330,35 +348,52 @@ int PlayGame(){
 
 					if (getCounter() % (60/game->FPS) == 0){
 						if (!perdeu){
+							//desenha o fundo
 							drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
+							if (Border){
+								MouseBorder();
+								drawBitmap(game->Border, 340, 40, ALIGN_LEFT);
+							}
 
 							//get time
+							int segundosAnteriores = segundos;
 							segundos = (int)getCounter()/60;
 							centesimas= (int)getCounter()%60;
 							centesimas= centesimas*100/60;
 							drawScore(800,690,segundos,centesimas);
 
+							//Update nos poderes
 							UpdatePowers();
 
+							//Faz update na energia
+							drawPart(game->EnergyBar, 63, 140, 0, 0, Poderes->Energy*212/100, 70, ALIGN_LEFT);
+							drawScore(100, 150, Poderes->Energy, NULL);
+							if (Poderes->Energy <= 98 && segundosAnteriores != segundos)
+								Poderes->Energy += 2;
+
+							//desenha o quadrado Principal
 							drawMouseJogo();
 
 							//Faz update aos objetos
-							if (!stopMovement)
+							if (!Poderes->stopMovement)
 								UpdateAllObjects();
 
+							//Desenha os objetos azuis
 							drawAllObjects();
 
-							//drawSquares();
+							//Coloca tudo na VideoMem
 							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
 
-							if (CheckPLayerColision(invencibilidade) == 1){
+							//verifica a colisao
+							if (CheckPLayerColision(Poderes->invencibilidade) == 1){
 								drawLosingText(segundos, centesimas);
 								perdeu = 1;
 								break;
 							}
 						}
 						else{
+							//Se tiver perdido (esta a mostrar o score, espera que o jogador reage)
 							if (keyboard == ENTER_KEY){
 								keyboard = ESC_KEY;
 								break;
@@ -378,8 +413,6 @@ int PlayGame(){
 				{ /* subscribed interrupt */
 					MOUSE_int_handler();
 					show_mouse();
-//					if (firstMove < 3)
-//						firstMove++;
 				}
 
 				break;
@@ -456,6 +489,7 @@ void UpdateObjPosition(rectangle * Objeto)
 
 	//game->BL->xi
 	//game->BL->direction (1, 2, 3, 4)
+	int vel = Poderes->vel;
 
 	switch(Objeto->direction)
 	{
@@ -558,8 +592,10 @@ void ResetObjects(){
 
 int CheckPLayerColision(int Inven){
 	if (rato->x < 350 || rato->y < 50 ||
-			(rato->x + 70) > 950 || (rato->y + 70) > 650)
-		return 1;
+			(rato->x + 70) > 950 || (rato->y + 70) > 650){
+		if (!Border)
+			return 1;
+	}
 	else{
 		if (!Inven){
 			if (CheckColisionObj(game->BL) == 1)
@@ -603,39 +639,66 @@ int checkClick(){
 
 void UpdatePowers(){
 
+	//se tiverem passado 1 segundos apos ativar a invencibilidade, desativa
+	if (Poderes->invencibilidade == 1 && ((getCounter() - Poderes->PowerBeginTime) >= (60))){
+		Poderes->invencibilidade = 0;
+	}
+	//se tiverem passado 1 segundos apos ativar o STOP, desativa
+	if (Poderes->stopMovement == 1 && ((getCounter() - Poderes->PowerBeginTime) >= (60))){
+		Poderes->stopMovement = 0;
+	}
+	//se tiverem passado 3 segundos apos ativar o SLOW, desativa
+	if (Poderes->vel == 4 && ((getCounter() - Poderes->PowerBeginTime) >= (60*3))){
+		Poderes->vel = 8;
+	}
+
 	//Invencibilidade
 	if (segundos == 0)
-		invencibilidade = 2;
-	else if (keyboard == KEY_1 && invencibilidade == 0){
+		Poderes->invencibilidade = 2;
+	else if (keyboard == KEY_1 && Poderes->invencibilidade == 0 && Poderes->Energy >= 40){
 		keyboard = 0;
-		invencibilidade = 1;
+		Poderes->invencibilidade = 1;
+		Poderes->PowerBeginTime = getCounter();
+		Poderes->Energy -= 40;
 	}
-	else if (keyboard == KEY_1 && invencibilidade == 1){
+	else if (keyboard == KEY_1 && Poderes->invencibilidade == 1){
 		keyboard = 0;
-		invencibilidade = 0;
+		Poderes->invencibilidade = 0;
 	}
 	else if (segundos != 0){
-		if (invencibilidade == 2)
-			invencibilidade = 0;
+		if (Poderes->invencibilidade == 2)
+			Poderes->invencibilidade = 0;
 	}
 
 	//Stop
-	if (keyboard == KEY_2 && stopMovement == 0){
-		stopMovement = 1;
+	if (keyboard == KEY_2 && Poderes->stopMovement == 0 && Poderes->Energy >= 50){
+		Poderes->stopMovement = 1;
 		keyboard = 0;
+		Poderes->PowerBeginTime = getCounter();
+		Poderes->Energy -= 50;
 	}
-	else if (keyboard == KEY_2 && stopMovement == 1){
-		stopMovement = 0;
+	else if (keyboard == KEY_2 && Poderes->stopMovement == 1){
+		Poderes->stopMovement = 0;
 		keyboard = 0;
 	}
 
 	//Slow
-	if (keyboard == KEY_3 && vel == 8){
+	if (keyboard == KEY_3 && Poderes->vel == 8 && Poderes->Energy >= 30){
 		keyboard = 0;
-		vel = 4;
+		Poderes->vel = 4;
+		Poderes->PowerBeginTime = getCounter();
+		Poderes->Energy -= 30;
 	}
-	else if (keyboard == KEY_3 && vel == 4){
+	else if (keyboard == KEY_3 && Poderes->vel == 4){
 		keyboard = 0;
-		vel = 8;
+		Poderes->vel = 8;
 	}
+}
+
+void StartGamePowers(){
+	Poderes->vel = 8;
+	Poderes->stopMovement = 0;
+	Poderes->invencibilidade = 0;
+	Poderes->PowerBeginTime = 0;
+	Poderes->Energy = 100;
 }

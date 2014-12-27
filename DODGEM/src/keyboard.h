@@ -32,6 +32,7 @@
 #define ENTER_KEY 0x009C
 #define W_KEY 0x0091
 #define S_KEY 0x009F
+#define B_KEY 0x00B0
 #define KEY_1 0x0082
 #define KEY_2 0x0083
 #define KEY_3 0x0084

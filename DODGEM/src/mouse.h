@@ -20,6 +20,7 @@ int rec_cmd();
 void drawMouse();
 void drawMouseJogo();
 void StartMouse();
+void MouseBorder();
 
 //Check if the user clicked in an option. 0(Exit), 1(play), 2(highscores)
 int checkOption();

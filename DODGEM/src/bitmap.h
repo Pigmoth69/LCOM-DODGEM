@@ -58,6 +58,8 @@ void drawBitmapNumber(Bitmap* bmp, int x, int y,int number, Alignment alignment)
 
 void drawScore(int x_inicial,int y_inicial,int segundos,int centesimas);
 
+void drawPart(Bitmap* bmp, int x, int y, int x_inicial, int y_inicial, int x_final, int y_final, Alignment alignment); //draw part of an image
+
 int number_draw_width(int number);//return the number width to draw
 /**
  * @brief Destroys the given bitmap, freeing all resources used by it.
