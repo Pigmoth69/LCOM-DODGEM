@@ -66,10 +66,18 @@ typedef struct{
 	int best_centesimas;
 	int actual_segundos;
 	int actual_centesimas;
+	int segundosAnteriores;
 }SCORE;
+
+typedef struct{
+	char* nickname;
+	int segundos;
+	int centesimas;
+}PLAYER;
 
 extern DODGEM * game;
 extern POWER * Poderes;
+extern SCORE *Scores;
 
 
 void StartOptions();
@@ -94,7 +102,12 @@ int PlayGame(); //O jogo em si
 int checkClick(); //verifica se clicou no botao do rato
 void UpdatePowers(); //faz update aos poderes
 void StartGamePowers(); //inicia os valores dos poderes (inicio do jogo)
-void updateScores(int segundos, int centesimas); //esta funcao compara e faz o update do bestscore return
+void updateScores(); //esta funcao compara e faz o update do bestscore return
+void UpdateEnergy(); // faz update da energia
+void addScore();	//adiciona o score do jogo ao ficheiro(isto só acontece se tal for possível)
+					// só é possivel se for melhor ou então, ainda houver espaço para tal
+void SaveScores();	//guarda todos os scores do jogo
+void UpdateScores();// faz update para o jogo de todos os scores
 
 
 #endif

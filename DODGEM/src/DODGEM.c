@@ -12,10 +12,14 @@
 DODGEM * game;
 POWER * Poderes;
 SCORE * scores;
+PLAYER* user;
+
+//APENAS PARA TESTE!
+int i = 0;
+PLAYER players[10]; // os 10 melhores scores do jogo
+//FIM DO TESTE
 
 unsigned long keyboard = 0x0;
-int segundos = 0;
-int centesimas = 0;
 int Border = 0;
 
 void test123(){
@@ -29,6 +33,7 @@ void start_DODGEM()
 {
 	game = malloc(sizeof(DODGEM));
 	Poderes = malloc(sizeof(POWER));
+	user = malloc(sizeof(PLAYER));
 	scores = malloc(sizeof(SCORE));
 	scores->actual_segundos = scores->actual_centesimas = scores->best_segundos = scores->best_centesimas = 0;
 	graphicsStart(MODE1024);
@@ -359,49 +364,41 @@ int PlayGame(){
 							}
 
 							//get time
-							int segundosAnteriores = segundos;
-							segundos = (int)getCounter()/60;
-							//centesimas= (int)getCounter()%60;
+							scores->segundosAnteriores = scores->actual_segundos;
+							scores->actual_segundos = (int)getCounter()/60;
 
-							//centesimas= centesimas*100/60;
-							drawScore(800,690,segundos,centesimas);
+					/*		//centesimas= (int)getCounter()%60;
+							//centesimas= centesimas*100/60;*/
+
+							drawScore(800,690,scores->actual_segundos,scores->actual_centesimas);
 
 							//Update nos poderes
 							UpdatePowers();
-
 							//Faz update na energia
-							drawPart(game->EnergyBar, 63, 140, 0, 0, Poderes->Energy*212/100, 70, ALIGN_LEFT);
-							drawScore(100, 150, Poderes->Energy, -1);
-							if (Poderes->Energy <= 98 && segundosAnteriores != segundos)
-								Poderes->Energy += 2;
-
+							UpdateEnergy();
 							//desenha o quadrado Principal
 							drawMouseJogo();
-
 							//Faz update aos objetos
+
 							if (!Poderes->stopMovement)
 								UpdateAllObjects();
-
 							//Desenha os objetos azuis
 							drawAllObjects();
-
 							//Coloca tudo na VideoMem
 							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
-
 							//verifica a colisao
-							printf("centesimascolisao: %d\n",centesimas);
 							if (CheckPLayerColision(Poderes->invencibilidade) == 1 ){
-								updateScores(segundos,centesimas);
+								updateScores();
 								printf("SEGUNDOS: %d CENTESIMAS: %d \n",scores->best_segundos,scores->best_centesimas);
-								drawLosingText(segundos, centesimas);
+								drawLosingText(scores->actual_segundos, scores->actual_centesimas);
 								perdeu = 1;
 								break;
 							}
 							//atualiza as centesimas
-							centesimas++;
-							if(centesimas == 100)
-								centesimas=0;
+							scores->actual_centesimas++;
+							if(scores->actual_centesimas == 100)
+								scores->actual_centesimas=0;
 
 						}
 						else{
@@ -439,24 +436,30 @@ int PlayGame(){
 	ResetObjects();
 
 }
-
-void updateScores(int segundos, int centesimas)//esta funcao compara e faz o update do bestscore
+void UpdateEnergy()
 {
-	scores->actual_segundos = segundos;
-	scores->actual_centesimas = centesimas;
+	drawPart(game->EnergyBar, 63, 140, 0, 0, Poderes->Energy*212/100, 70, ALIGN_LEFT);
+	drawScore(100, 150, Poderes->Energy, -1);
+	if (Poderes->Energy <= 98 && scores->segundosAnteriores != scores->actual_segundos)
+		Poderes->Energy += 2;
 
-	if(segundos > scores->best_segundos)
+}
+
+void updateScores()//esta funcao compara e faz o update do bestscore
+{
+
+	if(scores->actual_segundos > scores->best_segundos)
 	{
-		scores->best_segundos = segundos;
-		scores->best_centesimas = centesimas;
+		scores->best_segundos = scores->actual_segundos;
+		scores->best_centesimas = scores->actual_centesimas;
 		return;
 	}
-	else if (segundos == scores->best_segundos)
+	else if (scores->actual_segundos == scores->best_segundos)
 	{
-		if(centesimas > scores->best_centesimas)
+		if(scores->actual_centesimas > scores->best_centesimas)
 		{
-			scores->best_segundos = segundos;
-			scores->best_centesimas = centesimas;
+			scores->best_segundos = scores->actual_segundos;
+			scores->best_centesimas = scores->actual_centesimas;
 		}
 		return;
 	}
@@ -527,6 +530,7 @@ void UpdateObjPosition(rectangle * Objeto)
 
 	//game->BL->xi
 	//game->BL->direction (1, 2, 3, 4)
+
 	int vel = Poderes->vel;
 
 	switch(Objeto->direction)
@@ -691,7 +695,7 @@ void UpdatePowers(){
 	}
 
 	//Invencibilidade
-	if (segundos == 0)
+	if (scores->actual_segundos == 0)
 		Poderes->invencibilidade = 2;
 	else if (keyboard == KEY_1 && Poderes->invencibilidade == 0 && Poderes->Energy >= 40){
 		keyboard = 0;
@@ -703,7 +707,7 @@ void UpdatePowers(){
 		keyboard = 0;
 		Poderes->invencibilidade = 0;
 	}
-	else if (segundos != 0){
+	else if (scores->actual_segundos != 0){
 		if (Poderes->invencibilidade == 2)
 			Poderes->invencibilidade = 0;
 	}
