@@ -106,10 +106,7 @@ void StartGamePowers(); //inicia os valores dos poderes (inicio do jogo)
 void updateScores(); //esta funcao compara e faz o update do bestscore return
 void UpdateEnergy(); // faz update da energia
 
-void addScore();	//adiciona o score do jogo ao ficheiro(isto só acontece se tal for possível)
-					// só é possivel se for melhor ou então, ainda houver espaço para tal
-void SaveScores();	//guarda todos os scores do jogo
-void UpdateScores();// faz update para o jogo de todos os scores
+int UpdateScores();// faz update para o jogo de todos os scores retorna 1 se der erro retorna 0 se der
 
 
 #endif

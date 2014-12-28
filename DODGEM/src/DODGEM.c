@@ -767,17 +767,23 @@ void StartGamePowers(){
 }
 
 
-void UpdateScores()// faz update para o jogo de todos os scores
+int UpdateScores()// faz update para o jogo de todos os scores
 {
 
 	FILE * file;
 
 	file =fopen(FILENAME, "r");
-	if(file == NULL)
-		return;
-	int pos = 0;
 
-	//for(pos; pos<)
+	if(file == NULL)
+		return 1;
+
+	/*while(1)
+	{
+		PLAYER *p;
+		fgets(p->nickname, 255, (FILE*)file);
+		p->nickname= buff;
+
+	}*/
 }
 
 
