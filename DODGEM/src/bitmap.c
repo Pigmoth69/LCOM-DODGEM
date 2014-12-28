@@ -226,6 +226,11 @@ void drawScore(int x_inicial,int y_inicial,int segundos,int centesimas)
 
 	i = 0;
 	sprintf(string,"%d",centesimas);
+	if(centesimas <10)
+	{
+		drawBitmapNumber(game->Numbers,x_inicial,y_inicial ,0, ALIGN_LEFT);
+		x_inicial+=number_draw_width(0);
+	}
 
 	for(i; i < strlen(string);i++)
 	{
