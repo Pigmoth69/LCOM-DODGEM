@@ -15,8 +15,18 @@ coordenadas do best score:
 x: 55 y: 595
 
 Coordenadas menu submit:
-Menu -> x[350, 950]; y[50, 650]
-OK -> x[700, 900]; y[500, 600]
-Cancel -> x[400, 600]; y[500, 600]
-SCORE -> [x_i, y_i] = [725, 100]
-Name -> x[400, 900]; y[350, 450] 
+
+Menu
+ -> x[350, 950]; y[50, 650]
+ 
+OK 
+-> x[700, 900]; y[500, 600]
+
+Cancel 
+-> x[400, 600]; y[500, 600]
+
+SCORE 
+-> [x_i, y_i] = [725, 100]
+
+Name 
+-> x[400, 900]; y[350, 450]  

@@ -15,7 +15,6 @@ SCORE * scores;
 PLAYER* user;
 
 //APENAS PARA TESTE!
-int i = 0;
 PLAYER players_border[10]; // os 10 melhores scores do jogo com border
 PLAYER players_noborder[10]; // os 10 melhores scores do jogo com border
 
@@ -769,7 +768,8 @@ void StartGamePowers(){
 
 int UpdateScores()// faz update para o jogo de todos os scores
 {
-
+	int i_border = 0;
+	int i_noborder=0;
 	FILE * file;
 
 	file =fopen(FILENAME, "r");
@@ -777,13 +777,50 @@ int UpdateScores()// faz update para o jogo de todos os scores
 	if(file == NULL)
 		return 1;
 
-	/*while(1)
+	while (!feof(file))
 	{
-		PLAYER *p;
-		fgets(p->nickname, 255, (FILE*)file);
-		p->nickname= buff;
+		char border[1];
+		fgets(border, 1, (FILE*)file);
+		if(border == "1")	//significa que tem border
+		{
+			PLAYER *p;
+			char username[255];
+			char segundos[255];
+			char centesimas[255];
 
-	}*/
+			fgets(username, 255, (FILE*)file);
+			fgets(segundos, 255, (FILE*)file);
+			fgets(centesimas,255, (FILE*)file);
+			p->nickname = username;
+			p->segundos= atoi(segundos);
+			p->centesimas=atoi(centesimas);
+			players_border[i_border];
+			i_border++;
+
+		}
+		else
+		{
+			char border[1];
+			fgets(border, 1, (FILE*)file);
+			if(border == "1")	//significa que tem border
+			{
+				PLAYER *p;
+				char username[255];
+				char segundos[255];
+				char centesimas[255];
+
+				fgets(username, 255, (FILE*)file);
+				fgets(segundos, 255, (FILE*)file);
+				fgets(centesimas,255, (FILE*)file);
+				p->nickname = username;
+				p->segundos= atoi(segundos);
+				p->centesimas=atoi(centesimas);
+				players_border[i_noborder];
+				i_noborder++;
+
+			}
+		}
+	}
 }
 
 
