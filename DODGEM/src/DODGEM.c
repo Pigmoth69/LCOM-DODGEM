@@ -339,6 +339,7 @@ int PlayGame(){
 	StartGamePowers();
 	resetCounter();
 	printf("PLAYGAAAAAME!!!!!\n");
+
 	while(keyboard!= ESC_KEY) {
 		/* Get a request message. */
 		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
@@ -396,9 +397,9 @@ int PlayGame(){
 								break;
 							}
 							//atualiza as centesimas
-							scores->actual_centesimas++;
-							if(scores->actual_centesimas == 100)
-								scores->actual_centesimas=0;
+							scores->actual_centesimas += (double)1*100/60;
+							if(scores->actual_centesimas >= 100)
+								scores->actual_centesimas -= 100;
 
 						}
 						else{
@@ -436,6 +437,7 @@ int PlayGame(){
 	ResetObjects();
 
 }
+
 void UpdateEnergy()
 {
 	drawPart(game->EnergyBar, 63, 140, 0, 0, Poderes->Energy*212/100, 70, ALIGN_LEFT);
