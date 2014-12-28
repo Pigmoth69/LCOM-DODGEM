@@ -4,7 +4,7 @@
 #include "timer.h"
 #include "utilities.h"
 
-int counter = 60000;
+int counter = 0;
 int hook_id3 = 5;
 
 //123

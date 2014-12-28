@@ -28,8 +28,8 @@ short * getVideoMem()
 void graphicsStart(unsigned short mode)
 {
 	video_mem = (short*)vg_init(mode);
-	DOUB_BUF = malloc(MODE1024_H_RES * MODE1024_V_RES * 2);
-	TRIPLE_BUF = malloc(MODE1024_H_RES * MODE1024_V_RES * 2);
+	DOUB_BUF = ( uint16_t *)malloc(MODE1024_H_RES * MODE1024_V_RES * 2);
+	TRIPLE_BUF =  (uint16_t *)malloc(MODE1024_H_RES * MODE1024_V_RES * 2);
 }
 
 void graphicsExit()
