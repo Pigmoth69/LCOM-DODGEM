@@ -11,6 +11,7 @@
 
 DODGEM * game;
 POWER * Poderes;
+SCORE * scores;
 
 unsigned long keyboard = 0x0;
 int segundos = 0;
@@ -28,6 +29,8 @@ void start_DODGEM()
 {
 	game = malloc(sizeof(DODGEM));
 	Poderes = malloc(sizeof(POWER));
+	scores = malloc(sizeof(SCORE));
+	scores->actual_segundos = scores->actual_centesimas = scores->best_segundos = scores->best_centesimas = 0;
 	graphicsStart(MODE1024);
 	game->MenuImage= loadBitmap("/home/lcom/DODGEM/res/images/MenuPrincipal.bmp");
 	game->GameField= loadBitmap("/home/lcom/DODGEM/res/images/MenuGame.bmp");
@@ -330,7 +333,7 @@ int PlayGame(){
 
 	StartGamePowers();
 	resetCounter();
-
+	printf("PLAYGAAAAAME!!!!!\n");
 	while(keyboard!= ESC_KEY) {
 		/* Get a request message. */
 		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
@@ -387,6 +390,8 @@ int PlayGame(){
 
 							//verifica a colisao
 							if (CheckPLayerColision(Poderes->invencibilidade) == 1){
+								updateScores(segundos,centesimas);
+								printf("SEGUNDOS: %d CENTESIMAS: %d \n",scores->best_segundos,scores->best_centesimas);
 								drawLosingText(segundos, centesimas);
 								perdeu = 1;
 								break;
@@ -425,6 +430,32 @@ int PlayGame(){
 	}
 
 	ResetObjects();
+
+}
+
+void updateScores(int segundos, int centesimas)//esta funcao compara e faz o update do bestscore
+{
+	scores->actual_segundos = segundos;
+	scores->actual_centesimas = centesimas;
+
+	if(segundos > scores->best_segundos)
+	{
+		scores->best_segundos = segundos;
+		scores->best_centesimas = centesimas;
+		return;
+	}
+	else if (segundos == scores->best_segundos)
+	{
+		if(centesimas > scores->best_centesimas)
+		{
+			scores->best_segundos = segundos;
+			scores->best_centesimas = centesimas;
+		}
+		return;
+	}
+	else
+		return;
+
 
 }
 

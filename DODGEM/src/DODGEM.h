@@ -60,6 +60,14 @@ typedef struct{
 	int Energy;
 }POWER;
 
+
+typedef struct{
+	int best_segundos;
+	int best_centesimas;
+	int actual_segundos;
+	int actual_centesimas;
+}SCORE;
+
 extern DODGEM * game;
 extern POWER * Poderes;
 
@@ -86,6 +94,7 @@ int PlayGame(); //O jogo em si
 int checkClick(); //verifica se clicou no botao do rato
 void UpdatePowers(); //faz update aos poderes
 void StartGamePowers(); //inicia os valores dos poderes (inicio do jogo)
+void updateScores(int segundos, int centesimas); //esta funcao compara e faz o update do bestscore return
 
 
 #endif
