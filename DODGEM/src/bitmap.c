@@ -118,7 +118,7 @@ void drawBitmap(Bitmap* bmp, int x, int y, Alignment alignment) {
         if (pos < 0 || pos >= MODE1024_V_RES)
         	continue;
 
-        bufferStartPos = getVideoBuffer();
+        bufferStartPos = (char*)getVideoBuffer();
         bufferStartPos += x * 2 + pos * MODE1024_H_RES * 2;
 
         imgStartPos = bmp->bitmapData + xCorrection * 2 + i * width * 2;
@@ -190,7 +190,7 @@ void drawBitmapNumber(Bitmap* bmp, int x, int y,int number, Alignment alignment)
 		if (pos < 0|| pos >= MODE1024_V_RES)
 			continue;
 
-		bufferStartPos = getVideoBuffer();
+		bufferStartPos = (char*)getVideoBuffer();
 		bufferStartPos += x * 2 + pos * MODE1024_H_RES * 2;
 
 		imgStartPos = bmp->bitmapData + xCorrection * 2 + i * width * 2;
@@ -216,7 +216,7 @@ void drawScore(int x_inicial,int y_inicial,int segundos,int centesimas)
 		x_inicial+=number_draw_width(string[i]-'0');
 	}
 
-	if (centesimas == NULL)
+	if (centesimas == -1)
 		return;
 
 
@@ -228,10 +228,10 @@ void drawScore(int x_inicial,int y_inicial,int segundos,int centesimas)
 	sprintf(string,"%d",centesimas);
 
 	for(i; i < strlen(string);i++)
-		{
-			drawBitmapNumber(game->Numbers,x_inicial, y_inicial,string[i]-'0', ALIGN_LEFT);
-			x_inicial+=number_draw_width(string[i]-'0');
-		}
+	{
+		drawBitmapNumber(game->Numbers,x_inicial, y_inicial,string[i]-'0', ALIGN_LEFT);
+		x_inicial+=number_draw_width(string[i]-'0');
+	}
 
 }
 
@@ -281,7 +281,7 @@ void drawPart(Bitmap* bmp, int x, int y, int x_inicial, int y_inicial, int x_fin
 		if (pos < 0|| pos >= MODE1024_V_RES)
 			continue;
 
-		bufferStartPos = getVideoBuffer();
+		bufferStartPos = (char*)getVideoBuffer();
 		bufferStartPos += x * 2 + pos * MODE1024_H_RES * 2;
 
 		imgStartPos = bmp->bitmapData + xCorrection * 2 + i * width * 2;

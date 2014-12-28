@@ -27,6 +27,7 @@ void test123(){
 void start_DODGEM()
 {
 	game = malloc(sizeof(DODGEM));
+	Poderes = malloc(sizeof(POWER));
 	graphicsStart(MODE1024);
 	game->MenuImage= loadBitmap("/home/lcom/DODGEM/res/images/MenuPrincipal.bmp");
 	game->GameField= loadBitmap("/home/lcom/DODGEM/res/images/MenuGame.bmp");
@@ -53,7 +54,6 @@ void start_DODGEM()
 	StartOptions();
 	start_Objects();
 	StartMouse();
-	Poderes = malloc(sizeof(POWER));
 }
 
 void StartOptions(){
@@ -367,7 +367,7 @@ int PlayGame(){
 
 							//Faz update na energia
 							drawPart(game->EnergyBar, 63, 140, 0, 0, Poderes->Energy*212/100, 70, ALIGN_LEFT);
-							drawScore(100, 150, Poderes->Energy, NULL);
+							drawScore(100, 150, Poderes->Energy, -1);
 							if (Poderes->Energy <= 98 && segundosAnteriores != segundos)
 								Poderes->Energy += 2;
 
