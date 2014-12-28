@@ -66,6 +66,7 @@ typedef struct{
 	int best_centesimas;
 	int actual_segundos;
 	int actual_centesimas;
+
 	int segundosAnteriores;
 }SCORE;
 
