@@ -16,7 +16,9 @@ PLAYER* user;
 
 //APENAS PARA TESTE!
 int i = 0;
-PLAYER players[10]; // os 10 melhores scores do jogo
+PLAYER players_border[10]; // os 10 melhores scores do jogo com border
+PLAYER players_noborder[10]; // os 10 melhores scores do jogo com border
+
 //FIM DO TESTE
 
 unsigned long keyboard = 0x0;
@@ -244,7 +246,12 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 	drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
 	drawAllObjects();
 	drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
+
+	//esta sempre a mostrar o bestscore
+
+
 	memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+
 	memcpy(getTripleBuffer(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
 	while(keyboard!= ESC_KEY) {
@@ -257,6 +264,7 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 		if (is_ipc_notify(ipc_status)) { /* received notification */
 			switch (_ENDPOINT_P(msg.m_source)) {
 			case HARDWARE: /* hardware interrupt notification */
+
 
 				if (msg.NOTIFY_ARG & game->irq_set_time)
 				{ /* subscribed interrupt */
@@ -282,6 +290,8 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 						drawAllObjects();
 						drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
 						drawMouse();
+						if(scores->best_segundos!= 0 && scores->best_centesimas!= 0)
+							drawScore(55,595,scores->best_segundos,scores->best_centesimas);
 						memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
 
@@ -340,6 +350,8 @@ int PlayGame(){
 	resetCounter();
 	printf("PLAYGAAAAAME!!!!!\n");
 
+
+
 	while(keyboard!= ESC_KEY) {
 		/* Get a request message. */
 		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
@@ -350,6 +362,7 @@ int PlayGame(){
 		if (is_ipc_notify(ipc_status)) { /* received notification */
 			switch (_ENDPOINT_P(msg.m_source)) {
 			case HARDWARE: /* hardware interrupt notification */
+
 
 				if (msg.NOTIFY_ARG & game->irq_set_time)
 				{ /* subscribed interrupt */
@@ -371,7 +384,12 @@ int PlayGame(){
 					/*		//centesimas= (int)getCounter()%60;
 							//centesimas= centesimas*100/60;*/
 
-							drawScore(800,690,scores->actual_segundos,scores->actual_centesimas);
+							drawScore(740,685,scores->actual_segundos,scores->actual_centesimas);
+							if(scores->best_segundos== 0 && scores->best_centesimas== 0)
+								drawScore(55,595,scores->actual_segundos,scores->actual_centesimas);
+							else
+								drawScore(55,595,scores->best_segundos,scores->best_centesimas);
+
 
 							//Update nos poderes
 							UpdatePowers();
@@ -396,6 +414,7 @@ int PlayGame(){
 								perdeu = 1;
 								break;
 							}
+
 							//atualiza as centesimas
 							scores->actual_centesimas += (double)1*100/60;
 							if(scores->actual_centesimas >= 100)
@@ -746,3 +765,31 @@ void StartGamePowers(){
 	Poderes->PowerBeginTime = 0;
 	Poderes->Energy = 100;
 }
+
+
+void UpdateScores()// faz update para o jogo de todos os scores
+{
+
+	FILE * file;
+
+	file =fopen(FILENAME, "r");
+	if(file == NULL)
+		return;
+	int pos = 0;
+
+	//for(pos; pos<)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -5,7 +5,7 @@
 #define MODE1024 0x117
 #define MODE1024_H_RES 1024
 #define MODE1024_V_RES 768
-#define FILENAME "scores.txt"
+#define FILENAME "/home/lcom/DODGEM/scores.txt"
 
 
 int invert_number(int number);
