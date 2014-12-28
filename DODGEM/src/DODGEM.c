@@ -361,8 +361,9 @@ int PlayGame(){
 							//get time
 							int segundosAnteriores = segundos;
 							segundos = (int)getCounter()/60;
-							centesimas= (int)getCounter()%60;
-							centesimas= centesimas*100/60;
+							//centesimas= (int)getCounter()%60;
+
+							//centesimas= centesimas*100/60;
 							drawScore(800,690,segundos,centesimas);
 
 							//Update nos poderes
@@ -389,13 +390,19 @@ int PlayGame(){
 
 
 							//verifica a colisao
-							if (CheckPLayerColision(Poderes->invencibilidade) == 1){
+							printf("centesimascolisao: %d\n",centesimas);
+							if (CheckPLayerColision(Poderes->invencibilidade) == 1 ){
 								updateScores(segundos,centesimas);
 								printf("SEGUNDOS: %d CENTESIMAS: %d \n",scores->best_segundos,scores->best_centesimas);
 								drawLosingText(segundos, centesimas);
 								perdeu = 1;
 								break;
 							}
+							//atualiza as centesimas
+							centesimas++;
+							if(centesimas == 100)
+								centesimas=0;
+
 						}
 						else{
 							//Se tiver perdido (esta a mostrar o score, espera que o jogador reage)
