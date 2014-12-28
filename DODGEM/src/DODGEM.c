@@ -60,6 +60,9 @@ void start_DODGEM()
 	game->irq_set_keyboard = KBD_subscribe_int();
 	game->irq_set_time = timer_subscribe_int();
 	game->FPS = 60;
+	printf("OPENSCORES\n");
+	UpdateScores();
+	printf("LEAVESCORES\n");
 	StartOptions();
 	start_Objects();
 	StartMouse();
@@ -342,6 +345,7 @@ int PlayGame(){
 	message msg;
 	memcpy(getVideoMem(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 	int perdeu = 0;
+	printf("NOME: %d",players_noborder[0].centesimas);
 
 	keyboard = 0x0;
 
@@ -775,9 +779,14 @@ int UpdateScores()// faz update para o jogo de todos os scores
 	file =fopen(FILENAME, "r");
 
 	if(file == NULL)
+	{
+		printf("não abriu o ficheiro!\n");
 		return 1;
+	}
 
-	while (!feof(file))
+
+	int x = 0;
+	while (x!= 4)//!feof(file))
 	{
 		char border[1];
 		fgets(border, 1, (FILE*)file);
@@ -794,7 +803,7 @@ int UpdateScores()// faz update para o jogo de todos os scores
 			p->nickname = username;
 			p->segundos= atoi(segundos);
 			p->centesimas=atoi(centesimas);
-			players_border[i_border];
+			players_border[i_border]= *p;
 			i_border++;
 
 		}
@@ -815,12 +824,15 @@ int UpdateScores()// faz update para o jogo de todos os scores
 				p->nickname = username;
 				p->segundos= atoi(segundos);
 				p->centesimas=atoi(centesimas);
-				players_border[i_noborder];
+				players_noborder[i_noborder] =*p;
 				i_noborder++;
 
 			}
 		}
+		x++;
 	}
+	printf("segundos: %d\n",players_border[0].segundos);
+	return 0;
 }
 
 
