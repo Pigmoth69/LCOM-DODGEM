@@ -36,6 +36,8 @@ typedef struct{
 	Bitmap* alphabet;
 	Bitmap* submitScreen;
 	Bitmap* space;
+	Bitmap* MenuHighscore;
+	Bitmap* HighscoreList;
 	rectangle * PlayOption;
 	rectangle * HSOption;
 	rectangle * ExitOption;

@@ -445,3 +445,11 @@ void drawBitmapLetter(Bitmap* bmp, int x, int y,char letter, Alignment alignment
 		memcpy(bufferStartPos, imgStartPos, drawWidth * 2);
 	}
 }
+
+
+
+
+
+
+
+
