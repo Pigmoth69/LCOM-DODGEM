@@ -1052,8 +1052,10 @@ int submitHighscoreMenu()
 										//faz qualquer coisa aparecer no ecrã
 									}
 									else
+									{
 										p.nickname[pos_letra] = letra;
-									pos_letra++;
+										pos_letra++;
+									}
 								}
 								keyboard = 0x0;
 							}
