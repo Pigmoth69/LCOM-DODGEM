@@ -74,6 +74,7 @@
 #define KEY_7 0x88
 #define KEY_8 0x89
 #define KEY_9 0x8A
+#define KEY_SPACE 0x00B9
 
 
 

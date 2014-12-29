@@ -35,6 +35,7 @@ typedef struct{
 	Bitmap* PlayInv;
 	Bitmap* alphabet;
 	Bitmap* submitScreen;
+	Bitmap* space;
 	rectangle * PlayOption;
 	rectangle * HSOption;
 	rectangle * ExitOption;

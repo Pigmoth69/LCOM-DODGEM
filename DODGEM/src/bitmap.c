@@ -150,12 +150,7 @@ void drawBitmapNumber(Bitmap* bmp, int x, int y,int number, Alignment alignment)
 	int drawWidth = number_draw_width(number);
 	int xCorrection=0;
 
-	if(number == 0)
-		xCorrection=0;
-	else if(number == 1)
-		xCorrection+= 40;
-	else
-		xCorrection+=(number-1)*40+40;
+	xCorrection+=(number)*40;
 
 
 
@@ -354,40 +349,30 @@ void drawLosingText(int segundos, int centesimas){
 void drawPlayerName(char* name,int x,int y) // desenha o nome do player no ecra
 {
 	int i = 0;
-	for(i;i<11;i++)
+	for(i;i<12;i++)
 	{
 		if(name[i] == '*')
-			continue;
-		else if(name[i]== 'i')
-		{
-			drawBitmapLetter(game->alphabet,x,y,name[i],ALIGN_LEFT);
-			x+=20;
-		}
-		else if(name[i]== 'j')
-		{
-			drawBitmapLetter(game->alphabet,x,y,name[i],ALIGN_LEFT);
-			x+=30;
-		}
-		else if(name[i]== 'k')
-		{
-			drawBitmapLetter(game->alphabet,x,y,name[i],ALIGN_LEFT);
-			x+=50;
-		}
+			break;
 		else if(name[i] == '0'||name[i] == '1'||name[i] == '2'||name[i] == '3'||name[i] == '4'||
 				name[i] == '5'||name[i] == '6'||name[i] == '7'||name[i] == '8'||name[i] == '9')
 		{
-			int n = char_to_int(name[i]);
+			int n = ((int)(name[i]) - (int)'0');
 			drawBitmapNumber(game->NumbersBlack,x,y,n,ALIGN_LEFT);
-			x+=39;
+			x+=40;
 		}
 		else
 		{
 			drawBitmapLetter(game->alphabet,x,y,name[i],ALIGN_LEFT);
-			x+=40;
+			if (name[i] == 'i')
+				x+= 20;
+			else if (name[i] == 'j')
+				x+= 30;
+			else if (name[i] == 'w')
+				x+= 50;
+			else
+				x+=40;
 		}
-
 	}
-
 }
 
 void drawBitmapLetter(Bitmap* bmp, int x, int y,char letter, Alignment alignment)
@@ -404,9 +389,11 @@ void drawBitmapLetter(Bitmap* bmp, int x, int y,char letter, Alignment alignment
 
 	int drawWidth=0;
 
-	int xCorrection=getLetterPos(letter);
-	if (xCorrection == -1)
+	int xCorrection= getLetterPos(letter);
+	if (xCorrection == -1){
+		printf("correction a -1 \n");
 		return;
+	}
 
 	if(letter == 'i')
 		drawWidth = 20;
@@ -415,7 +402,7 @@ void drawBitmapLetter(Bitmap* bmp, int x, int y,char letter, Alignment alignment
 	else if(letter == 'w')
 		drawWidth = 50;
 	else
-		drawWidth = number_draw_width(char_to_int(letter));
+		drawWidth = 40;
 
 
 	if (alignment == ALIGN_CENTER)

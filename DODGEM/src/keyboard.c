@@ -148,14 +148,17 @@ char getLetra(unsigned long keyboard) // de acordo com os keyboard input retorna
 	case KEY_9:
 		return '9';
 		break;
-	case RETURN_KEY:
-		return '9';
-		break;
+//	case RETURN_KEY:
+//		return '*';
+//		break;
 	case BACKSPACE:
-		return '9';
+		return '*';
+		break;
+	case KEY_SPACE:
+		return ' ';
 		break;
 	default:
-		return '*';
+		return '.';
 	}
 }
 
