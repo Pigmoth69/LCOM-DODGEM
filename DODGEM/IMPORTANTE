@@ -3,7 +3,7 @@
 3- falta a imagem das letras
 4-  pensei em fazer um array de structs com a informação de player para ler e escrever dos ficheiros
 5- a implementação do save/load dos scores vou fazer no DODGEM.c para ser mais fácil. Depois se for preciso, passamos para um ficheiro novo
-
+6- falta a cena do OK e do CANCEL para o submit score!
 
 
 coordenadas do score:

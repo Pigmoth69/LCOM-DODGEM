@@ -1,5 +1,4 @@
 #pragma once
-
 /** @defgroup Bitmap Bitmap
  * @{
  * Functions for manipulating bitmaps
@@ -56,7 +55,9 @@ void drawBitmap(Bitmap* bitmap, int x, int y, Alignment alignment);
 
 void drawBitmapNumber(Bitmap* bmp, int x, int y,int number, Alignment alignment);
 
-void drawScore(int x_inicial,int y_inicial,int segundos,int centesimas);
+void drawWhiteScore(int x_inicial,int y_inicial,int segundos,int centesimas);
+
+void drawBlackScore(int x_inicial,int y_inicial,int segundos,int centesimas);
 
 void drawPart(Bitmap* bmp, int x, int y, int x_inicial, int y_inicial, int x_final, int y_final, Alignment alignment); //draw part of an image
 
@@ -68,6 +69,10 @@ int number_draw_width(int number);//return the number width to draw
  */
 void deleteBitmap(Bitmap* bmp);
 
+void drawPlayerName(char* name,int x,int y); // desenha o nome do player no ecra
+
 void drawLosingText(int segundos, int centesimas);
+
+void drawBitmapLetter(Bitmap* bmp, int x, int y,char letter, Alignment alignment);
 
 /**@}*/

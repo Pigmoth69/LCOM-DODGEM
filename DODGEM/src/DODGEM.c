@@ -17,6 +17,8 @@ PLAYER* user;
 //APENAS PARA TESTE!
 PLAYER players_border[10]; // os 10 melhores scores do jogo com border
 PLAYER players_noborder[10]; // os 10 melhores scores do jogo com border
+static int borderSize = 0;
+static int noborderSize = 0;
 
 //FIM DO TESTE
 
@@ -51,21 +53,35 @@ void start_DODGEM()
 	game->CursorLR = loadBitmap("/home/lcom/DODGEM/res/images/rato20LR.bmp");
 	game->CursorLRM = loadBitmap("/home/lcom/DODGEM/res/images/rato20LRM.bmp");
 	game->CursorMiddle = loadBitmap("/home/lcom/DODGEM/res/images/rato20M.bmp");
-	game->Numbers = loadBitmap("/home/lcom/DODGEM/res/images/Algarismos.bmp");
+	game->NumbersWhite = loadBitmap("/home/lcom/DODGEM/res/images/Algarismos.bmp");
+	game->NumbersBlack = loadBitmap("/home/lcom/DODGEM/res/images/AlgarismosPretos.bmp");
 	game->ScoreBackground = loadBitmap("/home/lcom/DODGEM/res/images/ScoreBackground.bmp");
 	game->EnergyBar = loadBitmap("home/lcom/DODGEM/res/images/Energy.bmp");
 	game->Border = loadBitmap("home/lcom/DODGEM/res/images/Fronteira.bmp");
 	game->PlayInv = loadBitmap("home/lcom/DODGEM/res/images/MainInv.bmp");
+	game->submitScreen = loadBitmap("home/lcom/DODGEM/res/images/Submit.bmp");
+	game->alphabet = loadBitmap("home/lcom/DODGEM/res/images/Alfabeto.bmp");
 	game->irq_set_mouse = MOUSE_send_command();
 	game->irq_set_keyboard = KBD_subscribe_int();
 	game->irq_set_time = timer_subscribe_int();
 	game->FPS = 60;
 	printf("OPENSCORES\n");
-	UpdateScores();
+	loadScores();
 	printf("LEAVESCORES\n");
+	printf("esperar...\n");
+	//sleep(3);
+
 	StartOptions();
+	printf("start1\n");
+	//sleep(2);
+
 	start_Objects();
+	printf("start2\n");
+//	sleep(2);
+
 	StartMouse();
+	printf("start3\n");
+	//sleep(2);
 }
 
 void StartOptions(){
@@ -74,6 +90,8 @@ void StartOptions(){
 	game->ExitOption = malloc(sizeof(rectangle));
 	game->gameMenuOption = malloc(sizeof(rectangle));
 	game->submitScore = malloc(sizeof(rectangle));
+	game->submitOK = malloc(sizeof(rectangle));
+	game->submitCANCEL = malloc(sizeof(rectangle));
 
 	game->PlayOption->xi = 340;
 	game->PlayOption->xf = 684;
@@ -100,6 +118,16 @@ void StartOptions(){
 	game->submitScore->yi=685;
 	game->submitScore->yf=745;
 
+	game->submitOK->xi=700;
+	game->submitOK->xf=900;
+	game->submitOK->yi=500;
+	game->submitOK->yf=600;
+
+	game->submitCANCEL->xi=400;
+	game->submitCANCEL->xf=600;
+	game->submitCANCEL->yi=500;
+	game->submitCANCEL->yf=600;
+
 
 }
 
@@ -124,7 +152,8 @@ void exit_DODGEM()
 	deleteBitmap(game->EnemyTL);
 	deleteBitmap(game->EnemyTR);
 	deleteBitmap(game->Cursor);
-	deleteBitmap(game->Numbers);
+	deleteBitmap(game->NumbersWhite);
+	deleteBitmap(game->NumbersBlack);
 	deleteBitmap(game->ScoreBackground);
 	deleteBitmap(game->EnergyBar);
 	deleteBitmap(game->Border);
@@ -215,7 +244,10 @@ int checkMenuOption(){
 	else if (rato->y > game->HSOption->yi && rato->y < game->HSOption->yf)
 	{
 		if ((rato->button == 1) && (rato->lastButton != 1))
+		{
+			printf("errp?\n");
 					return 2;
+		}
 				else
 					return 0;
 	}
@@ -249,7 +281,6 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 	drawAllObjects();
 	drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
 
-	//esta sempre a mostrar o bestscore
 
 
 	memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
@@ -293,7 +324,7 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 						drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
 						drawMouse();
 						if(scores->best_segundos!= 0 && scores->best_centesimas!= 0)
-							drawScore(55,595,scores->best_segundos,scores->best_centesimas);
+							drawWhiteScore(55,595,scores->best_segundos,scores->best_centesimas);
 						memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
 
@@ -303,8 +334,9 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 							keyboard = ESC_KEY;
 						else if(option == 2)
 						{
-							highscoreMenu();
-							keyboard = ESC_KEY;
+							printf("submeter o score!\n");
+							submitHighscoreMenu();
+							//keyboard = ESC_KEY;
 						}
 						else if(option == 3){
 							PlayGame(); //Comeca o jogo
@@ -343,9 +375,13 @@ int PlayGame(){
 	int ipc_status;
 	int r;
 	message msg;
+
+	//teve de se colocar aqui a cena do triple por causa do flickring com a imagem do submit score
+	memcpy(getTripleBuffer(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+	//.....................................................................
+
 	memcpy(getVideoMem(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 	int perdeu = 0;
-	printf("NOME: %d",players_noborder[0].centesimas);
 
 	keyboard = 0x0;
 
@@ -387,11 +423,11 @@ int PlayGame(){
 					/*		//centesimas= (int)getCounter()%60;
 							//centesimas= centesimas*100/60;*/
 
-							drawScore(740,685,scores->actual_segundos,scores->actual_centesimas);
+							drawWhiteScore(740,685,scores->actual_segundos,scores->actual_centesimas);
 							if(scores->best_segundos== 0 && scores->best_centesimas== 0)
-								drawScore(55,595,scores->actual_segundos,scores->actual_centesimas);
+								drawWhiteScore(55,595,scores->actual_segundos,scores->actual_centesimas);
 							else
-								drawScore(55,595,scores->best_segundos,scores->best_centesimas);
+								drawWhiteScore(55,595,scores->best_segundos,scores->best_centesimas);
 
 
 							//Update nos poderes
@@ -463,7 +499,7 @@ int PlayGame(){
 void UpdateEnergy()
 {
 	drawPart(game->EnergyBar, 63, 140, 0, 0, Poderes->Energy*212/100, 70, ALIGN_LEFT);
-	drawScore(100, 150, Poderes->Energy, -1);
+	drawWhiteScore(100, 150, Poderes->Energy, -1);
 	if (Poderes->Energy <= 98 && scores->segundosAnteriores != scores->actual_segundos)
 		Poderes->Energy += 2;
 
@@ -535,7 +571,7 @@ int checkGameOption()
 
 int highscoreMenu() // esta função chama o menu de highscores
 {
-	printf("highscoreMenu()\n");
+	//drawBitmap(game->submitScreen, 100, int y, Alignment alignment)
 	return 2;
 }
 
@@ -770,10 +806,11 @@ void StartGamePowers(){
 }
 
 
-int UpdateScores()// faz update para o jogo de todos os scores
+int loadScores()// faz update para o jogo de todos os scores
 {
 	int i_border = 0;
 	int i_noborder=0;
+
 	FILE * file;
 
 	file =fopen(FILENAME, "r");
@@ -784,55 +821,297 @@ int UpdateScores()// faz update para o jogo de todos os scores
 		return 1;
 	}
 
-
-	int x = 0;
-	while (x!= 4)//!feof(file))
+	while (!feof(file))
 	{
-		char border[1];
-		fgets(border, 1, (FILE*)file);
-		if(border == "1")	//significa que tem border
+		char border[100];
+		fgets(border,100,file);
+		if(border[0]=='1') // tem border
 		{
-			PLAYER *p;
-			char username[255];
-			char segundos[255];
-			char centesimas[255];
+			char score[10];
+			char name[100];
+			PLAYER p;
 
-			fgets(username, 255, (FILE*)file);
-			fgets(segundos, 255, (FILE*)file);
-			fgets(centesimas,255, (FILE*)file);
-			p->nickname = username;
-			p->segundos= atoi(segundos);
-			p->centesimas=atoi(centesimas);
-			players_border[i_border]= *p;
+			fgets(name,100,file);
+			int i = 0;
+			for(i; i< 11;i++){
+				if (name[i] == '\n')
+					break;
+				p.nickname[i]=name[i];
+			}
+
+
+			fgets(score,100,file);
+			p.segundos = atoi(score);
+
+			fgets(score,100,file);
+			p.centesimas = atoi(score);
+
+			players_border[i_border] = p;
 			i_border++;
+			borderSize++;
+
 
 		}
-		else
+		else			// não tem border
 		{
-			char border[1];
-			fgets(border, 1, (FILE*)file);
-			if(border == "1")	//significa que tem border
+			char score[10];
+			char name[100];
+			PLAYER p;
+
+			fgets(name,100,file);
+			int i = 0;
+			for(i; i< 11;i++){
+				if (name[i] == '\n')
+					break;
+				p.nickname[i]=name[i];
+			}
+
+
+			fgets(score,100,file);
+			p.segundos = atoi(score);
+
+			fgets(score,100,file);
+			p.centesimas = atoi(score);
+
+			players_noborder[i_noborder] = p;
+			i_noborder++;
+			noborderSize++;
+
+		}
+
+	}
+
+//	printf("NOME com border!: %s\n",players_border[0].nickname);
+//	printf("segundos com border!: %d\n",players_border[0].segundos);
+//	printf("centesimas com border!: %d\n",players_border[0].centesimas);
+//	printf("NOME com noborder!: %s\n",players_noborder[0].nickname);
+	//printf("NOME com noborder!: %s\n",players_noborder[1].nickname);
+
+
+	return 0;
+}
+
+void addScore(PLAYER p)
+{
+	int i = 0;
+	PLAYER p2;
+
+	if(Border == 1)
+	{
+		for(i;i< 10;i++)
+		{
+			if(i == (borderSize - 1))
 			{
-				PLAYER *p;
-				char username[255];
-				char segundos[255];
-				char centesimas[255];
-
-				fgets(username, 255, (FILE*)file);
-				fgets(segundos, 255, (FILE*)file);
-				fgets(centesimas,255, (FILE*)file);
-				p->nickname = username;
-				p->segundos= atoi(segundos);
-				p->centesimas=atoi(centesimas);
-				players_noborder[i_noborder] =*p;
-				i_noborder++;
-
+				players_border[i] = p;
+				borderSize++;
+				return;
+			}
+			else{
+				if (p.segundos >= players_border[i].segundos){
+					if (p.centesimas > players_border[i].centesimas){
+						p2 = players_border[i];
+						players_border[i] = p;
+						p = p2;
+						continue;
+					}
+					else
+						continue;
+				}
 			}
 		}
-		x++;
+
+	}else
+	{
+		for(i;i< 10;i++)
+		{
+			if(i == (noborderSize - 1))
+			{
+				players_noborder[i] = p;
+				noborderSize++;
+				return;
+			}
+			else{
+				if (p.segundos >= players_noborder[i].segundos){
+					if (p.centesimas > players_noborder[i].centesimas){
+						p2 = players_noborder[i];
+						players_noborder[i] = p;
+						p = p2;
+						continue;
+					}
+					else
+						continue;
+				}
+			}
+		}
 	}
-	printf("segundos: %d\n",players_border[0].segundos);
-	return 0;
+}
+
+int submitHighscoreMenu()
+{
+	timer_set_square(0, 60);
+
+		int ipc_status;
+		int r;
+		message msg;
+		unsigned long keyboard = 0x0;
+		int firstMove = 0;
+		int pos_letra = 0;
+		PLAYER p;
+
+
+		drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
+		drawAllObjects();
+		drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
+
+		//desenha o menu para submeter o score
+		drawBitmap(game->submitScreen,350,50,ALIGN_LEFT);
+		//desenha o bestsccore
+		drawBlackScore(725,100,scores->best_segundos,scores->best_centesimas);
+
+
+
+		memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+
+		memcpy(getTripleBuffer(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+
+
+		while(keyboard!= ESC_KEY) {
+			/* Get a request message. */
+			if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
+			{
+				printf("driver_receive failed with: %d", r);
+				continue;
+			}
+			if (is_ipc_notify(ipc_status)) { /* received notification */
+				switch (_ENDPOINT_P(msg.m_source)) {
+				case HARDWARE: /* hardware interrupt notification */
+
+
+					if (msg.NOTIFY_ARG & game->irq_set_time)
+					{ /* subscribed interrupt */
+						timer_int_handler();
+
+						if (getCounter() % (60/game->FPS) == 0){
+
+
+							//memcpy(getVideoBuffer(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+							drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
+
+							if (Border)
+								drawBitmap(game->Border, 340, 40, ALIGN_LEFT);
+
+							drawAllObjects();
+							drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
+							drawBitmap(game->submitScreen,350,50,ALIGN_LEFT);
+							drawBlackScore(725,100,scores->best_segundos,scores->best_centesimas);
+							drawPlayerName(p.nickname,400,350);
+							printf("teclado: %x\n",keyboard);
+							drawMouse();
+							if(scores->best_segundos!= 0 && scores->best_centesimas!= 0)
+								drawWhiteScore(55,595,scores->best_segundos,scores->best_centesimas);
+							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+
+
+							int option = checkSubmitOption();
+
+							if (option == 1)
+							{
+								printf("CANCEL key\n");
+								keyboard = ESC_KEY;
+							}
+							else if(option == 2)
+							{
+								//addScore();
+								printf("addsccore!\n");
+								printf("OK key\n");
+								keyboard = ESC_KEY;
+							}
+							else{
+
+								if(keyboard == RETURN_KEY )
+								{
+									//-----> adicionar scores com addScore();
+									printf("RETURN key\n");
+									keyboard = ESC_KEY;
+								}
+								if(keyboard == BACKSPACE)
+								{
+									pos_letra--;
+									p.nickname[pos_letra] = '*';
+								}
+
+								if(pos_letra < 11)
+								{
+									if (keyboard == 0)
+										continue;
+									char letra = getLetra(keyboard);
+									printf("letra: %c",letra);
+									if(letra == INVALID)
+									{
+										printf("INPUT INVALIDO!\n");
+										//faz qualquer coisa aparecer no ecrã
+									}
+									else
+										p.nickname[pos_letra] = letra;
+									pos_letra++;
+								}
+								keyboard = 0x0;
+							}
+
+						}
+					}
+					if (msg.NOTIFY_ARG & game->irq_set_keyboard)
+					{ /* subscribed interrupt */
+						keyboard = KBD_handler_C();
+
+
+					}
+					if (msg.NOTIFY_ARG & game->irq_set_mouse)
+					{ /* subscribed interrupt */
+						MOUSE_int_handler();
+						show_mouse();
+					}
+
+					break;
+				default:
+					break; /* no other notifications expected: do nothing */
+				}
+			} else { /* received a standard message, not a notification */
+				/* no standard messages expected: do nothing */
+			}
+		}
+
+
+
+		return 1;
+}
+
+int checkSubmitOption()
+{
+	if((rato->x > game->submitOK->xi) && (rato->x < game->submitOK->xf)&&
+				(rato->y > game->submitOK->yi) && (rato->y < game->submitOK->yf))
+	{
+		if(checkClick())
+			return 1;
+		else
+			return 0;
+	}
+	else if((rato->x > game->submitCANCEL->xi) && (rato->x < game->submitCANCEL->xf)&&
+			(rato->y > game->submitCANCEL->yi) && (rato->y < game->submitCANCEL->yf))
+	{
+		if(checkClick())
+			return 2;
+		else
+			return 0;
+	}
+	else
+		return 0;
+}
+
+
+void saveScores()
+{
+
 }
 
 
