@@ -75,4 +75,5 @@ void drawLosingText(int segundos, int centesimas);
 
 void drawBitmapLetter(Bitmap* bmp, int x, int y,char letter, Alignment alignment);
 
+void drawPlayerName(char* name,int x,int y);
 /**@}*/

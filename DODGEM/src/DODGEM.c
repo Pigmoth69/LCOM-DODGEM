@@ -62,6 +62,8 @@ void start_DODGEM()
 	game->submitScreen = loadBitmap("home/lcom/DODGEM/res/images/Submit.bmp");
 	game->alphabet = loadBitmap("home/lcom/DODGEM/res/images/Alfabeto.bmp");
 	game->space = loadBitmap("home/lcom/DODGEM/res/images/space.bmp");
+	game->MenuHighscore = loadBitmap("home/lcom/DODGEM/res/images/MenuHighScores.bmp");
+	game->HighscoreList = loadBitmap("home/lcom/DODGEM/res/images/HighScoresList.bmp");
 	game->irq_set_mouse = MOUSE_send_command();
 	game->irq_set_keyboard = KBD_subscribe_int();
 	game->irq_set_time = timer_subscribe_int();
@@ -805,7 +807,6 @@ void StartGamePowers(){
 	Poderes->Energy = 100;
 }
 
-
 int loadScores()// faz update para o jogo de todos os scores
 {
 	int i_border = 0;
@@ -998,9 +999,9 @@ int submitHighscoreMenu()
 						timer_int_handler();
 
 						if (getCounter() % (60/game->FPS) == 0){
-
-							//memcpy(getVideoBuffer(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-							/*drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
+							//inicio do comment
+						/*	memcpy(getVideoBuffer(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+							drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
 
 							if (Border)
 								drawBitmap(game->Border, 340, 40, ALIGN_LEFT);
@@ -1009,11 +1010,12 @@ int submitHighscoreMenu()
 							//drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
 							drawBitmap(game->submitScreen,350,50,ALIGN_LEFT);
 							drawBlackScore(725,100,scores->best_segundos,scores->best_centesimas);
-							drawPlayerName(p.nickname,400,350);*/
-							//drawMouse();
+							drawPlayerName(p.nickname,400,350);
+							drawMouse();
 
 
-							//memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+							//memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);*/
+							//fim do comment
 							int option = checkSubmitOption();
 							if (option == 1){
 								keyboard = ESC_KEY;
@@ -1030,7 +1032,9 @@ int submitHighscoreMenu()
 								char letra = getLetra(keyboard);
 
 								printf("keyboad %d = %c \n", keyboard, letra);
-								if (letra == '*'){
+
+								if (letra == '*')
+								{
 									name[pos_letra] = '*';
 									if (pos_letra > 0){
 										pos_letra--;
@@ -1079,10 +1083,13 @@ int submitHighscoreMenu()
 							}
 
 							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-
-
-
 						}
+
+
+
+
+
+
 					}
 					if (msg.NOTIFY_ARG & game->irq_set_keyboard)
 					{ /* subscribed interrupt */
