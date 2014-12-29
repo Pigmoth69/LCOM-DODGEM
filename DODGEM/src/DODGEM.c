@@ -1036,8 +1036,11 @@ int submitHighscoreMenu()
 								}
 								if(keyboard == BACKSPACE)
 								{
-									pos_letra--;
+									if(pos_letra > 0)
+										pos_letra--;
 									p.nickname[pos_letra] = '*';
+									keyboard=0;
+									continue;
 								}
 
 								if(pos_letra < 11)
