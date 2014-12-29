@@ -61,6 +61,7 @@ void start_DODGEM()
 	game->PlayInv = loadBitmap("home/lcom/DODGEM/res/images/MainInv.bmp");
 	game->submitScreen = loadBitmap("home/lcom/DODGEM/res/images/Submit.bmp");
 	game->alphabet = loadBitmap("home/lcom/DODGEM/res/images/Alfabeto.bmp");
+	game->space = loadBitmap("home/lcom/DODGEM/res/images/space.bmp");
 	game->irq_set_mouse = MOUSE_send_command();
 	game->irq_set_keyboard = KBD_subscribe_int();
 	game->irq_set_time = timer_subscribe_int();
@@ -323,7 +324,7 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 						drawAllObjects();
 						drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
 						drawMouse();
-						if(scores->best_segundos!= 0 && scores->best_centesimas!= 0)
+						if(scores->best_segundos!= 0 || scores->best_centesimas!= 0)
 							drawWhiteScore(55,595,scores->best_segundos,scores->best_centesimas);
 						memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
@@ -419,6 +420,10 @@ int PlayGame(){
 							//get time
 							scores->segundosAnteriores = scores->actual_segundos;
 							scores->actual_segundos = (int)getCounter()/60;
+							//atualiza as centesimas
+							scores->actual_centesimas = (getCounter()%60)*100/60;
+							if(scores->actual_centesimas >= 100)
+								scores->actual_centesimas -= 100;
 
 					/*		//centesimas= (int)getCounter()%60;
 							//centesimas= centesimas*100/60;*/
@@ -453,11 +458,6 @@ int PlayGame(){
 								perdeu = 1;
 								break;
 							}
-
-							//atualiza as centesimas
-							scores->actual_centesimas += (double)1*100/60;
-							if(scores->actual_centesimas >= 100)
-								scores->actual_centesimas -= 100;
 
 						}
 						else{
@@ -957,6 +957,10 @@ int submitHighscoreMenu()
 		int firstMove = 0;
 		int pos_letra = 0;
 		PLAYER p;
+		char name[12];
+		int x_inicio = 400;
+		int y_inicio = 350;
+		int xa = x_inicio;
 
 
 		drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
@@ -967,6 +971,8 @@ int submitHighscoreMenu()
 		drawBitmap(game->submitScreen,350,50,ALIGN_LEFT);
 		//desenha o bestsccore
 		drawBlackScore(725,100,scores->best_segundos,scores->best_centesimas);
+		if(scores->best_segundos!= 0 || scores->best_centesimas!= 0)
+			drawWhiteScore(55,595,scores->best_segundos,scores->best_centesimas);
 
 
 
@@ -993,75 +999,88 @@ int submitHighscoreMenu()
 
 						if (getCounter() % (60/game->FPS) == 0){
 
-
 							//memcpy(getVideoBuffer(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-							drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
+							/*drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
 
 							if (Border)
 								drawBitmap(game->Border, 340, 40, ALIGN_LEFT);
 
-							drawAllObjects();
-							drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
+							//drawAllObjects();
+							//drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
 							drawBitmap(game->submitScreen,350,50,ALIGN_LEFT);
 							drawBlackScore(725,100,scores->best_segundos,scores->best_centesimas);
-							drawPlayerName(p.nickname,400,350);
-							printf("teclado: %x\n",keyboard);
-							drawMouse();
-							if(scores->best_segundos!= 0 && scores->best_centesimas!= 0)
-								drawWhiteScore(55,595,scores->best_segundos,scores->best_centesimas);
+							drawPlayerName(p.nickname,400,350);*/
+							//drawMouse();
+
+
+							//memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+							int option = checkSubmitOption();
+							if (option == 1){
+								keyboard = ESC_KEY;
+							}
+							else if (option == 2){
+								//SaveScore()
+								keyboard = ESC_KEY;
+							}
+							else if (keyboard == ENTER_KEY){
+								//SaveScore()
+								keyboard = ESC_KEY;
+							}
+							else if (keyboard != 0){
+								char letra = getLetra(keyboard);
+
+								printf("keyboad %d = %c \n", keyboard, letra);
+								if (letra == '*'){
+									name[pos_letra] = '*';
+									if (pos_letra > 0){
+										pos_letra--;
+
+										keyboard = 0;
+										int espac = 0;
+										if(name[pos_letra] == 'i')
+											espac = 20;
+										else if(name[pos_letra] == 'j')
+											espac = 30;
+										else if(name[pos_letra] == 'w')
+											espac = 50;
+										else
+											espac = 40;
+										xa-= espac;
+										drawPart(game->space, xa, y_inicio, 0, 0, espac, 0, ALIGN_LEFT);
+									}
+								}
+								else if (letra != '.' && pos_letra < 12){
+									name[pos_letra] = letra;
+
+									if ((int)letra >= 48 && (int)letra <= 57){
+										drawBitmapNumber(game->NumbersBlack, xa, y_inicio, (int)letra - (int)('0'), ALIGN_LEFT);
+										xa += 40;
+									}
+									else if (letra == ' '){
+										drawPart(game->space, xa, y_inicio, 0, 0, 40, 0, ALIGN_LEFT);
+										xa+=40;
+									}
+									else{
+										drawBitmapLetter(game->alphabet, xa, y_inicio, letra, ALIGN_LEFT);
+										if(letra == 'i')
+											xa += 20;
+										else if(letra == 'j')
+											xa += 30;
+										else if(letra == 'w')
+											xa += 50;
+										else
+											xa += 40;
+									}
+
+									pos_letra++;
+									keyboard = 0;
+
+								}
+							}
+
 							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
 
-							int option = checkSubmitOption();
-
-							if (option == 1)
-							{
-								printf("CANCEL key\n");
-								keyboard = ESC_KEY;
-							}
-							else if(option == 2)
-							{
-								//addScore();
-								printf("addsccore!\n");
-								printf("OK key\n");
-								keyboard = ESC_KEY;
-							}
-							else{
-
-								if(keyboard == RETURN_KEY )
-								{
-									//-----> adicionar scores com addScore();
-									printf("RETURN key\n");
-									keyboard = ESC_KEY;
-								}
-								if(keyboard == BACKSPACE)
-								{
-									if(pos_letra > 0)
-										pos_letra--;
-									p.nickname[pos_letra] = '*';
-									keyboard=0;
-									continue;
-								}
-
-								if(pos_letra < 11)
-								{
-									if (keyboard == 0)
-										continue;
-									char letra = getLetra(keyboard);
-									printf("letra: %c",letra);
-									if(letra == INVALID)
-									{
-										printf("INPUT INVALIDO!\n");
-										//faz qualquer coisa aparecer no ecrã
-									}
-									else
-									{
-										p.nickname[pos_letra] = letra;
-										pos_letra++;
-									}
-								}
-								keyboard = 0x0;
-							}
 
 						}
 					}
@@ -1085,6 +1104,15 @@ int submitHighscoreMenu()
 				/* no standard messages expected: do nothing */
 			}
 		}
+
+		printf("nome: ");
+		int i = 0;
+		for (i; i < 12; i++){
+			if (i == pos_letra)
+				break;
+			printf("%c", name[i]);
+		}
+		printf("\n");
 
 
 
