@@ -6,8 +6,9 @@
 #define MODE1024_H_RES 1024
 #define MODE1024_V_RES 768
 #define FILENAME "/home/lcom/DODGEM/scores.txt"
+#define INVALID '*'
 
 
-int invert_number(int number);
+int char_to_int(char n); // numero
 
 

@@ -27,16 +27,21 @@ typedef struct{
 	Bitmap* CursorLR;
 	Bitmap* CursorLRM;
 	Bitmap* CursorMiddle;
-	Bitmap* Numbers;
+	Bitmap* NumbersWhite;
+	Bitmap* NumbersBlack;
 	Bitmap* ScoreBackground;
 	Bitmap* EnergyBar;
 	Bitmap* Border;
 	Bitmap* PlayInv;
+	Bitmap* alphabet;
+	Bitmap* submitScreen;
 	rectangle * PlayOption;
 	rectangle * HSOption;
 	rectangle * ExitOption;
 	rectangle * gameMenuOption;
 	rectangle * submitScore;
+	rectangle *submitOK;
+	rectangle *submitCANCEL;
 
 
 	rectangle * TL;
@@ -71,7 +76,7 @@ typedef struct{
 }SCORE;
 
 typedef struct{
-	char* nickname;
+	char nickname[12];
 	int segundos;
 	int centesimas;
 }PLAYER;
@@ -103,10 +108,12 @@ int PlayGame(); //O jogo em si
 int checkClick(); //verifica se clicou no botao do rato
 void UpdatePowers(); //faz update aos poderes
 void StartGamePowers(); //inicia os valores dos poderes (inicio do jogo)
-void updateScores(); //esta funcao compara e faz o update do bestscore return
 void UpdateEnergy(); // faz update da energia
-
-int UpdateScores();// faz update para o jogo de todos os scores retorna 1 se der erro retorna 0 se der
-
+void updateScores();//esta funcao compara e faz o update do bestscore
+int loadScores();// faz update para o jogo de todos os scores retorna 1 se der erro retorna 0 se der
+void addScore(PLAYER p); //esta função adiciona ao array o best score da struct SCORE
+void saveScores(); // esta função guarda no txt todos os recordes do jogo
+int submitHighscoreMenu(); // faz aparecer o menu para fazer submit do score
+int checkSubmitOption(); // ve a opcao de submit escolhida cancelas ou aceitar
 
 #endif

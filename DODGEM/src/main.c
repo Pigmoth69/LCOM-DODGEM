@@ -28,9 +28,11 @@ int main(int argc, char **argv) {
 		{
 		case 1:// Menu em que aparece o jogo!
 			MainOption = gameMenu();
+			printf("jogar!\n");
 			break;
 		case 2:// Menu em que aparecem os highscores
 			MainOption = highscoreMenu();
+			printf("ver os highscores\n");
 			break;
 		case 3:
 		{

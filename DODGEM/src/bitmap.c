@@ -4,6 +4,7 @@
 #include "graphics.h"
 #include "utilities.h"
 #include "string.h"
+#include "DODGEM.h"
 
 
 
@@ -199,7 +200,7 @@ void drawBitmapNumber(Bitmap* bmp, int x, int y,int number, Alignment alignment)
 	}
 }
 
-void drawScore(int x_inicial,int y_inicial,int segundos,int centesimas)
+void drawWhiteScore(int x_inicial,int y_inicial,int segundos,int centesimas)
 {
 	/*drawBitmapNumber(game->Numbers,800, 690,segundos, ALIGN_LEFT);*/
 
@@ -212,7 +213,7 @@ void drawScore(int x_inicial,int y_inicial,int segundos,int centesimas)
 	int i = 0;
 	for(i; i < strlen(string);i++)
 	{
-		drawBitmapNumber(game->Numbers,x_inicial, y_inicial,string[i]-'0', ALIGN_LEFT);
+		drawBitmapNumber(game->NumbersWhite,x_inicial, y_inicial,string[i]-'0', ALIGN_LEFT);
 		x_inicial+=number_draw_width(string[i]-'0');
 	}
 
@@ -220,7 +221,7 @@ void drawScore(int x_inicial,int y_inicial,int segundos,int centesimas)
 		return;
 
 
-	drawBitmapNumber(game->Numbers,x_inicial,y_inicial ,10, ALIGN_LEFT);
+	drawBitmapNumber(game->NumbersWhite,x_inicial,y_inicial ,10, ALIGN_LEFT);
 	x_inicial+=number_draw_width(10);
 
 
@@ -228,13 +229,54 @@ void drawScore(int x_inicial,int y_inicial,int segundos,int centesimas)
 	sprintf(string,"%d",centesimas);
 	if(centesimas <10)
 	{
-		drawBitmapNumber(game->Numbers,x_inicial,y_inicial ,0, ALIGN_LEFT);
+		drawBitmapNumber(game->NumbersWhite,x_inicial,y_inicial ,0, ALIGN_LEFT);
 		x_inicial+=number_draw_width(0);
 	}
 
 	for(i; i < strlen(string);i++)
 	{
-		drawBitmapNumber(game->Numbers,x_inicial, y_inicial,string[i]-'0', ALIGN_LEFT);
+		drawBitmapNumber(game->NumbersWhite,x_inicial, y_inicial,string[i]-'0', ALIGN_LEFT);
+		x_inicial+=number_draw_width(string[i]-'0');
+	}
+
+}
+
+void drawBlackScore(int x_inicial,int y_inicial,int segundos,int centesimas)
+{
+	/*drawBitmapNumber(game->Numbers,800, 690,segundos, ALIGN_LEFT);*/
+
+
+
+	unsigned char string[50];
+
+	sprintf(string,"%d",segundos);
+
+	int i = 0;
+	for(i; i < strlen(string);i++)
+	{
+		drawBitmapNumber(game->NumbersBlack,x_inicial, y_inicial,string[i]-'0', ALIGN_LEFT);
+		x_inicial+=number_draw_width(string[i]-'0');
+	}
+
+	if (centesimas == -1)
+		return;
+
+
+	drawBitmapNumber(game->NumbersBlack,x_inicial,y_inicial ,10, ALIGN_LEFT);
+	x_inicial+=number_draw_width(10);
+
+
+	i = 0;
+	sprintf(string,"%d",centesimas);
+	if(centesimas <10)
+	{
+		drawBitmapNumber(game->NumbersBlack,x_inicial,y_inicial ,0, ALIGN_LEFT);
+		x_inicial+=number_draw_width(0);
+	}
+
+	for(i; i < strlen(string);i++)
+	{
+		drawBitmapNumber(game->NumbersBlack,x_inicial, y_inicial,string[i]-'0', ALIGN_LEFT);
 		x_inicial+=number_draw_width(string[i]-'0');
 	}
 
@@ -305,6 +347,114 @@ void deleteBitmap(Bitmap* bmp) {
 
 void drawLosingText(int segundos, int centesimas){
     drawBitmap(game->ScoreBackground, 450, 250, ALIGN_LEFT);
-    drawScore(580,350,segundos,centesimas);
+    drawWhiteScore(580,350,segundos,centesimas);
     memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+}
+
+void drawPlayerName(char* name,int x,int y) // desenha o nome do player no ecra
+{
+	int i = 0;
+	for(i;i<11;i++)
+	{
+		if(name[i] == '*')
+			continue;
+		else if(name[i]== 'i')
+		{
+			drawBitmapLetter(game->alphabet,x,y,name[i],ALIGN_LEFT);
+			x+=20;
+		}
+		else if(name[i]== 'j')
+		{
+			drawBitmapLetter(game->alphabet,x,y,name[i],ALIGN_LEFT);
+			x+=30;
+		}
+		else if(name[i]== 'k')
+		{
+			drawBitmapLetter(game->alphabet,x,y,name[i],ALIGN_LEFT);
+			x+=50;
+		}
+		else if(name[i] == '0'||name[i] == '1'||name[i] == '2'||name[i] == '3'||name[i] == '4'||
+				name[i] == '5'||name[i] == '6'||name[i] == '7'||name[i] == '8'||name[i] == '9')
+		{
+			int n = char_to_int(name[i]);
+			drawBitmapNumber(game->NumbersBlack,x,y,n,ALIGN_LEFT);
+			x+=39;
+		}
+		else
+		{
+			drawBitmapLetter(game->alphabet,x,y,name[i],ALIGN_LEFT);
+			x+=40;
+		}
+
+	}
+
+}
+
+void drawBitmapLetter(Bitmap* bmp, int x, int y,char letter, Alignment alignment)
+{
+
+
+	if (bmp == NULL)
+		return;
+
+
+	int width = bmp->bitmapInfoHeader.width;
+	int height = bmp->bitmapInfoHeader.height;
+
+
+	int drawWidth=0;
+
+	int xCorrection=getLetterPos(letter);
+	if (xCorrection == -1)
+		return;
+
+	if(letter == 'i')
+		drawWidth = 20;
+	else if(letter == 'j')
+		drawWidth = 30;
+	else if(letter == 'w')
+		drawWidth = 50;
+	else
+		drawWidth = number_draw_width(char_to_int(letter));
+
+
+	if (alignment == ALIGN_CENTER)
+		x -= width / 2;
+	else if (alignment == ALIGN_RIGHT)
+		x -= width;
+
+	if (x + width < 0 || x > MODE1024_H_RES || y + height < 0
+			|| y > MODE1024_V_RES)
+		return;
+
+
+	if (x < 0) {
+		xCorrection = -x;
+		drawWidth -= xCorrection;
+		x = 0;
+
+		if (drawWidth > MODE1024_H_RES)
+			drawWidth = MODE1024_H_RES;
+	} else if (x + drawWidth >= MODE1024_H_RES) {
+		drawWidth = MODE1024_H_RES - x;
+	}
+
+	char* bufferStartPos;
+	char* imgStartPos;
+
+
+	int i;
+	for (i = 0; i < height; i++) {
+		int pos = y + height - 1 - i;
+
+		if (pos < 0|| pos >= MODE1024_V_RES)
+			continue;
+
+		bufferStartPos = (char*)getVideoBuffer();
+		bufferStartPos += x * 2 + pos * MODE1024_H_RES * 2;
+
+		imgStartPos = bmp->bitmapData + xCorrection * 2 + i * width * 2;
+
+		memcpy(bufferStartPos, imgStartPos, drawWidth * 2);
+	}
 }
