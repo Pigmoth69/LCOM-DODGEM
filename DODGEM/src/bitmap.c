@@ -349,31 +349,42 @@ void drawLosingText(int segundos, int centesimas){
 void drawPlayerName(char* name,int x,int y) // desenha o nome do player no ecra
 {
 	int i = 0;
+	printf("entrou aqui!\n");
 	for(i;i<12;i++)
 	{
-		if(name[i] == '*')
-			break;
+		if(name[i] == '.')
+			continue;
+		else if(name[i]== ' ')
+			x+=20;
 		else if(name[i] == '0'||name[i] == '1'||name[i] == '2'||name[i] == '3'||name[i] == '4'||
 				name[i] == '5'||name[i] == '6'||name[i] == '7'||name[i] == '8'||name[i] == '9')
 		{
-			int n = ((int)(name[i]) - (int)'0');
+			int n = char_to_int(name[i]);
 			drawBitmapNumber(game->NumbersBlack,x,y,n,ALIGN_LEFT);
 			x+=40;
+		}else if(name[i]=='i')
+		{
+			drawBitmapLetter(game->alphabet,x,y,name[i],ALIGN_LEFT);
+			x+= 20;
+		}
+		else if(name[i]=='j')
+		{
+			drawBitmapLetter(game->alphabet,x,y,name[i],ALIGN_LEFT);
+			x+= 30;
+		}
+		else if(name[i] == 'w')
+		{
+			drawBitmapLetter(game->alphabet,x,y,name[i],ALIGN_LEFT);
+			x+= 50;
 		}
 		else
 		{
 			drawBitmapLetter(game->alphabet,x,y,name[i],ALIGN_LEFT);
-			if (name[i] == 'i')
-				x+= 20;
-			else if (name[i] == 'j')
-				x+= 30;
-			else if (name[i] == 'w')
-				x+= 50;
-			else
-				x+=40;
+			x+= 40;
 		}
 	}
 }
+
 
 void drawBitmapLetter(Bitmap* bmp, int x, int y,char letter, Alignment alignment)
 {

@@ -951,180 +951,132 @@ int submitHighscoreMenu()
 {
 	timer_set_square(0, 60);
 
-		int ipc_status;
-		int r;
-		message msg;
-		unsigned long keyboard = 0x0;
-		int firstMove = 0;
-		int pos_letra = 0;
-		PLAYER p;
-		char name[12];
-		int x_inicio = 400;
-		int y_inicio = 350;
-		int xa = x_inicio;
+	int ipc_status;
+	int r;
+	message msg;
+	unsigned long keyboard = 0x0;
+	int firstMove = 0;
+	int pos_letra = 0;
+	PLAYER p;
+	char name[12];
+	memset(&name, '.', 12);
+	int x_inicio = 400;
+	int y_inicio = 350;
+	int xa = x_inicio;
 
 
-		drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
-		drawAllObjects();
-		drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
+	drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
+	drawAllObjects();
+	drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
 
-		//desenha o menu para submeter o score
-		drawBitmap(game->submitScreen,350,50,ALIGN_LEFT);
-		//desenha o bestsccore
-		drawBlackScore(725,100,scores->best_segundos,scores->best_centesimas);
-		if(scores->best_segundos!= 0 || scores->best_centesimas!= 0)
-			drawWhiteScore(55,595,scores->best_segundos,scores->best_centesimas);
-
-
-
-		memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-
-		memcpy(getTripleBuffer(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+	//desenha o menu para submeter o score
+	drawBitmap(game->submitScreen,350,50,ALIGN_LEFT);
+	//desenha o bestsccore
+	drawBlackScore(725,100,scores->best_segundos,scores->best_centesimas);
+	if(scores->best_segundos!= 0 || scores->best_centesimas!= 0)
+		drawWhiteScore(55,595,scores->best_segundos,scores->best_centesimas);
 
 
-		while(keyboard!= ESC_KEY) {
-			/* Get a request message. */
-			if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
-			{
-				printf("driver_receive failed with: %d", r);
-				continue;
-			}
-			if (is_ipc_notify(ipc_status)) { /* received notification */
-				switch (_ENDPOINT_P(msg.m_source)) {
-				case HARDWARE: /* hardware interrupt notification */
+
+	memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+
+	memcpy(getTripleBuffer(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
 
-					if (msg.NOTIFY_ARG & game->irq_set_time)
-					{ /* subscribed interrupt */
-						timer_int_handler();
+	while(keyboard!= ESC_KEY) {
+		/* Get a request message. */
+		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
+		{
+			printf("driver_receive failed with: %d", r);
+			continue;
+		}
+		if (is_ipc_notify(ipc_status)) { /* received notification */
+			switch (_ENDPOINT_P(msg.m_source)) {
+			case HARDWARE: /* hardware interrupt notification */
+				if (msg.NOTIFY_ARG & game->irq_set_time)
+				{ /* subscribed interrupt */
+					timer_int_handler();
 
-						if (getCounter() % (60/game->FPS) == 0){
-							//inicio do comment
-						/*	memcpy(getVideoBuffer(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-							drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
+					if (getCounter() % (60/game->FPS) == 0){
+						//inicio do comment
+						memcpy(getVideoBuffer(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+						drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
 
-							if (Border)
-								drawBitmap(game->Border, 340, 40, ALIGN_LEFT);
+						if (Border)
+							drawBitmap(game->Border, 340, 40, ALIGN_LEFT);
 
-							//drawAllObjects();
-							//drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
-							drawBitmap(game->submitScreen,350,50,ALIGN_LEFT);
-							drawBlackScore(725,100,scores->best_segundos,scores->best_centesimas);
-							drawPlayerName(p.nickname,400,350);
-							drawMouse();
+						//drawAllObjects();
+						//drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
+						drawBitmap(game->submitScreen,350,50,ALIGN_LEFT);
+						drawBlackScore(725,100,scores->best_segundos,scores->best_centesimas);
+						drawPlayerName(name,400,350);
+						drawMouse();
 
 
-							//memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);*/
-							//fim do comment
-							int option = checkSubmitOption();
-							if (option == 1){
-								keyboard = ESC_KEY;
-							}
-							else if (option == 2){
-								//SaveScore()
-								keyboard = ESC_KEY;
-							}
-							else if (keyboard == ENTER_KEY){
-								//SaveScore()
-								keyboard = ESC_KEY;
-							}
-							else if (keyboard != 0){
-								char letra = getLetra(keyboard);
-
-								printf("keyboad %d = %c \n", keyboard, letra);
-
-								if (letra == '*')
-								{
-									name[pos_letra] = '*';
-									if (pos_letra > 0){
-										pos_letra--;
-
-										keyboard = 0;
-										int espac = 0;
-										if(name[pos_letra] == 'i')
-											espac = 20;
-										else if(name[pos_letra] == 'j')
-											espac = 30;
-										else if(name[pos_letra] == 'w')
-											espac = 50;
-										else
-											espac = 40;
-										xa-= espac;
-										drawPart(game->space, xa, y_inicio, 0, 0, espac, 0, ALIGN_LEFT);
-									}
-								}
-								else if (letra != '.' && pos_letra < 12){
-									name[pos_letra] = letra;
-
-									if ((int)letra >= 48 && (int)letra <= 57){
-										drawBitmapNumber(game->NumbersBlack, xa, y_inicio, (int)letra - (int)('0'), ALIGN_LEFT);
-										xa += 40;
-									}
-									else if (letra == ' '){
-										drawPart(game->space, xa, y_inicio, 0, 0, 40, 0, ALIGN_LEFT);
-										xa+=40;
-									}
-									else{
-										drawBitmapLetter(game->alphabet, xa, y_inicio, letra, ALIGN_LEFT);
-										if(letra == 'i')
-											xa += 20;
-										else if(letra == 'j')
-											xa += 30;
-										else if(letra == 'w')
-											xa += 50;
-										else
-											xa += 40;
-									}
-
-									pos_letra++;
-									keyboard = 0;
-
-								}
-							}
-
-							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+						//memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+						//fim do comment
+						int option = checkSubmitOption();
+						if (option == 1){
+							keyboard = ESC_KEY;
 						}
+						else if (option == 2){
+							//SaveScore()
+							keyboard = ESC_KEY;
+						}
+						else if (keyboard == ENTER_KEY){
+							//SaveScore()
+							keyboard = ESC_KEY;
+						}
+						else if (keyboard != 0)
+						{
+							char letra = getLetra(keyboard);
+							printf("keyboad= %c \n", letra);
 
 
+							if (letra == '.')
+								keyboard = 0;
+							else if(letra == '*')
+							{
+								if (pos_letra > 0){
+									pos_letra--;
+									name[pos_letra]='.';
+								}
+								keyboard =0;
+							}
+							else
+							{
+								if(pos_letra <12){
+								name[pos_letra] = letra;
+								pos_letra++;}
+								keyboard=0;
+							}
 
-
-
+						}
+						memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
 					}
-					if (msg.NOTIFY_ARG & game->irq_set_keyboard)
-					{ /* subscribed interrupt */
-						keyboard = KBD_handler_C();
-
-
-					}
-					if (msg.NOTIFY_ARG & game->irq_set_mouse)
-					{ /* subscribed interrupt */
-						MOUSE_int_handler();
-						show_mouse();
-					}
-
-					break;
-				default:
-					break; /* no other notifications expected: do nothing */
 				}
-			} else { /* received a standard message, not a notification */
-				/* no standard messages expected: do nothing */
-			}
-		}
+				if (msg.NOTIFY_ARG & game->irq_set_keyboard)
+				{ /* subscribed interrupt */
+					keyboard = KBD_handler_C();
+				}
+				if (msg.NOTIFY_ARG & game->irq_set_mouse)
+				{ /* subscribed interrupt */
+					MOUSE_int_handler();
+					show_mouse();
+				}
 
-		printf("nome: ");
-		int i = 0;
-		for (i; i < 12; i++){
-			if (i == pos_letra)
 				break;
-			printf("%c", name[i]);
+			default:
+				break; /* no other notifications expected: do nothing */
+			}
+		} else { /* received a standard message, not a notification */
+			/* no standard messages expected: do nothing */
 		}
-		printf("\n");
+	}
 
-
-
-		return 1;
 }
+
 
 int checkSubmitOption()
 {
