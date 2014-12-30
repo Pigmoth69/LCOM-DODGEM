@@ -1153,28 +1153,31 @@ int loadScores()// faz update para o jogo de todos os scores
 		return 1;
 	}
 
-	//char name[15];
-
 	while (!feof(file))
 	{
 		char border[100];
 		fgets(border,100,file);
-		if(border[0]=='1') // tem border
+		if(border[0]== '1') // tem border
 		{
 			char score[10];
 			char name[15];
 			PLAYER p;
 
+			printf("NOME1P: %s \n",p.nickname);
+			printf("NOME1C: %s \n", name);
+
 			fgets(name,100,file);
 			int i = 0;
-			for(i; i< 12;i++){
-				if (name[i] == '\n' || name[i] == '*')
-					break;
-				p.nickname[i]=name[i];
+			if (name[strlen(name) - 1] == '\n')
+			{
+				name[strlen(name) - 1] = '\0';
 			}
-			for(i=0; i< 15;i++){
+			strcpy(p.nickname, name);
+			/*for(i=0; i< 15;i++){
 				name[i] = '*';
-			}
+			}*/
+			printf("NOME2P: %s \n",p.nickname);
+			printf("NOME2C: %s \n", name);
 
 
 			fgets(score,100,file);
@@ -1198,6 +1201,11 @@ int loadScores()// faz update para o jogo de todos os scores
 
 			fgets(name,100,file);
 			int i = 0;
+			if (name[strlen(name) - 1] == '\n')
+			{
+				name[strlen(name) - 1] = '\0';
+			}
+			strcpy(p.nickname, name);
 			for(i; i< 11;i++){
 				if (name[i] == '\n' || name[i] == '0')
 					break;
@@ -1206,6 +1214,9 @@ int loadScores()// faz update para o jogo de todos os scores
 			for(i=0; i< 15;i++){
 				name[i] = '0';
 			}
+
+			printf("NOME2P: %s \n",p.nickname);
+			printf("NOME2C: %s \n", name);
 
 
 			fgets(score,100,file);
