@@ -7,6 +7,7 @@ DODGEM.o:	/usr/include/machine/interrupt.h
 DODGEM.o:	/usr/include/machine/mcontext.h
 DODGEM.o:	/usr/include/machine/ports.h
 DODGEM.o:	/usr/include/machine/stackframe.h
+DODGEM.o:	/usr/include/mathconst.h
 DODGEM.o:	/usr/include/minix/bitmap.h
 DODGEM.o:	/usr/include/minix/callnr.h
 DODGEM.o:	/usr/include/minix/com.h
@@ -40,6 +41,7 @@ DODGEM.o:	/usr/include/sys/ucred.h
 DODGEM.o:	/usr/include/timers.h
 DODGEM.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/ansi.h
 DODGEM.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/limits.h
+DODGEM.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/math.h
 DODGEM.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/signal.h
 DODGEM.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/stddef.h
 DODGEM.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/stdio.h
@@ -50,6 +52,7 @@ DODGEM.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include-fixed/unistd.h
 DODGEM.o:	/usr/pkg/gcc44/lib/gcc/i686-pc-minix/4.4.3/include/stdarg.h
 DODGEM.o:	DODGEM.c
 DODGEM.o:	DODGEM.h
+DODGEM.o:	RTC.h
 DODGEM.o:	bitmap.h
 DODGEM.o:	graphics.h
 DODGEM.o:	i8254.h
