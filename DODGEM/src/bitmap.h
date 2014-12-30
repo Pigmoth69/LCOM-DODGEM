@@ -69,11 +69,13 @@ int number_draw_width(int number);//return the number width to draw
  */
 void deleteBitmap(Bitmap* bmp);
 
-void drawPlayerName(char* name,int x,int y); // desenha o nome do player no ecra
+int drawPlayerName(char* name,int x,int y); // desenha o nome do player no ecra e retorna onde está o x(ou seja, o comprimento do nome)
 
 void drawLosingText(int segundos, int centesimas);
 
 void drawBitmapLetter(Bitmap* bmp, int x, int y,char letter, Alignment alignment);
 
-void drawPlayerName(char* name,int x,int y);
+void drawHighscores(char*name,int segundos,int centesimas,int x,int y); // desenho o score no ecra
+
+
 /**@}*/

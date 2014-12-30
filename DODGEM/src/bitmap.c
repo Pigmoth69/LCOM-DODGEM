@@ -346,7 +346,7 @@ void drawLosingText(int segundos, int centesimas){
     memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 }
 
-void drawPlayerName(char* name,int x,int y) // desenha o nome do player no ecra
+int drawPlayerName(char* name,int x,int y) // desenha o nome do player no ecra
 {
 	int i = 0;
 	printf("entrou aqui!\n");
@@ -383,8 +383,8 @@ void drawPlayerName(char* name,int x,int y) // desenha o nome do player no ecra
 			x+= 40;
 		}
 	}
+	return x;
 }
-
 
 void drawBitmapLetter(Bitmap* bmp, int x, int y,char letter, Alignment alignment)
 {
@@ -456,6 +456,14 @@ void drawBitmapLetter(Bitmap* bmp, int x, int y,char letter, Alignment alignment
 		memcpy(bufferStartPos, imgStartPos, drawWidth * 2);
 	}
 }
+
+void drawHighscores(char*name,int segundos,int centesimas,int x,int y)
+{
+	drawPlayerName(name,x,y);
+	drawBlackScore(700,y,segundos,centesimas);
+	return;
+}
+
 
 
 

@@ -14,6 +14,7 @@ POWER * Poderes;
 SCORE * scores;
 PLAYER* user;
 
+
 //APENAS PARA TESTE!
 PLAYER players_border[10]; // os 10 melhores scores do jogo com border
 PLAYER players_noborder[10]; // os 10 melhores scores do jogo com border
@@ -95,6 +96,10 @@ void StartOptions(){
 	game->submitScore = malloc(sizeof(rectangle));
 	game->submitOK = malloc(sizeof(rectangle));
 	game->submitCANCEL = malloc(sizeof(rectangle));
+	game->HighscoreExit = malloc(sizeof(rectangle));
+	game->HighscoreNOBORDER=malloc(sizeof(rectangle));
+	game->HighscoreBORDER =malloc(sizeof(rectangle));
+	game->HighscoreListExit = malloc(sizeof(rectangle));
 
 	game->PlayOption->xi = 340;
 	game->PlayOption->xf = 684;
@@ -131,6 +136,25 @@ void StartOptions(){
 	game->submitCANCEL->yi=500;
 	game->submitCANCEL->yf=600;
 
+	game->HighscoreExit->xi=714;
+	game->HighscoreExit->xf=974;
+	game->HighscoreExit->yi=550;
+	game->HighscoreExit->yf=610;
+
+	game->HighscoreNOBORDER->xi=340;
+	game->HighscoreNOBORDER->xf=700;
+	game->HighscoreNOBORDER->yi=250;
+	game->HighscoreNOBORDER->yf=370;
+
+	game->HighscoreBORDER->xi=340;
+	game->HighscoreBORDER->xf=700;
+	game->HighscoreBORDER->yi=380;
+	game->HighscoreBORDER->yf=500;
+
+	game->HighscoreListExit->xi=705;
+	game->HighscoreListExit->xf=966;
+	game->HighscoreListExit->yi=650;
+	game->HighscoreListExit->yf=710;
 
 }
 
@@ -214,9 +238,6 @@ int mainMenu()
 				{ /* subscribed interrupt */
 					MOUSE_int_handler();
 					show_mouse();
-//					if (firstMove < 3)
-//						firstMove++;
-
 				}
 
 				break;
@@ -249,7 +270,7 @@ int checkMenuOption(){
 		if ((rato->button == 1) && (rato->lastButton != 1))
 		{
 			printf("errp?\n");
-					return 2;
+			return 2;
 		}
 				else
 					return 0;
@@ -356,8 +377,7 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 				{ /* subscribed interrupt */
 					MOUSE_int_handler();
 					show_mouse();
-//					if (firstMove < 3)
-//						firstMove++;
+
 				}
 
 				break;
@@ -573,9 +593,204 @@ int checkGameOption()
 
 int highscoreMenu() // esta função chama o menu de highscores
 {
-	//drawBitmap(game->submitScreen, 100, int y, Alignment alignment)
+	timer_set_square(0, 60);
+
+		int ipc_status;
+		int r;
+		message msg;
+		unsigned long keyboard = 0x0;
+		int firstMove = 0;
+		int x = 0;
+		//para fazer reset ao rato
+		rato->button=rato->lastButton = 0;
+		//fim do reset
+		drawBitmap(game->MenuHighscore, 0, 0, ALIGN_LEFT);
+		memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+		printf("entrou no ver sccore!\n");
+		while(keyboard!= ESC_KEY) {
+			/* Get a request message. */
+			if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
+			{
+				printf("driver_receive failed with: %d", r);
+				continue;
+			}
+			if (is_ipc_notify(ipc_status)) { /* received notification */
+				switch (_ENDPOINT_P(msg.m_source)) {
+				case HARDWARE: /* hardware interrupt notification */
+					if (msg.NOTIFY_ARG & game->irq_set_time)
+					{ /* subscribed interrupt */
+						timer_int_handler();
+
+						if (getCounter() % (60/game->FPS) == 0)
+						{
+
+							drawBitmap(game->MenuHighscore, 0, 0, ALIGN_LEFT);
+							drawMouse();
+							memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+
+							int option=0;
+							option = checkHighscoreOption();
+
+							if(option == 1)	//faz exit
+								keyboard = ESC_KEY;
+							else if(option == 2) // NOBORDER
+								MenuHighscoreList(option);
+							else if(option == 3) // WITH BORDER
+								MenuHighscoreList(option);
+						}
+					}
+					if (msg.NOTIFY_ARG & game->irq_set_keyboard)
+					{ /* subscribed interrupt */
+						keyboard = KBD_handler_C();
+					}
+					if (msg.NOTIFY_ARG & game->irq_set_mouse)
+					{ /* subscribed interrupt */
+						MOUSE_int_handler();
+						show_mouse();
+					}
+
+					break;
+				default:
+					break; /* no other notifications expected: do nothing */
+				}
+			} else { /* received a standard message, not a notification */
+				/* no standard messages expected: do nothing */
+			}
+		}
 	return 2;
 }
+
+int checkHighscoreOption()
+{
+
+	if((rato->x > game->HighscoreExit->xi) && (rato->x < game->HighscoreExit->xf)&&
+			(rato->y > game->HighscoreExit->yi) && (rato->y < game->HighscoreExit->yf))
+	{
+		if(checkClick())
+			return 1;
+		else
+			return 0;
+	}
+	else if((rato->x > game->HighscoreNOBORDER->xi) && (rato->x < game->HighscoreNOBORDER->xf)&&
+			(rato->y > game->HighscoreNOBORDER->yi) && (rato->y < game->HighscoreNOBORDER->yf))
+	{
+		if(checkClick())
+			return 2;
+		else
+			return 0;
+	}
+	else if((rato->x > game->HighscoreBORDER->xi) && (rato->x < game->HighscoreBORDER->xf)&&
+			(rato->y > game->HighscoreBORDER->yi) && (rato->y < game->HighscoreBORDER->yf))
+	{
+		if(checkClick())
+			return 3;
+		else
+			return 0;
+	}
+	else
+		return 0;
+	return 0;
+}
+
+int MenuHighscoreList(int option)
+{
+	timer_set_square(0, 60);
+
+	int ipc_status;
+	int r;
+	message msg;
+	unsigned long keyboard = 0x0;
+	int firstMove = 0;
+
+
+	drawBitmap(game->HighscoreList, 0, 0, ALIGN_LEFT);
+	memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+
+	while(keyboard!= ESC_KEY) {
+		/* Get a request message. */
+		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
+		{
+			printf("driver_receive failed with: %d", r);
+			continue;
+		}
+		if (is_ipc_notify(ipc_status)) { /* received notification */
+			switch (_ENDPOINT_P(msg.m_source)) {
+			case HARDWARE: /* hardware interrupt notification */
+				if (msg.NOTIFY_ARG & game->irq_set_time)
+				{ /* subscribed interrupt */
+					timer_int_handler();
+
+					if (getCounter() % (60/game->FPS) == 0){
+
+						drawBitmap(game->HighscoreList, 0, 0, ALIGN_LEFT);
+
+
+
+						//drawAllScores
+						/*drawHighscores(char*name,int segundos,int centesimas,int x,int y); */
+						int i = 0;
+						int y_pos=170;
+						int x_pos=100;
+						if(option)
+						{
+							for(i;i< 12;i++)
+							{
+								drawHighscores(players_border[i].nickname,players_border[i].segundos,players_border[i].centesimas,x_pos,y_pos);
+								y_pos+=60;
+							}
+						}else
+						{
+							for(i;i< 12;i++)
+							{
+								drawHighscores(players_noborder[i].nickname,players_noborder[i].segundos,players_noborder[i].centesimas,x_pos,y_pos);
+								y_pos+=60;
+							}
+						}
+						drawMouse();
+						memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+						printf("imprimiu os scores!\n");
+						if(HighScoreListExit())
+							keyboard=ESC_KEY;
+
+					}
+				}
+				if (msg.NOTIFY_ARG & game->irq_set_keyboard)
+				{ /* subscribed interrupt */
+					keyboard = KBD_handler_C();
+				}
+				if (msg.NOTIFY_ARG & game->irq_set_mouse)
+				{ /* subscribed interrupt */
+					MOUSE_int_handler();
+					show_mouse();
+				}
+
+				break;
+			default:
+				break; /* no other notifications expected: do nothing */
+			}
+		} else { /* received a standard message, not a notification */
+			/* no standard messages expected: do nothing */
+		}
+	}
+	return 1;
+
+}
+
+int HighScoreListExit()
+{
+	if((rato->x > game->HighscoreListExit->xi) && (rato->x < game->HighscoreListExit->xf)&&
+			(rato->y > game->HighscoreListExit->yi) && (rato->y < game->HighscoreListExit->yf))
+	{
+		if(checkClick())
+			return 1;
+		else
+			return 0;
+	}
+	else
+		return 0;
+}
+
+
 
 int exitMenu()	//esta função faz exit de tudo
 {
