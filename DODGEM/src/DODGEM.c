@@ -16,8 +16,8 @@ PLAYER* user;
 
 
 //APENAS PARA TESTE!
-PLAYER players_border[10]; // os 10 melhores scores do jogo com border
-PLAYER players_noborder[10]; // os 10 melhores scores do jogo com border
+PLAYER players_border[5]; // os 5 melhores scores do jogo com border
+PLAYER players_noborder[5]; // os 5 melhores scores do jogo com border
 static int borderSize = 0;
 static int noborderSize = 0;
 
@@ -185,7 +185,7 @@ void exit_DODGEM()
 	deleteBitmap(game->ScoreBackground);
 	deleteBitmap(game->EnergyBar);
 	deleteBitmap(game->Border);
-	saveScores();
+	//saveScores();
 	game->irq_set_mouse = MOUSE_unsubscribe_int();
 	game->irq_set_keyboard = KBD_unsubscribe_int();
 	game->irq_set_time = timer_unsubscribe_int();
@@ -749,15 +749,39 @@ int MenuHighscoreList(int option)
 	unsigned long keyboard = 0x0;
 	int firstMove = 0;
 
-	int i = 0;
-	for(i; i < borderSize; i++)
+	int j = 0;
+	for(j; j < noborderSize; j++)
 	{
-		printf("Nome%d = %s \n", i, players_border[i].nickname);
+		printf("Nome%d = %s \n", j, players_noborder[j].nickname);
 	}
 
 
+
 	drawBitmap(game->HighscoreList, 0, 0, ALIGN_LEFT);
+	//drawAllScores
+	/*drawHighscores(char*name,int segundos,int centesimas,int x,int y); */
+	int i = 0;
+	int y_pos=145;
+	int x_pos=100;
+	if(option == 3)
+	{
+		for(i;i< borderSize;i++)
+		{
+			drawBitmapNumber(game->NumbersBlack, x_pos, y_pos ,i+1, ALIGN_LEFT);
+			drawHighscores(players_border[i].nickname,players_border[i].segundos,players_border[i].centesimas,x_pos+40,y_pos);
+			y_pos+=50;
+		}
+	}else
+	{
+		for(i;i< noborderSize;i++)
+		{
+			drawBitmapNumber(game->NumbersBlack, x_pos, y_pos ,i+1, ALIGN_LEFT);
+			drawHighscores(players_noborder[i].nickname,players_noborder[i].segundos,players_noborder[i].centesimas,x_pos+40,y_pos);
+			y_pos+=50;
+		}
+	}
 	memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+	memcpy(getTripleBuffer(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
 	while(keyboard!= ESC_KEY) {
 		/* Get a request message. */
@@ -775,35 +799,10 @@ int MenuHighscoreList(int option)
 
 					if (getCounter() % (60/game->FPS) == 0){
 
-						drawBitmap(game->HighscoreList, 0, 0, ALIGN_LEFT);
 
-
-
-						//drawAllScores
-						/*drawHighscores(char*name,int segundos,int centesimas,int x,int y); */
-						int i = 0;
-						int y_pos=145;
-						int x_pos=100;
-						if(option == 3)
-						{
-							for(i;i< borderSize;i++)
-							{
-								drawBitmapNumber(game->NumbersBlack, x_pos, y_pos ,i+1, ALIGN_LEFT);
-								drawHighscores(players_border[i].nickname,players_border[i].segundos,players_border[i].centesimas,x_pos+40,y_pos);
-								y_pos+=50;
-							}
-						}else
-						{
-							for(i;i< noborderSize;i++)
-							{
-								drawBitmapNumber(game->NumbersBlack, x_pos, y_pos ,i+1, ALIGN_LEFT);
-								drawHighscores(players_noborder[i].nickname,players_noborder[i].segundos,players_noborder[i].centesimas,x_pos+40,y_pos);
-								y_pos+=50;
-							}
-						}
+						memcpy(getVideoBuffer(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 						drawMouse();
 						memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-						printf("imprimiu os scores!\n");
 						if(HighScoreListExit())
 							keyboard=ESC_KEY;
 
@@ -1149,6 +1148,9 @@ int loadScores()// faz update para o jogo de todos os scores
 
 	int i_noborder=0;
 
+	borderSize = 0;
+	noborderSize = 0;
+
 	FILE * file;
 
 	file =fopen(FILENAME, "r");
@@ -1173,7 +1175,7 @@ int loadScores()// faz update para o jogo de todos os scores
 
 		if(border[0]== '1') // tem border
 
-				{
+		{
 
 			char score[10];
 
@@ -1186,6 +1188,11 @@ int loadScores()// faz update para o jogo de todos os scores
 			printf("NOME1C: %s \n", name);
 
 			fgets(name,100,file);
+
+			if (strncmp(name, "0s2", strlen("0s2"))==0)
+				return -1;
+
+			printf("name lido %s, borderSize %d \n", name, borderSize);
 
 			int i = 0;
 
@@ -1223,7 +1230,7 @@ int loadScores()// faz update para o jogo de todos os scores
 
 			borderSize++;
 
-				}
+		}
 
 		else                        // não tem border
 
@@ -1236,6 +1243,9 @@ int loadScores()// faz update para o jogo de todos os scores
 			PLAYER p;
 
 			fgets(name,100,file);
+
+			if (strncmp(name, "0s2", strlen("0s2"))==0)
+				return -1;
 
 			int i = 0;
 
