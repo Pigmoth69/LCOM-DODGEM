@@ -13,6 +13,7 @@ DODGEM * game;
 POWER * Poderes;
 SCORE * scores;
 PLAYER* user;
+DATA* data;
 
 
 //APENAS PARA TESTE!
@@ -26,12 +27,6 @@ static int noborderSize = 0;
 unsigned long keyboard = 0x0;
 int Border = 0;
 
-void test123(){
-	drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
-	//drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
-	memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-	sleep(5);
-}
 
 void start_DODGEM()
 {
@@ -70,23 +65,13 @@ void start_DODGEM()
 	game->irq_set_keyboard = KBD_subscribe_int();
 	game->irq_set_time = timer_subscribe_int();
 	game->FPS = 60;
-	printf("OPENSCORES\n");
 	loadScores();
-	printf("LEAVESCORES\n");
-	printf("esperar...\n");
-	//sleep(3);
 
 	StartOptions();
-	printf("start1\n");
-	//sleep(2);
 
 	start_Objects();
-	printf("start2\n");
-//	sleep(2);
 
 	StartMouse();
-	printf("start3\n");
-	//sleep(2);
 }
 
 void StartOptions(){
@@ -271,7 +256,6 @@ int checkMenuOption(){
 	{
 		if ((rato->button == 1) && (rato->lastButton != 1))
 		{
-			printf("errp?\n");
 			return 2;
 		}
 				else
@@ -377,22 +361,6 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 							break;
 						}
 
-//						if(option == 4){
-//							option = HelpMenu();
-//						}
-//						if (option == 1)
-//							keyboard = ESC_KEY;
-//						else if(option == 2)
-//						{
-//							printf("submeter o score!\n");
-//							submitHighscoreMenu();
-//							//keyboard = ESC_KEY;
-//						}
-//						else if(option == 3){
-//							PlayGame(); //Comeca o jogo
-//							//E necessario fazer algo para quando retorna do jogo
-//						}
-
 					}
 				}
 				if (msg.NOTIFY_ARG & game->irq_set_keyboard)
@@ -436,7 +404,6 @@ int PlayGame(){
 
 	StartGamePowers();
 	resetCounter();
-	printf("PLAYGAAAAAME!!!!!\n");
 
 
 
@@ -501,7 +468,6 @@ int PlayGame(){
 							//verifica a colisao
 							if (CheckPLayerColision(Poderes->invencibilidade) == 1 ){
 								updateScores();
-								printf("SEGUNDOS: %d CENTESIMAS: %d \n",scores->best_segundos,scores->best_centesimas);
 								drawLosingText(scores->actual_segundos, scores->actual_centesimas);
 								perdeu = 1;
 								break;
@@ -582,9 +548,8 @@ int checkGameOption()
 	if((rato->x > game->gameMenuOption->xi) && (rato->x < game->gameMenuOption->xf)&&
 			(rato->y > game->gameMenuOption->yi) && (rato->y < game->gameMenuOption->yf))
 	{
-		if ((rato->button == 1) && (rato->lastButton != 1))
+		if ((rato->button == 1) && (rato->lastButton != 1)) //Exit
 		{
-			printf("MainMenuButton\n");
 			return 1;
 		}
 		else
@@ -593,9 +558,8 @@ int checkGameOption()
 	else if((rato->x > game->submitScore->xi) && (rato->x < game->submitScore->xf)&&
 			(rato->y > game->submitScore->yi) && (rato->y < game->submitScore->yf))
 	{
-		if ((rato->button == 1) && (rato->lastButton != 1))
+		if ((rato->button == 1) && (rato->lastButton != 1)) //submit
 		{
-			printf("submitScore\n");
 			return 2;
 		}
 		else
@@ -604,9 +568,8 @@ int checkGameOption()
 	else if ((rato->x > game->MainSquare->xi) && (rato->x < game->MainSquare->xf)&&
 			(rato->y > game->MainSquare->yi) && (rato->y < game->MainSquare->yf))
 	{
-		if ((rato->button == 1) && (rato->lastButton != 1))
+		if ((rato->button == 1) && (rato->lastButton != 1)) //PlayGame
 		{
-			printf("PlayGame\n");
 			return 3;
 		}
 		else
@@ -615,9 +578,8 @@ int checkGameOption()
 	else if ((rato->x > 233) && (rato->x < 286) &&
 			(rato->y > 30) && (rato->y < 117))
 	{
-		if ((rato->button == 1) && (rato->lastButton != 1))
+		if ((rato->button == 1) && (rato->lastButton != 1)) //help
 		{
-			printf("Help\n");
 			return 4;
 		}
 		else
@@ -653,7 +615,6 @@ int highscoreMenu() // esta função chama o menu de highscores
 		//fim do reset
 		drawBitmap(game->MenuHighscore, 0, 0, ALIGN_LEFT);
 		memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-		printf("entrou no ver sccore!\n");
 		while(keyboard!= ESC_KEY) {
 			/* Get a request message. */
 			if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
@@ -914,7 +875,6 @@ int HelpMenu(){
 
 int exitMenu()	//esta função faz exit de tudo
 {
-	printf("exitMenu()\n");
 	return 3;
 }
 
@@ -949,7 +909,7 @@ void UpdateObjPosition(rectangle * Objeto)
 		Objeto->yi += vel; Objeto->yf += vel;
 		break;
 	default:
-		printf("direction tem um valor esquisito \n");
+		break;
 	}
 
 	if (Objeto->yi <= 5){
@@ -1156,86 +1116,92 @@ int loadScores()// faz update para o jogo de todos os scores
 	file =fopen(FILENAME, "r");
 
 	if(file == NULL)
-
 	{
-
 		printf("não abriu o ficheiro!\n");
-
 		return 1;
-
 	}
 
 	while (!feof(file))
-
 	{
-
 		char border[100];
 
 		fgets(border,100,file);
 
 		if(border[0]== '1') // tem border
-
 		{
-
+			char time[2];
+			char lido;
+			char trash;
 			char score[10];
 
 			char name[15];
 
 			PLAYER p;
 
-			printf("NOME1P: %s \n",p.nickname);
-
-			printf("NOME1C: %s \n", name);
-
 			fgets(name,100,file);
 
 			if (strncmp(name, "0s2", strlen("0s2"))==0)
 				return -1;
 
-			printf("name lido %s, borderSize %d \n", name, borderSize);
-
 			int i = 0;
 
 			if (name[strlen(name) - 1] == '\n')
-
 			{
-
 				name[strlen(name) - 1] = '\0';
-
 			}
 
 			strcpy(p.nickname, name);
 
-			/*for(i=0; i< 15;i++){
-
-                            name[i] = '*';
-
-                    }*/
-
 			printf("NOME2P: %s \n",p.nickname);
 
-			printf("NOME2C: %s \n", name);
-
 			fgets(score,100,file);
-
 			p.segundos = atoi(score);
 
 			fgets(score,100,file);
-
 			p.centesimas = atoi(score);
 
+			int j = 0;
+			for (j; j < 6; j++){
+				lido = fgetc(file); //le o primeiro caracter do numero
+				time[0] = lido;
+				lido = fgetc(file); //le o segundo caracter do numero
+				time[1] = lido;
+				trash = fgetc(file); //le o espaço
+				switch (j){
+				case 0:
+					p.data.day = atoi(time);
+					break;
+				case 1:
+					p.data.month = atoi(time);
+					break;
+				case 2:
+					p.data.year = atoi(time);
+					break;
+				case 3:
+					p.data.hours = atoi(time);
+					break;
+				case 4:
+					p.data.min = atoi(time);
+					break;
+				case 5:
+					p.data.sec = atoi(time);
+					break;
+				}
+			}
+			trash = fgetc(file); //le o newline no fim da linha
+
+			printf("Dia %d \n", p.data.day);
+
 			players_border[i_border] = p;
-
 			i_border++;
-
 			borderSize++;
 
 		}
-
 		else                        // não tem border
-
 		{
-
+			char time[2];
+			char lido;
+			char trash;
 			char score[10];
 
 			char name[100];
@@ -1246,66 +1212,73 @@ int loadScores()// faz update para o jogo de todos os scores
 
 			if (strncmp(name, "0s2", strlen("0s2"))==0)
 				return -1;
-
 			int i = 0;
 
 			if (name[strlen(name) - 1] == '\n')
-
 			{
-
 				name[strlen(name) - 1] = '\0';
-
 			}
 
 			strcpy(p.nickname, name);
 
 			for(i; i< 11;i++){
-
 				if (name[i] == '\n' || name[i] == '0')
-
 					break;
-
 				p.nickname[i]=name[i];
-
 			}
 
 			for(i=0; i< 15;i++){
-
 				name[i] = '0';
-
 			}
 
 			printf("NOME2P: %s \n",p.nickname);
 
-			printf("NOME2C: %s \n", name);
-
 			fgets(score,100,file);
-
 			p.segundos = atoi(score);
 
 			fgets(score,100,file);
-
 			p.centesimas = atoi(score);
 
+			int j = 0;
+			for (j; j < 6; j++){
+				lido = fgetc(file);
+				time[0] = lido;
+				lido = fgetc(file);
+				time[1] = lido;
+				trash = fgetc(file);
+				switch (j){
+				case 0:
+					p.data.day = atoi(time);
+					break;
+				case 1:
+					p.data.month = atoi(time);
+					break;
+				case 2:
+					p.data.year = atoi(time);
+					break;
+				case 3:
+					p.data.hours = atoi(time);
+					break;
+				case 4:
+					p.data.min = atoi(time);
+					break;
+				case 5:
+					p.data.sec = atoi(time);
+					break;
+				}
+			}
+			trash = fgetc(file);
+
+			printf("Dia %d \n", p.data.day);
+
+
 			players_noborder[i_noborder] = p;
-
 			i_noborder++;
-
 			noborderSize++;
 
 		}
 
 	}
-
-	//        printf("NOME com border!: %s\n",players_border[0].nickname);
-
-	//        printf("segundos com border!: %d\n",players_border[0].segundos);
-
-	//        printf("centesimas com border!: %d\n",players_border[0].centesimas);
-
-	//        printf("NOME com noborder!: %s\n",players_noborder[0].nickname);
-
-	//printf("NOME com noborder!: %s\n",players_noborder[1].nickname);
 
 	return 0;
 
@@ -1320,7 +1293,7 @@ void addScore(PLAYER p)
 
 	if(Border == 1)
 	{
-		for(i;i< 10;i++)
+		for(i;i<5;i++)
 		{
 			if(i == (borderSize - 1))
 			{
@@ -1344,7 +1317,7 @@ void addScore(PLAYER p)
 
 	}else
 	{
-		for(i;i< 10;i++)
+		for(i;i<5;i++)
 		{
 			if(i == (noborderSize - 1))
 			{
@@ -1440,22 +1413,25 @@ int submitHighscoreMenu()
 						if (option == 1){
 							keyboard = ESC_KEY;
 						}
-						else if (option == 2){
+						else if (option == 2 || keyboard == ENTER_KEY){
 							p.segundos= scores->best_segundos;
 							p.centesimas=scores->best_centesimas;
-							addScore(p);
-							keyboard = ESC_KEY;
-						}
-						else if (keyboard == ENTER_KEY){
-							p.segundos= scores->best_segundos;
-							p.centesimas=scores->best_centesimas;
+
+							rtc_subscribe_int(0);
+							p.data.sec = read_rtc(0);
+							p.data.min = read_rtc(2);
+							p.data.hours = read_rtc(4);
+							p.data.day = read_rtc(7);
+							p.data.month = read_rtc(8);
+							p.data.year = read_rtc(9);
+							rtc_unsubscribe_int();
+
 							addScore(p);
 							keyboard = ESC_KEY;
 						}
 						else if (keyboard != 0)
 						{
 							char letra = getLetra(keyboard);
-							printf("keyboad= %c \n", letra);
 
 
 							if (letra == '.')
@@ -1538,12 +1514,12 @@ void saveScores()
 		printf("não abriu o ficheiro!\n");
 		return;
 	}
-	printf("boarder size: %d",borderSize);
+	//printf("boarder size: %d",borderSize);
 
 	char* segundos;
 	char* centesimas;
 	fputs("1\n",file);
-	printf("teste: %s\n", players_noborder[0].nickname);
+	//printf("teste: %s\n", players_noborder[0].nickname);
 	fputs(players_noborder[0].nickname,file);
 	//fputs("\n",file);
 	/*int i = 0;
@@ -1574,7 +1550,7 @@ void saveScores()
 		fputs(centesimas,file);
 	}*/
 
-	printf("cenasssasasa3\n");
+	//printf("cenasssasasa3\n");
 
 	return;
 }

@@ -4,7 +4,7 @@ CC = gcc
 
 PROG = DODGEM
 SRCS = main.c
-SRCS += graphics.c utilities.c vbe.c keyboard.c sprite.c timer.c vbe.c video_gr.c bitmap.c DODGEM.c mouse.c
+SRCS += graphics.c utilities.c vbe.c keyboard.c sprite.c timer.c vbe.c video_gr.c bitmap.c DODGEM.c mouse.c RTC.c
 
 CCFLAGS= -Wall -O3
 

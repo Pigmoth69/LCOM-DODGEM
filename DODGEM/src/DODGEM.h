@@ -1,7 +1,7 @@
 #ifndef DODGEM_H_
 #define DODGEM_H_
 
-
+#include "RTC.h"
 #include "bitmap.h"
 
 /**
@@ -106,6 +106,7 @@ typedef struct{
 	char nickname[12];
 	int segundos;
 	int centesimas;
+	DATA data;
 }PLAYER;
 
 extern DODGEM * game;
