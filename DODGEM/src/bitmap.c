@@ -464,7 +464,67 @@ void drawHighscores(char* name,int segundos,int centesimas,int x,int y)
 	return;
 }
 
+void drawData(int day, int month, int year, int hours, int min, int sec, int x, int y){
+	int digito;
 
+	digito = day/10;
+	drawBitmapNumber(game->NumbersBlack, x, y ,digito, ALIGN_LEFT);
+	x+=40;
+	digito = day%10;
+	drawBitmapNumber(game->NumbersBlack, x, y ,digito, ALIGN_LEFT);
+	x+=40;
+
+	drawPart(game->Separadores, x, y, 0, 0, 20, 50, ALIGN_LEFT);
+	x+=20;
+
+	digito = month/10;
+	drawBitmapNumber(game->NumbersBlack, x, y ,digito, ALIGN_LEFT);
+	x+=40;
+	digito = month%10;
+	drawBitmapNumber(game->NumbersBlack, x, y ,digito, ALIGN_LEFT);
+	x+=40;
+
+	drawPart(game->Separadores, x, y, 0, 0, 20, 50, ALIGN_LEFT);
+	x+=20;
+
+	drawBitmapNumber(game->NumbersBlack, x, y ,2, ALIGN_LEFT);
+	x+=40;
+	drawBitmapNumber(game->NumbersBlack, x, y ,0, ALIGN_LEFT);
+	x+=40;
+	digito = year/10;
+	drawBitmapNumber(game->NumbersBlack, x, y ,digito, ALIGN_LEFT);
+	x+=40;
+	digito = year%10;
+	drawBitmapNumber(game->NumbersBlack, x, y ,digito, ALIGN_LEFT);
+	x+=80;
+
+	digito = hours/10;
+	drawBitmapNumber(game->NumbersBlack, x, y,digito, ALIGN_LEFT);
+	x+=40;
+	digito = hours%10;
+	drawBitmapNumber(game->NumbersBlack, x, y,digito, ALIGN_LEFT);
+	x+=40;
+
+	drawPart(game->Separadores, x, y, 20, 0, 30, 50, ALIGN_LEFT);
+	x+=10;
+
+	digito = min/10;
+	drawBitmapNumber(game->NumbersBlack, x, y,digito, ALIGN_LEFT);
+	x+=40;
+	digito = min%10;
+	drawBitmapNumber(game->NumbersBlack, x, y,digito, ALIGN_LEFT);
+	x+=40;
+
+	drawPart(game->Separadores, x, y, 20, 0, 30, 50, ALIGN_LEFT);
+	x+=10;
+
+	digito = sec/10;
+	drawBitmapNumber(game->NumbersBlack, x, y,digito, ALIGN_LEFT);
+	x+=40;
+	digito = sec%10;
+	drawBitmapNumber(game->NumbersBlack, x, y,digito, ALIGN_LEFT);
+	x+=40;
+}
 
 
 

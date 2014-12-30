@@ -153,5 +153,18 @@ void drawBitmapLetter(Bitmap* bmp, int x, int y,char letter, Alignment alignment
  */
 void drawHighscores(char*name,int segundos,int centesimas,int x,int y); // desenho o score no ecra
 
+/**
+ * @brief draw a Date
+ *
+ * @param day of the month
+ * @param month
+ * @param year
+ * @param hours
+ * @param min minutes
+ * @param sec seconds
+ * @param x destiny x coord
+ * @param y destiny y coord
+ */
+void drawData(int day, int month, int year, int hours, int min, int sec, int x, int y);
 
 /**@}*/

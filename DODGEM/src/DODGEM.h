@@ -44,6 +44,7 @@ typedef struct{
 	Bitmap* MenuHighscore;
 	Bitmap* HighscoreList;
 	Bitmap* Help;
+	Bitmap* Separadores;
 	rectangle * PlayOption;
 	rectangle * HSOption;
 	rectangle * ExitOption;
