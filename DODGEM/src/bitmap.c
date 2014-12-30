@@ -349,7 +349,6 @@ void drawLosingText(int segundos, int centesimas){
 int drawPlayerName(char* name,int x,int y) // desenha o nome do player no ecra
 {
 	int i = 0;
-	printf("entrou aqui!\n");
 	for(i;i<12;i++)
 	{
 		if(name[i] == '.')
@@ -402,7 +401,6 @@ void drawBitmapLetter(Bitmap* bmp, int x, int y,char letter, Alignment alignment
 
 	int xCorrection= getLetterPos(letter);
 	if (xCorrection == -1){
-		printf("correction a -1 \n");
 		return;
 	}
 

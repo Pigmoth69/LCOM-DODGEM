@@ -65,6 +65,7 @@ void start_DODGEM()
 	game->space = loadBitmap("home/lcom/DODGEM/res/images/space.bmp");
 	game->MenuHighscore = loadBitmap("home/lcom/DODGEM/res/images/MenuHighScores.bmp");
 	game->HighscoreList = loadBitmap("home/lcom/DODGEM/res/images/HighScoresList.bmp");
+	game->Help = loadBitmap("home/lcom/DODGEM/res/images/Help.bmp");
 	game->irq_set_mouse = MOUSE_send_command();
 	game->irq_set_keyboard = KBD_subscribe_int();
 	game->irq_set_time = timer_subscribe_int();
@@ -354,18 +355,38 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 
 						int option = checkGameOption();
 
-						if (option == 1)
+						switch(option){
+						case 4:
+							option = HelpMenu();
+							continue;
+						case 1:
 							keyboard = ESC_KEY;
-						else if(option == 2)
-						{
-							printf("submeter o score!\n");
+							break;
+						case 2:
 							submitHighscoreMenu();
-							//keyboard = ESC_KEY;
+							break;
+						case 3:
+							PlayGame();
+							break;
+						default:
+							break;
 						}
-						else if(option == 3){
-							PlayGame(); //Comeca o jogo
-							//E necessario fazer algo para quando retorna do jogo
-						}
+
+//						if(option == 4){
+//							option = HelpMenu();
+//						}
+//						if (option == 1)
+//							keyboard = ESC_KEY;
+//						else if(option == 2)
+//						{
+//							printf("submeter o score!\n");
+//							submitHighscoreMenu();
+//							//keyboard = ESC_KEY;
+//						}
+//						else if(option == 3){
+//							PlayGame(); //Comeca o jogo
+//							//E necessario fazer algo para quando retorna do jogo
+//						}
 
 					}
 				}
@@ -586,6 +607,27 @@ int checkGameOption()
 		else
 			return 0;
 	}
+	else if ((rato->x > 233) && (rato->x < 286) &&
+			(rato->y > 30) && (rato->y < 117))
+	{
+		if ((rato->button == 1) && (rato->lastButton != 1))
+		{
+			printf("Help\n");
+			return 4;
+		}
+		else
+			return 0;
+	}
+	else if ((rato->x > 400) && (rato->x < 900) &&
+			(rato->y > 550) && (rato->y < 630))
+	{
+		if ((rato->button == 1) && (rato->lastButton != 1))
+		{
+			return 5;
+		}
+		else
+			return 0;
+	}
 	else
 		return 0;
 
@@ -702,6 +744,12 @@ int MenuHighscoreList(int option)
 	unsigned long keyboard = 0x0;
 	int firstMove = 0;
 
+	int i = 0;
+	for(i; i < borderSize; i++)
+	{
+		printf("Nome%d = %s \n", i, players_border[i].nickname);
+	}
+
 
 	drawBitmap(game->HighscoreList, 0, 0, ALIGN_LEFT);
 	memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
@@ -733,7 +781,7 @@ int MenuHighscoreList(int option)
 						int x_pos=100;
 						if(option == 3)
 						{
-							for(i;i< 10;i++)
+							for(i;i< borderSize;i++)
 							{
 								drawBitmapNumber(game->NumbersBlack, x_pos, y_pos ,i+1, ALIGN_LEFT);
 								drawHighscores(players_border[i].nickname,players_border[i].segundos,players_border[i].centesimas,x_pos+40,y_pos);
@@ -741,7 +789,7 @@ int MenuHighscoreList(int option)
 							}
 						}else
 						{
-							for(i;i< 10;i++)
+							for(i;i< noborderSize;i++)
 							{
 								drawBitmapNumber(game->NumbersBlack, x_pos, y_pos ,i+1, ALIGN_LEFT);
 								drawHighscores(players_noborder[i].nickname,players_noborder[i].segundos,players_noborder[i].centesimas,x_pos+40,y_pos);
@@ -792,7 +840,73 @@ int HighScoreListExit()
 		return 0;
 }
 
+int HelpMenu(){
 
+	int ipc_status;
+	int r;
+	message msg;
+	unsigned long keyboard = 0x0;
+	int firstMove = 0;
+	int x = 0;
+
+
+	//para fazer reset ao rato
+	rato->button=rato->lastButton = 0;
+	//fim do reset
+
+	drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
+	drawBitmap(game->Help, 350, 50, ALIGN_LEFT);
+
+	memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+	memcpy(getTripleBuffer(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+	while(keyboard!= ESC_KEY) {
+		/* Get a request message. */
+		if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0)
+		{
+			printf("driver_receive failed with: %d", r);
+			continue;
+		}
+		if (is_ipc_notify(ipc_status)) { /* received notification */
+			switch (_ENDPOINT_P(msg.m_source)) {
+			case HARDWARE: /* hardware interrupt notification */
+				if (msg.NOTIFY_ARG & game->irq_set_time)
+				{ /* subscribed interrupt */
+					timer_int_handler();
+
+					if (getCounter() % (60/game->FPS) == 0)
+					{
+						memcpy(getVideoBuffer(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+						drawMouse();
+						memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+
+						int option = checkGameOption();
+
+						if (option == 5){
+							return option;
+						}
+
+
+					}
+				}
+				if (msg.NOTIFY_ARG & game->irq_set_keyboard)
+				{ /* subscribed interrupt */
+					keyboard = KBD_handler_C();
+				}
+				if (msg.NOTIFY_ARG & game->irq_set_mouse)
+				{ /* subscribed interrupt */
+					MOUSE_int_handler();
+					show_mouse();
+				}
+
+				break;
+			default:
+				break; /* no other notifications expected: do nothing */
+			}
+		} else { /* received a standard message, not a notification */
+			/* no standard messages expected: do nothing */
+		}
+	}
+}
 
 int exitMenu()	//esta função faz exit de tudo
 {
@@ -1039,6 +1153,8 @@ int loadScores()// faz update para o jogo de todos os scores
 		return 1;
 	}
 
+	//char name[15];
+
 	while (!feof(file))
 	{
 		char border[100];
@@ -1046,15 +1162,18 @@ int loadScores()// faz update para o jogo de todos os scores
 		if(border[0]=='1') // tem border
 		{
 			char score[10];
-			char name[100];
+			char name[15];
 			PLAYER p;
 
 			fgets(name,100,file);
 			int i = 0;
-			for(i; i< 11;i++){
-				if (name[i] == '\n')
+			for(i; i< 12;i++){
+				if (name[i] == '\n' || name[i] == '*')
 					break;
 				p.nickname[i]=name[i];
+			}
+			for(i=0; i< 15;i++){
+				name[i] = '*';
 			}
 
 
@@ -1069,6 +1188,7 @@ int loadScores()// faz update para o jogo de todos os scores
 			borderSize++;
 
 
+
 		}
 		else			// não tem border
 		{
@@ -1079,9 +1199,12 @@ int loadScores()// faz update para o jogo de todos os scores
 			fgets(name,100,file);
 			int i = 0;
 			for(i; i< 11;i++){
-				if (name[i] == '\n')
+				if (name[i] == '\n' || name[i] == '0')
 					break;
 				p.nickname[i]=name[i];
+			}
+			for(i=0; i< 15;i++){
+				name[i] = '0';
 			}
 
 
@@ -1293,6 +1416,7 @@ int submitHighscoreMenu()
 	}
 
 }
+
 
 
 int checkSubmitOption()

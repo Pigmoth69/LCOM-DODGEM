@@ -38,6 +38,7 @@ typedef struct{
 	Bitmap* space;
 	Bitmap* MenuHighscore;
 	Bitmap* HighscoreList;
+	Bitmap* Help;
 	rectangle * PlayOption;
 	rectangle * HSOption;
 	rectangle * ExitOption;
@@ -103,6 +104,7 @@ void test123();
 int checkMenuOption(); //see if the user clicked any option from menu. 0(None), 1(Play), 2(HS), 3(Exit)
 int gameMenu(); //menu de jogo
 int highscoreMenu(); // menu de pontuações
+int HelpMenu(); //menu de ajuda
 int exitMenu(); //sair do jogo
 int checkGameOption(); //verificar a opção de jogo escolhida (juntamente com os powers)
 int playGame(); //função que permite jogar o jogo
