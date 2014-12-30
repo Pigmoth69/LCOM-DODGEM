@@ -356,9 +356,6 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 						int option = checkGameOption();
 
 						switch(option){
-						case 4:
-							option = HelpMenu();
-							continue;
 						case 1:
 							keyboard = ESC_KEY;
 							break;
@@ -367,6 +364,13 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 							break;
 						case 3:
 							PlayGame();
+							break;
+						case 4:
+							option = HelpMenu();
+							if (option == 1)
+								keyboard = ESC_KEY;
+							else if (option == 2)
+								submitHighscoreMenu();
 							break;
 						default:
 							break;
@@ -881,7 +885,7 @@ int HelpMenu(){
 
 						int option = checkGameOption();
 
-						if (option == 5){
+						if (option == 1 || option == 2 || option == 5){
 							return option;
 						}
 
