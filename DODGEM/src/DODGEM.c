@@ -61,6 +61,7 @@ void start_DODGEM()
 	game->MenuHighscore = loadBitmap("home/lcom/DODGEM/res/images/MenuHighScores.bmp");
 	game->HighscoreList = loadBitmap("home/lcom/DODGEM/res/images/HighScoresList.bmp");
 	game->Help = loadBitmap("home/lcom/DODGEM/res/images/Help.bmp");
+	game->Separadores = loadBitmap("home/lcom/DODGEM/res/images/Separadores.bmp");
 	game->irq_set_mouse = MOUSE_send_command();
 	game->irq_set_keyboard = KBD_subscribe_int();
 	game->irq_set_time = timer_subscribe_int();
@@ -731,6 +732,11 @@ int MenuHighscoreList(int option)
 			drawBitmapNumber(game->NumbersBlack, x_pos, y_pos ,i+1, ALIGN_LEFT);
 			drawHighscores(players_border[i].nickname,players_border[i].segundos,players_border[i].centesimas,x_pos+40,y_pos);
 			y_pos+=50;
+			drawData(players_border[i].data.day, players_border[i].data.month,
+					players_border[i].data.year, players_border[i].data.hours,
+					players_border[i].data.min, players_border[i].data.sec,
+					x_pos, y_pos);
+			y_pos+=50;
 		}
 	}else
 	{
@@ -739,6 +745,11 @@ int MenuHighscoreList(int option)
 			drawBitmapNumber(game->NumbersBlack, x_pos, y_pos ,i+1, ALIGN_LEFT);
 			drawHighscores(players_noborder[i].nickname,players_noborder[i].segundos,players_noborder[i].centesimas,x_pos+40,y_pos);
 			y_pos+=50;
+			drawData(players_noborder[i].data.day, players_noborder[i].data.month,
+					players_noborder[i].data.year, players_noborder[i].data.hours,
+					players_noborder[i].data.min, players_noborder[i].data.sec,
+					x_pos, y_pos);
+			y_pos+= 50;
 		}
 	}
 	memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
