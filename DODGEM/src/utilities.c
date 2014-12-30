@@ -34,7 +34,6 @@ int char_to_int(char n) // numero
 	case '9':
 		return 9;
 		break;
-
 	}
 }
 
