@@ -4,7 +4,7 @@
 4-  pensei em fazer um array de structs com a informação de player para ler e escrever dos ficheiros
 5- a implementação do save/load dos scores vou fazer no DODGEM.c para ser mais fácil. Depois se for preciso, passamos para um ficheiro novo
 6- falta a cena do OK e do CANCEL para o submit score!
-
+7- temos de fazer uma função que limpe o rato cada vez que se entre num ciclo de while(interrupt)
 
 coordenadas do score:
 
@@ -32,6 +32,7 @@ Name
 -> x[400, 900]; y[350, 450]  
 
 
-No Border -> x[340, 700]; y[250, 370]
+No Border -> 
+x[340, 700]; y[250, 370]
 With Border -> x[340, 700]; y[380, 500]
 Exit -> x[714, 974]; y[550, 610] 

@@ -45,6 +45,11 @@ typedef struct{
 	rectangle * submitScore;
 	rectangle *submitOK;
 	rectangle *submitCANCEL;
+	rectangle *HighscoreExit;
+	rectangle *HighscoreNOBORDER;
+	rectangle *HighscoreBORDER;
+	rectangle *HighscoreListExit;
+
 
 
 	rectangle * TL;
@@ -118,5 +123,8 @@ void addScore(PLAYER p); //esta função adiciona ao array o best score da struc
 void saveScores(); // esta função guarda no txt todos os recordes do jogo
 int submitHighscoreMenu(); // faz aparecer o menu para fazer submit do score
 int checkSubmitOption(); // ve a opcao de submit escolhida cancelas ou aceitar
+int MenuHighscoreList(int option); // de acordo com a opção escolhida faz display dos scores
+int checkHighscoreOption(); // vê a qual a opção de score a mostrar ao utilizador
+int HighScoreListExit(); // faz exit no menu das listagens dos highscores
 
 #endif
