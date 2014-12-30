@@ -5,6 +5,7 @@
 5- a implementação do save/load dos scores vou fazer no DODGEM.c para ser mais fácil. Depois se for preciso, passamos para um ficheiro novo
 6- falta a cena do OK e do CANCEL para o submit score!
 7- temos de fazer uma função que limpe o rato cada vez que se entre num ciclo de while(interrupt)
+8- o update dos scores está a dar mal outra vez...
 
 coordenadas do score:
 

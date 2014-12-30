@@ -729,18 +729,18 @@ int MenuHighscoreList(int option)
 						//drawAllScores
 						/*drawHighscores(char*name,int segundos,int centesimas,int x,int y); */
 						int i = 0;
-						int y_pos=170;
+						int y_pos=145;
 						int x_pos=100;
-						if(option)
+						if(option == 3)
 						{
-							for(i;i< 12;i++)
+							for(i;i< 10;i++)
 							{
 								drawHighscores(players_border[i].nickname,players_border[i].segundos,players_border[i].centesimas,x_pos,y_pos);
 								y_pos+=50;
 							}
 						}else
 						{
-							for(i;i< 12;i++)
+							for(i;i< 10;i++)
 							{
 								drawHighscores(players_noborder[i].nickname,players_noborder[i].segundos,players_noborder[i].centesimas,x_pos,y_pos);
 								y_pos+=50;
