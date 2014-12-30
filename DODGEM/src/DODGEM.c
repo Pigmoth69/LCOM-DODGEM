@@ -185,6 +185,7 @@ void exit_DODGEM()
 	deleteBitmap(game->ScoreBackground);
 	deleteBitmap(game->EnergyBar);
 	deleteBitmap(game->Border);
+	saveScores();
 	game->irq_set_mouse = MOUSE_unsubscribe_int();
 	game->irq_set_keyboard = KBD_unsubscribe_int();
 	game->irq_set_time = timer_unsubscribe_int();
@@ -1145,6 +1146,7 @@ void StartGamePowers(){
 int loadScores()// faz update para o jogo de todos os scores
 {
 	int i_border = 0;
+
 	int i_noborder=0;
 
 	FILE * file;
@@ -1152,100 +1154,154 @@ int loadScores()// faz update para o jogo de todos os scores
 	file =fopen(FILENAME, "r");
 
 	if(file == NULL)
+
 	{
+
 		printf("não abriu o ficheiro!\n");
+
 		return 1;
+
 	}
 
 	while (!feof(file))
+
 	{
+
 		char border[100];
+
 		fgets(border,100,file);
+
 		if(border[0]== '1') // tem border
-		{
+
+				{
+
 			char score[10];
+
 			char name[15];
+
 			PLAYER p;
 
 			printf("NOME1P: %s \n",p.nickname);
+
 			printf("NOME1C: %s \n", name);
 
 			fgets(name,100,file);
+
 			int i = 0;
+
 			if (name[strlen(name) - 1] == '\n')
+
 			{
+
 				name[strlen(name) - 1] = '\0';
+
 			}
+
 			strcpy(p.nickname, name);
+
 			/*for(i=0; i< 15;i++){
-				name[i] = '*';
-			}*/
+
+                            name[i] = '*';
+
+                    }*/
+
 			printf("NOME2P: %s \n",p.nickname);
+
 			printf("NOME2C: %s \n", name);
 
-
 			fgets(score,100,file);
+
 			p.segundos = atoi(score);
 
 			fgets(score,100,file);
+
 			p.centesimas = atoi(score);
 
 			players_border[i_border] = p;
+
 			i_border++;
+
 			borderSize++;
 
+				}
 
+		else                        // não tem border
 
-		}
-		else			// não tem border
 		{
+
 			char score[10];
+
 			char name[100];
+
 			PLAYER p;
 
 			fgets(name,100,file);
+
 			int i = 0;
+
 			if (name[strlen(name) - 1] == '\n')
+
 			{
+
 				name[strlen(name) - 1] = '\0';
+
 			}
+
 			strcpy(p.nickname, name);
+
 			for(i; i< 11;i++){
+
 				if (name[i] == '\n' || name[i] == '0')
+
 					break;
+
 				p.nickname[i]=name[i];
+
 			}
+
 			for(i=0; i< 15;i++){
+
 				name[i] = '0';
+
 			}
 
 			printf("NOME2P: %s \n",p.nickname);
+
 			printf("NOME2C: %s \n", name);
 
-
 			fgets(score,100,file);
+
 			p.segundos = atoi(score);
 
 			fgets(score,100,file);
+
 			p.centesimas = atoi(score);
 
 			players_noborder[i_noborder] = p;
+
 			i_noborder++;
+
 			noborderSize++;
 
 		}
 
 	}
 
-//	printf("NOME com border!: %s\n",players_border[0].nickname);
-//	printf("segundos com border!: %d\n",players_border[0].segundos);
-//	printf("centesimas com border!: %d\n",players_border[0].centesimas);
-//	printf("NOME com noborder!: %s\n",players_noborder[0].nickname);
+	//        printf("NOME com border!: %s\n",players_border[0].nickname);
+
+	//        printf("segundos com border!: %d\n",players_border[0].segundos);
+
+	//        printf("centesimas com border!: %d\n",players_border[0].centesimas);
+
+	//        printf("NOME com noborder!: %s\n",players_noborder[0].nickname);
+
 	//printf("NOME com noborder!: %s\n",players_noborder[1].nickname);
 
-
 	return 0;
+
 }
+
+
 
 void addScore(PLAYER p)
 {
@@ -1375,11 +1431,15 @@ int submitHighscoreMenu()
 							keyboard = ESC_KEY;
 						}
 						else if (option == 2){
-							//SaveScore()
+							p.segundos= scores->best_segundos;
+							p.centesimas=scores->best_centesimas;
+							addScore(p);
 							keyboard = ESC_KEY;
 						}
 						else if (keyboard == ENTER_KEY){
-							//SaveScore()
+							p.segundos= scores->best_segundos;
+							p.centesimas=scores->best_centesimas;
+							addScore(p);
 							keyboard = ESC_KEY;
 						}
 						else if (keyboard != 0)
@@ -1459,7 +1519,54 @@ int checkSubmitOption()
 
 void saveScores()
 {
+	FILE * file;
 
+	file =fopen(FILENAME, "w");
+
+	if(file == NULL)
+	{
+		printf("não abriu o ficheiro!\n");
+		return;
+	}
+	printf("boarder size: %d",borderSize);
+
+	char* segundos;
+	char* centesimas;
+	fputs("1\n",file);
+	printf("teste: %s\n", players_noborder[0].nickname);
+	fputs(players_noborder[0].nickname,file);
+	//fputs("\n",file);
+	/*int i = 0;
+	for(i;i<borderSize;i++) //guarda os com border
+	{
+		char* segundos;
+		char* centesimas;
+		fputs("1\n",file);
+		fputs(players_border[i].nickname,file);
+		fputs("\n",file);
+		return;
+		sprintf(segundos,"%d",players_border[i].segundos);
+		sprintf(centesimas,"%d",players_border[i].centesimas);
+		fputs(segundos,file);
+		fputs(centesimas,file);
+	}
+	return;
+	i=0;
+	for(i;i<noborderSize;i++)	// guarda os sem boarder
+	{
+		char* segundos;
+		char* centesimas;
+		fputs("0",file);
+		fputs(players_noborder[i].nickname,file);
+		sprintf(segundos,"%d",players_noborder[i].segundos);
+		sprintf(centesimas,"%d",players_noborder[i].centesimas);
+		fputs(segundos,file);
+		fputs(centesimas,file);
+	}*/
+
+	printf("cenasssasasa3\n");
+
+	return;
 }
 
 
