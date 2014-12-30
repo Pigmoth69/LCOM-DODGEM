@@ -8,7 +8,13 @@
 #define FILENAME "/home/lcom/DODGEM/scores.txt"
 #define INVALID '*'
 
-
+/**
+ * @brief turns a char into a int
+ *
+ * @param char pretended
+ *
+ * @return the int correspondent
+ */
 int char_to_int(char n); // numero
 
 

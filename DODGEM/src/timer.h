@@ -96,8 +96,16 @@ int timer_test_int();
  */
 int timer_test_config(unsigned long timer);
 
+/**
+ * @brief Gets the Counter
+ *
+ * @return the current counter
+ */
 int getCounter();
 
+/**
+ * @brief Reset the Counter to 0
+ */
 void resetCounter();
 
 #endif /* __TIMER_H */

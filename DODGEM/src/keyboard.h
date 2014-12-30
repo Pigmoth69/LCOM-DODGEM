@@ -87,16 +87,48 @@
 
 #define DELAY_US 20000
 
+/**
+ * @brief subscribe keyboard interrupts
+ *
+ * @return -1 if failed otherwise the bit of the hook id
+ */
 int KBD_subscribe_int(void );
+
+/**
+ * @brief unsubscribe keyboard interrupts
+ *
+ * @return -1 if failed
+ */
 int KBD_unsubscribe_int();
+
+/**
+ * @brief gets the keyboard code
+ *
+ * @return the code of the keyboard
+ */
 int KBD_handler_C();
+
+/**
+ * @brief returns the char that corresponds to the keyboard code
+ *
+ * @param keyboard code
+ *
+ * @return char correspondent
+ */
 char getLetra(unsigned long keyboard); // de acordo com os keyboard input retorna a letra char correspondente
+
+/**
+ * @brief gets the position of a letter in the alphabet bitmap
+ *
+ * @param letter pretended
+ *
+ * @return x coord in the bitmap
+ */
 int getLetterPos(char letter); // retorna a posicao da letra no bitmap
 
+/**
+ * @brief sleep for a second
+ */
 int wait_a_second();
-
-
-int send_cmd();
-//int rec_cmd();
 
 #endif /* KEYBOARD_H_ */
