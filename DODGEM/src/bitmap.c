@@ -455,7 +455,7 @@ void drawBitmapLetter(Bitmap* bmp, int x, int y,char letter, Alignment alignment
 	}
 }
 
-void drawHighscores(char*name,int segundos,int centesimas,int x,int y)
+void drawHighscores(char* name,int segundos,int centesimas,int x,int y)
 {
 	drawPlayerName(name,x,y);
 	drawBlackScore(780,y,segundos,centesimas);
