@@ -736,14 +736,14 @@ int MenuHighscoreList(int option)
 							for(i;i< 12;i++)
 							{
 								drawHighscores(players_border[i].nickname,players_border[i].segundos,players_border[i].centesimas,x_pos,y_pos);
-								y_pos+=60;
+								y_pos+=50;
 							}
 						}else
 						{
 							for(i;i< 12;i++)
 							{
 								drawHighscores(players_noborder[i].nickname,players_noborder[i].segundos,players_noborder[i].centesimas,x_pos,y_pos);
-								y_pos+=60;
+								y_pos+=50;
 							}
 						}
 						drawMouse();
