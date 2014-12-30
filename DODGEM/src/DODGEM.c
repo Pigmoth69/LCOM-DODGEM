@@ -170,7 +170,7 @@ void exit_DODGEM()
 	deleteBitmap(game->ScoreBackground);
 	deleteBitmap(game->EnergyBar);
 	deleteBitmap(game->Border);
-	//saveScores();
+	saveScores();
 	game->irq_set_mouse = MOUSE_unsubscribe_int();
 	game->irq_set_keyboard = KBD_unsubscribe_int();
 	game->irq_set_time = timer_unsubscribe_int();
@@ -1152,7 +1152,7 @@ int loadScores()// faz update para o jogo de todos os scores
 
 			strcpy(p.nickname, name);
 
-			printf("NOME2P: %s \n",p.nickname);
+			printf("NOME2P: %s\n",p.nickname);
 
 			fgets(score,100,file);
 			p.segundos = atoi(score);
@@ -1190,7 +1190,7 @@ int loadScores()// faz update para o jogo de todos os scores
 			}
 			trash = fgetc(file); //le o newline no fim da linha
 
-			printf("Dia %d \n", p.data.day);
+			printf("Dia %d\n", p.data.day);
 
 			players_border[i_border] = p;
 			i_border++;
@@ -1288,29 +1288,32 @@ int loadScores()// faz update para o jogo de todos os scores
 
 void addScore(PLAYER p)
 {
+	printf("AddScore name: %s, dia: %X \n", p.nickname, p.data.day);
 	int i = 0;
-	PLAYER p2;
+	PLAYER p2 = p;
 
 	if(Border == 1)
 	{
 		for(i;i<5;i++)
 		{
-			if(i == (borderSize - 1))
+			if(i == borderSize)
 			{
-				players_border[i] = p;
+				players_border[i] = p2;
 				borderSize++;
 				return;
 			}
 			else{
-				if (p.segundos >= players_border[i].segundos){
+				if (p.segundos == players_border[i].segundos){
 					if (p.centesimas > players_border[i].centesimas){
 						p2 = players_border[i];
 						players_border[i] = p;
 						p = p2;
-						continue;
 					}
-					else
-						continue;
+				}
+				else if (p.segundos > players_border[i].segundos){
+					p2 = players_border[i];
+					players_border[i] = p;
+					p = p2;
 				}
 			}
 		}
@@ -1319,22 +1322,24 @@ void addScore(PLAYER p)
 	{
 		for(i;i<5;i++)
 		{
-			if(i == (noborderSize - 1))
+			if(i == noborderSize)
 			{
-				players_noborder[i] = p;
+				players_noborder[i] = p2;
 				noborderSize++;
 				return;
 			}
 			else{
-				if (p.segundos >= players_noborder[i].segundos){
+				if (p.segundos == players_noborder[i].segundos){
 					if (p.centesimas > players_noborder[i].centesimas){
 						p2 = players_noborder[i];
 						players_noborder[i] = p;
 						p = p2;
-						continue;
 					}
-					else
-						continue;
+				}
+				else if (p.segundos >= players_noborder[i].segundos){
+					p2 = players_noborder[i];
+					players_noborder[i] = p;
+					p = p2;
 				}
 			}
 		}
@@ -1414,6 +1419,12 @@ int submitHighscoreMenu()
 							keyboard = ESC_KEY;
 						}
 						else if (option == 2 || keyboard == ENTER_KEY){
+							int k;
+							for (k = 0; k < 12; k++){
+								if (name[k] == '\0' || name[k] == '\n' || name[k] == '*' || name[k] == '.')
+									break;
+								p.nickname[k] = name[k];
+							}
 							p.segundos= scores->best_segundos;
 							p.centesimas=scores->best_centesimas;
 
@@ -1505,54 +1516,39 @@ int checkSubmitOption()
 
 void saveScores()
 {
-	FILE * file;
-
-	file =fopen(FILENAME, "w");
-
-	if(file == NULL)
+	FILE *f = fopen(FILENAME, "w");
+	if (f == NULL)
 	{
-		printf("não abriu o ficheiro!\n");
-		return;
+	    printf("Error opening file!\n");
+	    return;
 	}
-	//printf("boarder size: %d",borderSize);
 
-	char* segundos;
-	char* centesimas;
-	fputs("1\n",file);
-	//printf("teste: %s\n", players_noborder[0].nickname);
-	fputs(players_noborder[0].nickname,file);
-	//fputs("\n",file);
-	/*int i = 0;
-	for(i;i<borderSize;i++) //guarda os com border
-	{
-		char* segundos;
-		char* centesimas;
-		fputs("1\n",file);
-		fputs(players_border[i].nickname,file);
-		fputs("\n",file);
-		return;
-		sprintf(segundos,"%d",players_border[i].segundos);
-		sprintf(centesimas,"%d",players_border[i].centesimas);
-		fputs(segundos,file);
-		fputs(centesimas,file);
+	int i = 0;
+
+	for (i = 0; i < noborderSize; i++){
+		char noborder = '0';
+		fprintf(f, "%c\n", noborder);
+		fprintf(f, "%s\n", players_noborder[i].nickname);
+		fprintf(f, "%d\n", players_noborder[i].segundos);
+		fprintf(f, "%d\n", players_noborder[i].centesimas);
+		fprintf(f, "%d %d %d %d %d %d \n", players_noborder[i].data.day, players_noborder[i].data.month,
+				players_noborder[i].data.year, players_noborder[i].data.hours,
+				players_noborder[i].data.min, players_noborder[i].data.sec);
 	}
-	return;
-	i=0;
-	for(i;i<noborderSize;i++)	// guarda os sem boarder
-	{
-		char* segundos;
-		char* centesimas;
-		fputs("0",file);
-		fputs(players_noborder[i].nickname,file);
-		sprintf(segundos,"%d",players_noborder[i].segundos);
-		sprintf(centesimas,"%d",players_noborder[i].centesimas);
-		fputs(segundos,file);
-		fputs(centesimas,file);
-	}*/
-
-	//printf("cenasssasasa3\n");
-
-	return;
+	for (i = 0; i < borderSize; i++){
+		char border = '1';
+		fprintf(f, "%c\n", border);
+		fprintf(f, "%s\n", players_border[i].nickname);
+		fprintf(f, "%d\n", players_border[i].segundos);
+		fprintf(f, "%d\n", players_border[i].centesimas);
+		fprintf(f, "%d %d %d %d %d %d ",
+				players_border[i].data.day, players_border[i].data.month,
+				players_border[i].data.year, players_border[i].data.hours,
+				players_border[i].data.min, players_border[i].data.sec);
+		if (i != (borderSize-1))
+			fprintf(f, "\n");
+	}
+	fclose(f);
 }
 
 
