@@ -10,20 +10,81 @@ typedef struct{
 
 extern MOUSE * rato;
 
+/**
+ * @brief subscribe mouse interrupts
+ *
+ * @return -1 if failed
+ */
 int MOUSE_subscribe_int();
+
+/**
+ * @brief unsubscribes mouse interrupts
+ *
+ * @return -1 if failed
+ */
 int MOUSE_unsubscribe_int();
+
+/**
+ * @brief gets a mouse packet
+ *
+ * @return a packet of the mouse
+ */
 int MOUSE_int_handler();
+
+/**
+ * @brief send a command to the mouse
+ *
+ * @return irq
+ */
 int MOUSE_send_command();
+
+/**
+ * @brief saves the correct mouse packets
+ *
+ * @return 1 if all packets are saved, 0 otherwise
+ */
 int show_mouse();
+
+/**
+ * @brief update mouse informations
+ *
+ * @param packets of the mouse
+ */
 void print_mouse(unsigned char *packets);
+
+/**
+ * @brief
+ *
+ * @param
+ *
+ * @return
+ */
 int rec_cmd();
+
+/**
+ * @brief
+ *
+ * @param
+ *
+ * @return
+ */
 void drawMouse();
+
+/**
+ * @brief draw the mouse
+ */
 void drawMouseJogo();
+
+/**
+ * @brief allocate mouse memory and starts it's information
+ */
 void StartMouse();
+
+/**
+ * @brief updates the mouse coordinates, so it doesn't get out of the game area
+ */
 void MouseBorder();
 
-//Check if the user clicked in an option. 0(Exit), 1(play), 2(highscores)
-int checkOption();
 
 extern char mouse_char;
 

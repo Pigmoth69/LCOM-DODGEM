@@ -187,12 +187,12 @@ int checkGameOption(); //verificar a opção de jogo escolhida (juntamente com o
 /**
  * @brief Start Game (the game itself)
  */
-int playGame(); //função que permite jogar o jogo
+int PlayGame(); //função que permite jogar o jogo
 
 /**
  * @brief Updates the coordinates of an object
  *
- * @param The object that needs to be updated
+ * @param Objeto The object that needs to be updated
  */
 void UpdateObjPosition(rectangle * Objeto); //atualiza a posicao dos objetos
 
@@ -214,7 +214,7 @@ void ResetObjects(); //reset nas coordenadas dos objetos
 /**
  * @brief Check if the player colided with an object or the game area
  *
- * @param 0 or 1 depending if the player has the power immortality activated or not
+ * @param Inven - 0 or 1 depending if the player has the power immortality activated or not
  *
  * @return 0 if he didn't colide or 1 if he did
  */
@@ -223,135 +223,88 @@ int CheckPLayerColision(int Inven); //verifica se o jogador colidiu (0 - Não, 1
 /**
  * @brief Check if the player colided with an object
  *
- * @param The object it will compare with
+ * @param Objeto - The object it will compare with
  *
  * @return 0 if he didnt and 1 if he did
  */
 int CheckColisionObj(rectangle * Objeto); // (0 Não, 1 Sim)
 
 /**
- * @brief
+ * @brief check if the player clicked the mouse left button
  *
- * @param
- *
- * @return
- */
-int PlayGame(); //O jogo em si
-
-/**
- * @brief
- *
- * @param
- *
- * @return
+ * @return 0 if he didn't, 1 if he did
  */
 int checkClick(); //verifica se clicou no botao do rato
 
 /**
- * @brief
- *
- * @param
- *
- * @return
+ * @brief Update all powers states
  */
 void UpdatePowers(); //faz update aos poderes
 
 /**
- * @brief
- *
- * @param
- *
- * @return
+ * @brief Reset the powers value
  */
 void StartGamePowers(); //inicia os valores dos poderes (inicio do jogo)
 
 /**
- * @brief
- *
- * @param
- *
- * @return
+ * @brief Draw the energy bar and updates the energy (regen)
  */
 void UpdateEnergy(); // faz update da energia
 
 /**
- * @brief
- *
- * @param
- *
- * @return
+ * @brief Update the best Score
  */
 void updateScores();//esta funcao compara e faz o update do bestscore
 
 /**
- * @brief
+ * @brief Read the scores file
  *
- * @param
- *
- * @return
+ * @return 1 if it does an error 0 otherwise
  */
 int loadScores();// faz update para o jogo de todos os scores retorna 1 se der erro retorna 0 se der
 
 /**
- * @brief
+ * @brief adds to the Score array the best score
  *
- * @param
- *
- * @return
+ * @param p - a player information
  */
 void addScore(PLAYER p); //esta função adiciona ao array o best score da struct SCORE
 
 /**
- * @brief
- *
- * @param
- *
- * @return
+ * @brief saves the scores to the scores file
  */
 void saveScores(); // esta função guarda no txt todos os recordes do jogo
 
 /**
- * @brief
- *
- * @param
- *
- * @return
+ * @brief the submit highscore menu
  */
 int submitHighscoreMenu(); // faz aparecer o menu para fazer submit do score
 
 /**
- * @brief
+ * @brief Checks the option of the submit menu chosen
  *
- * @param
- *
- * @return
+ * @return Cancel(2) or OK(1)
  */
 int checkSubmitOption(); // ve a opcao de submit escolhida cancelas ou aceitar
 
 /**
- * @brief
+ * @brief DIsplay the list of highscores
  *
- * @param
- *
- * @return
+ * @param option - Border or without Border
  */
 int MenuHighscoreList(int option); // de acordo com a opção escolhida faz display dos scores
 
 /**
- * @brief
+ * @brief Checks wich option the user has chosen (Highscore menu)
  *
- * @param
- *
- * @return
+ * @return 1 (Exit), 2(NoBorder Highscores), 3(Border Highscores)
  */
 int checkHighscoreOption(); // vê a qual a opção de score a mostrar ao utilizador
 
 /**
- * @brief
+ * @brief check if the user clicked the exit button on the highscore list menu
  *
- * @param
- *
- * @return
+ * @return 1(Exit) or 0.
  */
 int HighScoreListExit(); // faz exit no menu das listagens dos highscores
 
