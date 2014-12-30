@@ -736,7 +736,7 @@ int MenuHighscoreList(int option)
 					players_border[i].data.year, players_border[i].data.hours,
 					players_border[i].data.min, players_border[i].data.sec,
 					x_pos, y_pos);
-			y_pos+=50;
+			y_pos+=70;
 		}
 	}else
 	{
@@ -749,7 +749,7 @@ int MenuHighscoreList(int option)
 					players_noborder[i].data.year, players_noborder[i].data.hours,
 					players_noborder[i].data.min, players_noborder[i].data.sec,
 					x_pos, y_pos);
-			y_pos+= 50;
+			y_pos+= 70;
 		}
 	}
 	memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
