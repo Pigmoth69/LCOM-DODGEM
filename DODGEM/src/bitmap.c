@@ -351,6 +351,8 @@ int drawPlayerName(char* name,int x,int y) // desenha o nome do player no ecra
 	int i = 0;
 	for(i;i<12;i++)
 	{
+		if (name[i] == '\0' || name[i] == '\n' || name[i] == '*')
+			return x;
 		if(name[i] == '.')
 			continue;
 		else if(name[i]== ' ')
