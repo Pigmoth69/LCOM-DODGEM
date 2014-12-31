@@ -326,7 +326,7 @@ void drawPart(Bitmap* bmp, int x, int y, int x_inicial, int y_inicial, int x_fin
 		bufferStartPos = (char*)getVideoBuffer();
 		bufferStartPos += x * 2 + pos * MODE1024_H_RES * 2;
 
-		imgStartPos = bmp->bitmapData + xCorrection * 2 + i * width * 2;
+		imgStartPos = bmp->bitmapData + x_inicial*2 + y_inicial*width + xCorrection * 2 + i * width * 2;
 
 		memcpy(bufferStartPos, imgStartPos, drawWidth * 2);
 	}

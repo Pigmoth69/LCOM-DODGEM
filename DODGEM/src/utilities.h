@@ -16,5 +16,3 @@
  * @return the int correspondent
  */
 int char_to_int(char n); // numero
-
-
