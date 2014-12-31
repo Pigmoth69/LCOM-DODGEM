@@ -17,8 +17,8 @@ DATA* data;
 
 
 //APENAS PARA TESTE!
-PLAYER players_border[5]; // os 5 melhores scores do jogo com border
-PLAYER players_noborder[5]; // os 5 melhores scores do jogo com border
+PLAYER players_border[4]; // os 4 melhores scores do jogo com border
+PLAYER players_noborder[4]; // os 4 melhores scores do jogo com border
 static int borderSize = 0;
 static int noborderSize = 0;
 
@@ -166,11 +166,25 @@ void exit_DODGEM()
 	deleteBitmap(game->EnemyTL);
 	deleteBitmap(game->EnemyTR);
 	deleteBitmap(game->Cursor);
+	deleteBitmap(game->CursorLeft);
+	deleteBitmap(game->CursorRight);
+	deleteBitmap(game->CursorLR);
+	deleteBitmap(game->CursorLRM);
+	deleteBitmap(game->CursorMiddle);
 	deleteBitmap(game->NumbersWhite);
 	deleteBitmap(game->NumbersBlack);
 	deleteBitmap(game->ScoreBackground);
 	deleteBitmap(game->EnergyBar);
 	deleteBitmap(game->Border);
+	deleteBitmap(game->PlayInv);
+	deleteBitmap(game->alphabet);
+	deleteBitmap(game->submitScreen);
+	deleteBitmap(game->space);
+	deleteBitmap(game->MenuHighscore);
+	deleteBitmap(game->HighscoreList);
+	deleteBitmap(game->Help);
+	deleteBitmap(game->Separadores);
+
 	saveScores();
 	game->irq_set_mouse = MOUSE_unsubscribe_int();
 	game->irq_set_keyboard = KBD_unsubscribe_int();
@@ -319,10 +333,14 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 						if (keyboard == B_KEY && Border == 0){
 							keyboard = 0;
 							Border = 1;
+							scores->best_segundos = 0;
+							scores->best_centesimas = 0;
 						}
 						if (keyboard == B_KEY && Border == 1){
 							keyboard = 0;
 							Border = 0;
+							scores->best_segundos = 0;
+							scores->best_centesimas = 0;
 						}
 
 						//memcpy(getVideoBuffer(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
@@ -723,7 +741,7 @@ int MenuHighscoreList(int option)
 	//drawAllScores
 	/*drawHighscores(char*name,int segundos,int centesimas,int x,int y); */
 	int i = 0;
-	int y_pos=145;
+	int y_pos=160;
 	int x_pos=100;
 	if(option == 3)
 	{
@@ -1291,6 +1309,7 @@ int loadScores()// faz update para o jogo de todos os scores
 
 	}
 
+
 	return 0;
 
 }
@@ -1299,13 +1318,13 @@ int loadScores()// faz update para o jogo de todos os scores
 
 void addScore(PLAYER p)
 {
-	printf("AddScore name: %s, dia: %X \n", p.nickname, p.data.day);
+	printf("AddScore name: %s, dia: %X, dia: %d \n", p.nickname, p.data.day, p.data.day);
 	int i = 0;
 	PLAYER p2 = p;
 
 	if(Border == 1)
 	{
-		for(i;i<5;i++)
+		for(i;i<4;i++)
 		{
 			if(i == borderSize)
 			{
@@ -1331,7 +1350,7 @@ void addScore(PLAYER p)
 
 	}else
 	{
-		for(i;i<5;i++)
+		for(i;i<4;i++)
 		{
 			if(i == noborderSize)
 			{
@@ -1439,14 +1458,42 @@ int submitHighscoreMenu()
 							p.segundos= scores->best_segundos;
 							p.centesimas=scores->best_centesimas;
 
+							int sec, min, hours, day, month, year;
 							rtc_subscribe_int(0);
-							p.data.sec = read_rtc(0);
-							p.data.min = read_rtc(2);
-							p.data.hours = read_rtc(4);
-							p.data.day = read_rtc(7);
-							p.data.month = read_rtc(8);
-							p.data.year = read_rtc(9);
+							sec = read_rtc(0);
+							min = read_rtc(2);
+							hours = read_rtc(4);
+							day = read_rtc(7);
+							month = read_rtc(8);
+							year = read_rtc(9);
 							rtc_unsubscribe_int();
+
+							char Sec[10], Min[10], Hours[10], Day[10], Month[10], Year[10];
+							sprintf(Month,"%x", month);
+							sprintf(Day,"%x", day);
+							sprintf(Year,"%x", year);
+							sprintf(Hours,"%x", hours);
+							sprintf(Min,"%x", min);
+							sprintf(Sec,"%x", sec);
+
+							year = atoi(Year);
+							month = atoi(Month);
+							day = atoi(Day);
+							min = atoi(Min);
+							hours = atoi(Hours);
+							sec = atoi(Sec);
+
+							p.data.sec = sec;
+							p.data.min = min;
+							p.data.hours = hours;
+							p.data.day = day;
+							p.data.month = month;
+							p.data.year = year;
+
+							printf("Data: %d-%d-20%d %d:%d:%d\n", day, month, year, hours, min, sec);
+
+							scores->best_segundos = 0;
+							scores->best_centesimas = 0;
 
 							addScore(p);
 							keyboard = ESC_KEY;
@@ -1540,22 +1587,175 @@ void saveScores()
 		char noborder = '0';
 		fprintf(f, "%c\n", noborder);
 		fprintf(f, "%s\n", players_noborder[i].nickname);
-		fprintf(f, "%d\n", players_noborder[i].segundos);
-		fprintf(f, "%d\n", players_noborder[i].centesimas);
-		fprintf(f, "%d %d %d %d %d %d \n", players_noborder[i].data.day, players_noborder[i].data.month,
-				players_noborder[i].data.year, players_noborder[i].data.hours,
-				players_noborder[i].data.min, players_noborder[i].data.sec);
+		//segundos
+		if (players_noborder[i].segundos == 0){
+			fprintf(f, "00\n");
+		}
+		else if (players_noborder[i].segundos < 10){
+			fprintf(f, "0%d\n", players_noborder[i].segundos);
+		}
+		else
+			fprintf(f, "%d\n", players_noborder[i].segundos);
+
+		//centesimas
+		if (players_noborder[i].centesimas == 0){
+			fprintf(f, "00\n");
+		}
+		else if (players_noborder[i].centesimas < 10){
+			fprintf(f, "0%d\n", players_noborder[i].centesimas);
+		}
+		else
+			fprintf(f, "%d\n", players_noborder[i].centesimas);
+
+		//dia
+		if (players_noborder[i].data.day < 10){
+			fprintf(f, "0%d ", players_noborder[i].data.day);
+		}
+		else{
+			fprintf(f, "%d ", players_noborder[i].data.day);
+		}
+
+		//mes
+		if (players_noborder[i].data.month < 10){
+			fprintf(f, "0%d ", players_noborder[i].data.month);
+		}
+		else{
+			fprintf(f, "%d ", players_noborder[i].data.month);
+		}
+
+		//ano
+		if (players_noborder[i].data.year == 0){
+			fprintf(f, "00 ");
+		}
+		else if (players_noborder[i].data.year < 10){
+			fprintf(f, "0%d ", players_noborder[i].data.year);
+		}
+		else{
+			fprintf(f, "%d ", players_noborder[i].data.year);
+		}
+
+		//hours
+		if (players_noborder[i].data.hours == 0){
+			fprintf(f, "00 ");
+		}
+		else if (players_noborder[i].data.hours < 10){
+			fprintf(f, "0%d ", players_noborder[i].data.hours);
+		}
+		else{
+			fprintf(f, "%d ", players_noborder[i].data.hours);
+		}
+
+		//mins
+		if (players_noborder[i].data.min == 0){
+			fprintf(f, "00 ");
+		}
+		else if (players_noborder[i].data.min < 10){
+			fprintf(f, "0%d ", players_noborder[i].data.min);
+		}
+		else{
+			fprintf(f, "%d ", players_noborder[i].data.min);
+		}
+
+		//segundos
+		if (players_noborder[i].data.sec == 0){
+			fprintf(f, "00 ");
+		}
+		else if (players_noborder[i].data.sec < 10){
+			fprintf(f, "0%d ", players_noborder[i].data.sec);
+		}
+		else{
+			fprintf(f, "%d ", players_noborder[i].data.sec);
+		}
+
+		if (i != (noborderSize-1) || borderSize != 0)
+			fprintf(f, "\n");
+
 	}
 	for (i = 0; i < borderSize; i++){
 		char border = '1';
 		fprintf(f, "%c\n", border);
 		fprintf(f, "%s\n", players_border[i].nickname);
-		fprintf(f, "%d\n", players_border[i].segundos);
-		fprintf(f, "%d\n", players_border[i].centesimas);
-		fprintf(f, "%d %d %d %d %d %d ",
-				players_border[i].data.day, players_border[i].data.month,
-				players_border[i].data.year, players_border[i].data.hours,
-				players_border[i].data.min, players_border[i].data.sec);
+
+		//segundos
+		if (players_border[i].segundos == 0){
+			fprintf(f, "00\n");
+		}
+		else if (players_border[i].segundos < 10){
+			fprintf(f, "0%d\n", players_border[i].segundos);
+		}
+		else
+			fprintf(f, "%d\n", players_border[i].segundos);
+
+		//centesimas
+		if (players_border[i].centesimas == 0){
+			fprintf(f, "00\n");
+		}
+		else if (players_border[i].centesimas < 10){
+			fprintf(f, "0%d\n", players_border[i].centesimas);
+		}
+		else
+			fprintf(f, "%d\n", players_border[i].centesimas);
+
+		//dia
+		if (players_border[i].data.day < 10){
+			fprintf(f, "0%d ", players_border[i].data.day);
+		}
+		else{
+			fprintf(f, "%d ", players_border[i].data.day);
+		}
+
+		//mes
+		if (players_border[i].data.month < 10){
+			fprintf(f, "0%d ", players_border[i].data.month);
+		}
+		else{
+			fprintf(f, "%d ", players_border[i].data.month);
+		}
+
+		//ano
+		if (players_border[i].data.year == 0){
+			fprintf(f, "00 ");
+		}
+		else if (players_border[i].data.year < 10){
+			fprintf(f, "0%d ", players_border[i].data.year);
+		}
+		else{
+			fprintf(f, "%d ", players_border[i].data.year);
+		}
+
+		//hours
+		if (players_border[i].data.hours == 0){
+			fprintf(f, "00 ");
+		}
+		else if (players_border[i].data.hours < 10){
+			fprintf(f, "0%d ", players_border[i].data.hours);
+		}
+		else{
+			fprintf(f, "%d ", players_border[i].data.hours);
+		}
+
+		//mins
+		if (players_border[i].data.min == 0){
+			fprintf(f, "00 ");
+		}
+		else if (players_border[i].data.min < 10){
+			fprintf(f, "0%d ", players_border[i].data.min);
+		}
+		else{
+			fprintf(f, "%d ", players_border[i].data.min);
+		}
+
+		//segundos
+		if (players_border[i].data.sec == 0){
+			fprintf(f, "00 ");
+		}
+		else if (players_border[i].data.sec < 10){
+			fprintf(f, "0%d ", players_border[i].data.sec);
+		}
+		else{
+			fprintf(f, "%d ", players_border[i].data.sec);
+		}
+
 		if (i != (borderSize-1))
 			fprintf(f, "\n");
 	}
