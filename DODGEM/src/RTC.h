@@ -20,10 +20,29 @@ typedef struct{
 	unsigned long year;
 }DATA;
 
+/**
+ * @brief subscribe RTC interrupts
+ *
+ * @return -1 if failed, 0 otherwise
+ */
 int rtc_subscribe_int(int exclusive);
+
+/**
+ * @brief unsubscribe RTC interrupts
+ *
+ * @return -1 if failed, 0 otherwise
+ */
 int rtc_unsubscribe_int();
+
+/**
+ * @brief returns de information of a certain reg of RTC
+ *
+ * @param reg register to access
+ *
+ * @return the value of the register
+ */
 unsigned long read_rtc(unsigned long reg);
-int BinToInt(unsigned long number);
+
 
 
 
