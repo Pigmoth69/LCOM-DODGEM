@@ -9,33 +9,34 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-DODGEM * game;
-POWER * Poderes;
-SCORE * scores;
-PLAYER* user;
-DATA* data;
+DODGEM * game; //contem irq's, bitmaps e areas
+POWER * Poderes; //infos dos poderes de jogo
+SCORE * scores; //scores
+PLAYER* user; //informação de um jogador
+DATA* data; //uma data
 
 
-//APENAS PARA TESTE!
 PLAYER players_border[4]; // os 4 melhores scores do jogo com border
-PLAYER players_noborder[4]; // os 4 melhores scores do jogo com border
-static int borderSize = 0;
-static int noborderSize = 0;
+PLAYER players_noborder[4]; // os 4 melhores scores do jogo sem border
+static int borderSize = 0; //players_border.size()
+static int noborderSize = 0; //players_noborder.size()
 
-//FIM DO TESTE
-
-unsigned long keyboard = 0x0;
-int Border = 0;
+unsigned long keyboard = 0x0; //variavel que contém o codigo do teclado (variavel externa de "keyboard.h")
+int Border = 0; //variavel global que diz que o jogo possui barreira ou não
 
 
 void start_DODGEM()
 {
+	//alocar memoria das structs usadas
 	game = malloc(sizeof(DODGEM));
 	Poderes = malloc(sizeof(POWER));
 	user = malloc(sizeof(PLAYER));
 	scores = malloc(sizeof(SCORE));
 	scores->actual_segundos = scores->actual_centesimas = scores->best_segundos = scores->best_centesimas = 0;
+	//inicia o modo gráfico
 	graphicsStart(MODE1024);
+
+	//load de todos os bitmaps necessários
 	game->MenuImage= loadBitmap("/home/lcom/DODGEM/res/images/MenuPrincipal.bmp");
 	game->GameField= loadBitmap("/home/lcom/DODGEM/res/images/MenuGame.bmp");
 	game->PlaySquare= loadBitmap("/home/lcom/DODGEM/res/images/MainSquare.bmp");
@@ -62,16 +63,23 @@ void start_DODGEM()
 	game->HighscoreList = loadBitmap("home/lcom/DODGEM/res/images/HighScoresList.bmp");
 	game->Help = loadBitmap("home/lcom/DODGEM/res/images/Help.bmp");
 	game->Separadores = loadBitmap("home/lcom/DODGEM/res/images/Separadores.bmp");
+	//subscribes de periféricos
 	game->irq_set_mouse = MOUSE_send_command();
 	game->irq_set_keyboard = KBD_subscribe_int();
 	game->irq_set_time = timer_subscribe_int();
+	//FPS do jogo
 	game->FPS = 60;
+
+	//le o ficheiro dos scores
 	loadScores();
 
+	//inicia as informações dos retangulos de jogo
 	StartOptions();
 
+	//inicia as informações dos objetos de jogo
 	start_Objects();
 
+	//inicia as informações do rato a serem usadas
 	StartMouse();
 }
 
@@ -158,6 +166,7 @@ void start_Objects(){
 
 void exit_DODGEM()
 {
+	//apaga os bitmaps
 	deleteBitmap(game->MenuImage);
 	deleteBitmap(game->GameField);
 	deleteBitmap(game->PlaySquare);
@@ -185,10 +194,14 @@ void exit_DODGEM()
 	deleteBitmap(game->Help);
 	deleteBitmap(game->Separadores);
 
+	//guarda os scores no ficheiro
 	saveScores();
+
+	//unsubscribe dos periféricos
 	game->irq_set_mouse = MOUSE_unsubscribe_int();
 	game->irq_set_keyboard = KBD_unsubscribe_int();
 	game->irq_set_time = timer_unsubscribe_int();
+	//sai do modo gráfico
 	graphicsExit();
 }
 
@@ -222,11 +235,16 @@ int mainMenu()
 
 					if (getCounter() % (60/game->FPS) == 0){
 
+						//desenha o fundo no buffer secundario
 						drawBitmap(game->MenuImage, 0, 0, ALIGN_LEFT);
+						//desenha o rato
 						drawMouse();
+						//copia para a video_mem o buffer secundario
 						memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+
 						int option = 0;
 						option = checkMenuOption();
+						//1-PLay, 2-Highscores, 3-Exit
 						if (option == 1 || option == 2 || option == 3)
 							return option;
 
@@ -251,10 +269,12 @@ int mainMenu()
 		}
 	}
 
+	//se o ciclo terminou com a ESC_KEY o programa retorna 3(Exit)
 	return 3;
 }
 
 int checkMenuOption(){
+	//0-Nothing, 1-PLay, 2-Highscores, 3-Exit
 	if (rato->x < game->PlayOption->xi || rato->x > game->PlayOption->xf)
 		return 0;
 	if (rato->y < game->PlayOption->yi || rato->y > game->ExitOption->yf)
@@ -330,6 +350,7 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 
 					if (getCounter() % (60/game->FPS) == 0){
 
+						//com a B_KEY altera a border
 						if (keyboard == B_KEY && Border == 0){
 							keyboard = 0;
 							Border = 1;
@@ -343,33 +364,41 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 							scores->best_centesimas = 0;
 						}
 
-						//memcpy(getVideoBuffer(), getTripleBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
+						//desenha o fundo
 						drawBitmap(game->GameField, 0, 0, ALIGN_LEFT);
 
+						//se tiver border desenha-a
 						if (Border)
 							drawBitmap(game->Border, 340, 40, ALIGN_LEFT);
 
+						//desenha os objetos
 						drawAllObjects();
+						//desenha o quadrado de jogo
 						drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
-						drawMouse();
+						//Best Score
 						if(scores->best_segundos!= 0 || scores->best_centesimas!= 0)
 							drawWhiteScore(55,595,scores->best_segundos,scores->best_centesimas);
+
+						//Desenha o rato
+						drawMouse();
+
+						//copia para a video_mem o que foi desenhado no double buffer
 						memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
 
 
 						int option = checkGameOption();
 
 						switch(option){
-						case 1:
+						case 1: //Menu (Exit)
 							keyboard = ESC_KEY;
 							break;
-						case 2:
+						case 2: //Submit (Score)
 							submitHighscoreMenu();
 							break;
-						case 3:
+						case 3: //PLay
 							PlayGame();
 							break;
-						case 4:
+						case 4: //Help
 							option = HelpMenu();
 							if (option == 1)
 								keyboard = ESC_KEY;
@@ -390,7 +419,6 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 				{ /* subscribed interrupt */
 					MOUSE_int_handler();
 					show_mouse();
-
 				}
 
 				break;
@@ -398,6 +426,8 @@ int gameMenu() // esta função tem os menus de jogo todos juntamente com os pow
 				break; /* no other notifications expected: do nothing */
 			}
 		} else { /* received a standard message, not a notification */
+			printf("Aconteceu um problema em PlayGame()\n");
+			keyboard = ESC_KEY;
 			/* no standard messages expected: do nothing */
 		}
 	}
@@ -729,11 +759,6 @@ int MenuHighscoreList(int option)
 	unsigned long keyboard = 0x0;
 	int firstMove = 0;
 
-	int j = 0;
-	for(j; j < noborderSize; j++)
-	{
-		printf("Nome%d = %s \n", j, players_noborder[j].nickname);
-	}
 
 
 
@@ -907,7 +932,6 @@ int exitMenu()	//esta função faz exit de tudo
 	return 3;
 }
 
-
 void UpdateObjPosition(rectangle * Objeto)
 {
 	/*Area jogo -> x[350, 950]; y[50, 650]*/
@@ -1040,7 +1064,6 @@ int CheckPLayerColision(int Inven){
 	}
 }
 
-
 //E preciso verificar colisao entre o rato e os objetos
 int CheckColisionObj(rectangle * Objeto){
 	if (rato->y > Objeto->yf)
@@ -1134,8 +1157,7 @@ void StartGamePowers(){
 int loadScores()// faz update para o jogo de todos os scores
 {
 	int i_border = 0;
-
-	int i_noborder=0;
+	int i_noborder = 0;
 
 	borderSize = 0;
 	noborderSize = 0;
@@ -1154,7 +1176,7 @@ int loadScores()// faz update para o jogo de todos os scores
 	{
 		char border[100];
 
-		fgets(border,100,file);
+		fgets(border,100,file); //O primeiro caracter (linha) possui a info se tem border ou nao
 
 		if(border[0]== '1') // tem border
 		{
@@ -1167,31 +1189,30 @@ int loadScores()// faz update para o jogo de todos os scores
 
 			PLAYER p;
 
-			fgets(name,100,file);
+			fgets(name,100,file); //2ª linha - Nome do jogador
 
-			if (strncmp(name, "0s2", strlen("0s2"))==0)
+			if (strncmp(name, "0s2", strlen("0s2"))==0) //se for "lixo" termina
 				return -1;
 
 			int i = 0;
 
-			if (name[strlen(name) - 1] == '\n')
+			if (name[strlen(name) - 1] == '\n') //Se encontrar newline, substitui por fim de string
 			{
 				name[strlen(name) - 1] = '\0';
 			}
 
 			strcpy(p.nickname, name);
 
-			printf("NOME2P: %s\n",p.nickname);
 
-			fgets(score,100,file);
+			fgets(score,100,file); //3ª linha possui os segundos do score
 			p.segundos = atoi(score);
 
-			fgets(score,100,file);
+			fgets(score,100,file); //4ª linha possui as centesimas do score
 			p.centesimas = atoi(score);
 
 			int j = 0;
 			for (j; j < 6; j++){
-				lido = fgetc(file); //le o primeiro caracter do numero
+				lido = fgetc(file); //le o primeiro caracter do numero da data
 				time[0] = lido;
 				lido = fgetc(file); //le o segundo caracter do numero
 				time[1] = lido;
@@ -1219,9 +1240,8 @@ int loadScores()// faz update para o jogo de todos os scores
 			}
 			trash = fgetc(file); //le o newline no fim da linha
 
-			printf("Dia %d\n", p.data.day);
 
-			players_border[i_border] = p;
+			players_border[i_border] = p; //guarda no array
 			i_border++;
 			borderSize++;
 
@@ -1260,7 +1280,6 @@ int loadScores()// faz update para o jogo de todos os scores
 				name[i] = '0';
 			}
 
-			printf("NOME2P: %s \n",p.nickname);
 
 			fgets(score,100,file);
 			p.segundos = atoi(score);
@@ -1298,7 +1317,6 @@ int loadScores()// faz update para o jogo de todos os scores
 			}
 			trash = fgetc(file);
 
-			printf("Dia %d \n", p.data.day);
 
 
 			players_noborder[i_noborder] = p;
@@ -1314,11 +1332,9 @@ int loadScores()// faz update para o jogo de todos os scores
 
 }
 
-
-
 void addScore(PLAYER p)
 {
-	printf("AddScore name: %s, dia: %X, dia: %d \n", p.nickname, p.data.day, p.data.day);
+
 	int i = 0;
 	PLAYER p2 = p;
 
@@ -1434,16 +1450,12 @@ int submitHighscoreMenu()
 						if (Border)
 							drawBitmap(game->Border, 340, 40, ALIGN_LEFT);
 
-						//drawAllObjects();
-						//drawBitmap(game->PlaySquare,game->MainSquare->xi,game->MainSquare->yi,ALIGN_LEFT);
 						drawBitmap(game->submitScreen,350,50,ALIGN_LEFT);
 						drawBlackScore(725,100,scores->best_segundos,scores->best_centesimas);
 						drawPlayerName(name,400,350);
 						drawMouse();
 
 
-						//memcpy(getVideoMem(), getVideoBuffer(), MODE1024_H_RES * MODE1024_V_RES * 2);
-						//fim do comment
 						int option = checkSubmitOption();
 						if (option == 1){
 							keyboard = ESC_KEY;
@@ -1459,6 +1471,9 @@ int submitHighscoreMenu()
 							p.centesimas=scores->best_centesimas;
 
 							int sec, min, hours, day, month, year;
+
+							//Vai buscar informações ao RTC
+							//para guardar a data no score
 							rtc_subscribe_int(0);
 							sec = read_rtc(0);
 							min = read_rtc(2);
@@ -1490,7 +1505,7 @@ int submitHighscoreMenu()
 							p.data.month = month;
 							p.data.year = year;
 
-							printf("Data: %d-%d-20%d %d:%d:%d\n", day, month, year, hours, min, sec);
+
 
 							scores->best_segundos = 0;
 							scores->best_centesimas = 0;
@@ -1547,8 +1562,6 @@ int submitHighscoreMenu()
 
 }
 
-
-
 int checkSubmitOption()
 {
 	if((rato->x > game->submitOK->xi) && (rato->x < game->submitOK->xf)&&
@@ -1570,7 +1583,6 @@ int checkSubmitOption()
 	else
 		return 0;
 }
-
 
 void saveScores()
 {
