@@ -1,0 +1,39 @@
+1- O score está a funcionar com as centesimas a serem incremetadas de ciclo a ciclo
+2- faltam as imagens do highscore
+3- falta a imagem das letras
+4-  pensei em fazer um array de structs com a informação de player para ler e escrever dos ficheiros
+5- a implementação do save/load dos scores vou fazer no DODGEM.c para ser mais fácil. Depois se for preciso, passamos para um ficheiro novo
+6- falta a cena do OK e do CANCEL para o submit score!
+7- temos de fazer uma função que limpe o rato cada vez que se entre num ciclo de while(interrupt)
+8- o update dos scores está a dar mal outra vez...
+
+coordenadas do score:
+
+x: 740 y: 685
+
+coordenadas do best score:
+
+x: 55 y: 595
+
+Coordenadas menu submit:
+
+Menu
+ -> x[350, 950]; y[50, 650]
+ 
+OK 
+-> x[700, 900]; y[500, 600]
+
+Cancel 
+-> x[400, 600]; y[500, 600]
+
+SCORE 
+-> [x_i, y_i] = [725, 100]
+
+Name 
+-> x[400, 900]; y[350, 450]  
+
+
+No Border -> 
+x[340, 700]; y[250, 370]
+With Border -> x[340, 700]; y[380, 500]
+Exit -> x[714, 974]; y[550, 610] 
