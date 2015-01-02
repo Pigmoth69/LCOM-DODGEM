@@ -1,6 +1,14 @@
 #ifndef MOUSE_H_
 #define MOUSE_H_
 
+/** @defgroup mouse mouse
+* @{
+* Functions and data structs for manipulating mouse
+*/
+
+
+extern char mouse_char;
+
 typedef struct{
 	int x;
 	int y;
@@ -9,6 +17,7 @@ typedef struct{
 }MOUSE;
 
 extern MOUSE * rato;
+extern char mouse_char;
 
 /**
  * @brief subscribe mouse interrupts
@@ -53,25 +62,18 @@ int show_mouse();
 void print_mouse(unsigned char *packets);
 
 /**
- * @brief
- *
- * @param
- *
- * @return
+ * @brief reads the out buffer from the KBC
  */
 int rec_cmd();
 
 /**
- * @brief
+ * @brief draw the mouse 
  *
- * @param
- *
- * @return
  */
 void drawMouse();
 
 /**
- * @brief draw the mouse
+ * @brief draw the game mouse
  */
 void drawMouseJogo();
 
@@ -86,6 +88,9 @@ void StartMouse();
 void MouseBorder();
 
 
-extern char mouse_char;
+
+
+
+/**@}*/
 
 #endif

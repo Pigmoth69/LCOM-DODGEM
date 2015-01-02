@@ -109,7 +109,7 @@ int number_draw_width(int number);//return the number width to draw
 /**
  * @brief Destroys the given bitmap, freeing all resources used by it. (Made by Henrique Ferrolho)
  *
- * @param bitmap bitmap to be destroyed
+ * @param bmp bitmap to be destroyed
  */
 void deleteBitmap(Bitmap* bmp);
 
