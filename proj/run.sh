@@ -1,1 +1,1 @@
-service run `pwd`/DODGEM
+service run `pwd`/proj
