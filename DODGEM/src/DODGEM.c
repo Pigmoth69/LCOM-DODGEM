@@ -1092,15 +1092,15 @@ void UpdatePowers(){
 
 	//se tiverem passado 1 segundos apos ativar a invencibilidade, desativa
 	if (Poderes->invencibilidade == 1 && ((getCounter() - Poderes->PowerBeginTime) >= (60))){
-		Poderes->invencibilidade = 0;
+		//Poderes->invencibilidade = 0;
 	}
 	//se tiverem passado 1 segundos apos ativar o STOP, desativa
 	if (Poderes->stopMovement == 1 && ((getCounter() - Poderes->PowerBeginTime) >= (60))){
-		Poderes->stopMovement = 0;
+		//Poderes->stopMovement = 0;
 	}
 	//se tiverem passado 3 segundos apos ativar o SLOW, desativa
 	if (Poderes->vel == 4 && ((getCounter() - Poderes->PowerBeginTime) >= (60*3))){
-		Poderes->vel = 8;
+		//Poderes->vel = 8;
 	}
 
 	//Invencibilidade
