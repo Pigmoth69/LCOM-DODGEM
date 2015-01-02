@@ -7,6 +7,13 @@
 #include <stdlib.h>
 #include <math.h>
 
+/** @defgroup RTC rtc
+* @{
+* Functions and data structs for manipulating rtc
+*/
+
+
+
 #define RTC_ADDR_R 0x70
 #define RTC_DATA_R 0x71
 #define RTC_IRQ 8
@@ -44,6 +51,6 @@ int rtc_unsubscribe_int();
 unsigned long read_rtc(unsigned long reg);
 
 
-
+/**@}*/ 
 
 #endif

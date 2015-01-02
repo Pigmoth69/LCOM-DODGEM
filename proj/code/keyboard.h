@@ -2,11 +2,19 @@
  * keyboard.h
  *
  *  Created on: Oct 20, 2014
- *      Author: daniel
+ *      Author: daniel, david
  */
 
 #ifndef KEYBOARD_H_
 #define KEYBOARD_H_
+
+/** @defgroup keyboard keyboard
+* @{
+* Functions and data for manipulating keyboard
+*/
+
+
+/**@}*/
 
 #include <minix/sysutil.h>
 #include <minix/drivers.h>

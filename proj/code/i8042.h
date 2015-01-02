@@ -2,7 +2,7 @@
  * keyboard.h
  *
  *  Created on: Oct 20, 2014
- *      Author: daniel
+ *      Author: daniel, david
  */
 
 #ifndef KEYBOARD_H_
@@ -11,7 +11,11 @@
 #include <minix/sysutil.h>
 #include <minix/drivers.h>
 
-//#include "timer.h"
+
+/** @defgroup i8042 i8042
+* @{
+* Functions and data for keyboard
+*/
 
 
 #define KBD_IRQ 1
@@ -41,7 +45,8 @@
 
 
 #define DELAY_US 20000
-void print_config(unsigned char *packets);
 
+
+/**@}*/
 
 #endif /* KEYBOARD_H_ */

@@ -4,6 +4,12 @@
 #include "RTC.h"
 #include "bitmap.h"
 
+/** @defgroup DODGEM dodgem
+* @{
+* Functions and data structs for manipulating dodgem
+*/
+
+
 /**
  * @brief Saves the coordinates of rectangles and direction (in case of a game object)
  */
@@ -310,4 +316,7 @@ int checkHighscoreOption(); // vê a qual a opção de score a mostrar ao utiliz
  */
 int HighScoreListExit(); // faz exit no menu das listagens dos highscores
 
+
+
+/**@}*/
 #endif

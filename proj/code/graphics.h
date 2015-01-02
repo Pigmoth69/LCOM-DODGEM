@@ -3,6 +3,12 @@
 
 #include "DODGEM.h"
 
+/** @defgroup graphics graphics
+* @{
+* Functions for manipulating graphics
+*/
+
+
 
 /**
  * @brief allocate memory for all buffers
@@ -54,6 +60,6 @@ short *getVideoBuffer();
 short *getVideoMem();
 
 
-
+/**@}*/
 
 #endif
