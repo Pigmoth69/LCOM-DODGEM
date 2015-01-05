@@ -2,4 +2,4 @@ cd code
 make clean install
 mv DODGEM ../
 cd ..
-strip --strip-all proj
+strip --strip-all DODGEM
