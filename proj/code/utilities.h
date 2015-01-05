@@ -15,8 +15,8 @@
 #define MODE1024 0x117
 #define MODE1024_H_RES 1024
 #define MODE1024_V_RES 768
-#define FILENAME "/home/lcom/proj/scores.txt"
-#define ImagesPath "/home/lcom/proj/code/images/"
+#define FILENAME "/home/DODGEM/scores.txt"
+#define ImagesPath "/home/DODGEM/"
 #define INVALID '*'
 
 /**

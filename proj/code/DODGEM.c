@@ -53,7 +53,8 @@ void start_DODGEM()
 	game->NumbersWhite = loadBitmap(ImagesPath"Algarismos.bmp");
 	game->NumbersBlack = loadBitmap(ImagesPath"AlgarismosPretos.bmp");
 	game->ScoreBackground = loadBitmap(ImagesPath"ScoreBackground.bmp");
-	game->EnergyBar = loadBitmap(ImagesPath"Fronteira.bmp");
+	game->EnergyBar = loadBitmap(ImagesPath"Energy.bmp");
+	game->Border = loadBitmap(ImagesPath"Fronteira.bmp");
 	game->PlayInv = loadBitmap(ImagesPath"MainInv.bmp");
 	game->submitScreen = loadBitmap(ImagesPath"Submit.bmp");
 	game->alphabet = loadBitmap(ImagesPath"Alfabeto.bmp");
